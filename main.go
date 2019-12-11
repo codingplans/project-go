@@ -1,15 +1,19 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"iceberg/frame"
 	"iceberg/frame/icelog"
+	"iceberg/frame/protocol"
+	"laoyuegou.com/http_api"
 	"laoyuegou.com/util"
 	"laoyuegou.pb/gameserver/pb"
 	"laoyuegou.pb/gameserver/pb/gobang"
 	"laoyuegou.pb/imapi/pb"
 	"math/rand"
 	"strings"
+	"testing"
 	"time"
 )
 
@@ -25,17 +29,189 @@ const (
 	WHITE_FIVE = int(2)
 )
 
+func testslice() {
+
+	// var i ,j =1,1
+	for i := 9; i >= 1; i-- {
+		for j := 1; j < i+1; j++ {
+			fmt.Print(i, "*", j, "=", j*i, " ")
+		}
+		fmt.Print("\n")
+	}
+}
+
+func main() {
+	testslice()
+	// counts()
+	// Test2(&testing.T{})
+	// testint()
+	// channel()
+	// CompletePayOrder(234, 1896)
+	// https()
+	// testarr()
+	// chantest()
+
+	// gotoFun()
+	// TestFor()
+	// aaaa := boo()
+	// fmt.Printf("%+v,%d ", aaaa, len(aaaa))
+
+	// mapinit()
+	// timess()
+	// timeseco¡nd()
+	// maptest()
+	// fmt.Print(1/2 + 1)
+	// fmt.Print(2 / 2)
+	// fmt.Print(1 % 2)
+	// fmt.Print(2 % 2)
+	// slices()
+	// varsss()¡
+	// arr := map[int]int32{}
+	// arr[1] = 1
+	// arr[2] = 1
+	//
+	// if _, ok := arr[12]; ok {
+	// 	fmt.Printf("%3d", arr)
+	// }
+	//
+	// for i := 0; i < 20; i++ {
+	// 	fmt.Println(rand.Int31n(3) + 1)
+	// }
+
+	// tt := JSONTime{time.Now()}
+	// arrtest()
+
+	// Shuffle()
+	// golang()
+
+	// listcon()
+	// t, _ := time.ParseInLocation("2006-01-02 15:04:05", timeStr+" 23:59:59", time.Local)
+	// timeStr := time.Now().Format("2006-01-02")
+	// t2, _ := time.ParseInLocation("2006-01-02", time.Now().Format("2006-01-02"), time.Local)
+	// second := t2.AddDate(0, 0, 1).Unix() - time.Now().Unix()
+	// fmt.Println(timeStr, t, t2)
+	// fmt.Println(t.Unix() + 1)
+	// fmt.Println(t2.AddDate(0, 0, 1).Unix() - time.Now().Unix())
+
+	// return
+	//
+	// mapt()
+	//
+	// userinfo()
+	// Cmd(frame.TODO())
+	// return
+	// // mm := new(gameserver.Room)
+	// mm.Black = 2
+	// mm.White = 4
+	// if mm.InRoom == nil {
+	// 	mm.InRoom = make(map[int64]int)
+	// 	mm.InRoom[mm.Black] = 1
+	//
+	// }
+	// if mm.InRoom[4] != 2 {
+	// 	fmt.Println(3444)
+	//
+	// }
+	//
+	// fmt.Println(mm.InRoom, mm)
+	// return
+	//
+	// var aa []*http.Server
+	// if aa != nil && len(aa) >= 2 {
+	// 	fmt.Println(11)
+	// }
+	// fmt.Println(aa)
+	//
+	// return
+	// for i := 0; i < 2; i++ {
+	// 	rand.Seed(int64(time.Now().UnixNano()))
+	// 	fmt.Println(rand.Intn(2))
+	// }
+	// return
+
+	// var i,j int32
+	// arr := make([][]int32,0,15)
+
+	// for i = 1; i <= 10; i++ {
+	// 	for j = 1; j <= 10; j++ {
+	// 		arr = append(arr,[]int32{i,j})
+	// 	}
+	// }
+	// fmt.Println(arr,arrToRepeat(arr))
+
+	// return
+	// var m int
+	// m = -1
+	// fmt.Println(m)
+	// // for m < 5{
+	// // 	fmt.Print(m,&m)
+	// // 	m++
+	// // }
+	//
+	// return
+	// for _, j := range Board {
+	// 	fmt.Println(j)
+	//
+	// }
+}
+
+const a = 10 << iota
+
+const (
+	b = 10 << iota * iota
+	c
+	d
+	e
+)
+
+// const (
+// 	// c = 10
+// 	// d
+// 	// d = iota
+// 	// e
+// 	f = "hello"
+// 	// nothing
+// 	g
+// 	h = iota
+// 	i
+// 	j = 0
+// 	k
+// 	l, m = iota, iota
+// 	n, o
+//
+// 	p = iota + 1
+// 	q
+// 	_
+// 	r = iota * iota
+// 	s
+// 	t = r
+// 	u
+// 	v = 1 << iota
+// 	w
+// 	x         = iota * 0.01
+// 	y float32 = iota * 0.01
+// 	z
+// )
+
 var Board [BOARD_SIZE + 2][BOARD_SIZE + 2]int
+
+// func counts() {
+// 	print(a, "\n", b, "\n", c, "\n", d, "\n", e, "\n", f, "\n", g, "\n", h, "\n", i, "\n", j, "\n", k, "\n", l, "\n", m, "\n", n, "\n", o, "\n", p, "\n", q, "\n", r, "\n", s, "\n", t, "\n", u, "\n",
+// 		v, "\n", w, "\n", x, "\n", y, "\n", z)
+// }
 
 func timess() {
 
-	end_time := time.Now().AddDate(0, 0, -10).Unix()
+	aa := util.XTime(time.Now())
 
-	fmt.Println(end_time)
-	fmt.Println(util.XTime(time.Now()))
+	fmt.Println(util.XTime(time.Now()), aa.String())
+
+	formatTime, err := time.Parse("2006-01-02 15:04:05", aa.String())
+	qq, _ := time.LoadLocation("Asia/Shanghai")
+	url := fmt.Sprintf("%s%s", "123123", "order/interior/quickorder/disable-auto-grab")
+	fmt.Println(formatTime.Unix(), err, time.Now().In(qq).Unix(), url)
+
 }
-
-type aa map[int64]string
 
 func mapinit() {
 
@@ -127,116 +303,114 @@ func testarr() {
 	arr = append(arr, 11)
 	icelog.Info(arr)
 
+	var days int64
+	days = 100
+	days = 0 - days
+	icelog.Info(int(days))
+
 }
 
-func main() {
-	// testarr()
-	// chantest()
+func https() {
 
-	// gotoFun()
-	// TestFor()
-	// aaaa := boo()
-	// fmt.Printf("%+v,%d ", aaaa, len(aaaa))
+	client := http_api.NewClient()
 
-	// mapinit()
-	timess()
-	// timesecond()
-	// maptest()
-	// fmt.Print(1/2 + 1)
-	// fmt.Print(2 / 2)
-	// fmt.Print(1 % 2)
-	// fmt.Print(2 % 2)
-	// slices()
-	// varsss()¡
-	// arr := map[int]int32{}
-	// arr[1] = 1
-	// arr[2] = 1
-	//
-	// if _, ok := arr[12]; ok {
-	// 	fmt.Printf("%3d", arr)
-	// }
-	//
-	// for i := 0; i < 20; i++ {
-	// 	fmt.Println(rand.Int31n(3) + 1)
-	// }
+	// resp, err := client.GETV1("https://latest-test-api.lygou.cc/order/plorder/is_show?god_id=13100179", nil)
+	resp, err := client.POSTV2("https://latest-test-api.lygou.cc/order/interior/quickorder/disable-auto-grab", map[string]interface{}{
+		"god_id": 1896,
+	})
+	if err != nil {
+		icelog.Error(err.Error())
+	}
+	qq, err := resp.ReadAll()
+	var ress protocol.Message
+	err = json.Unmarshal(qq, &ress)
+	icelog.Info(ress)
 
-	// tt := JSONTime{time.Now()}
-	// arrtest()
+	// resp.Body.Close()
+}
 
-	// Shuffle()
-	// golang()
+func CompletePayOrder(userId, godId int64) {
+	client := http_api.NewClient()
+	resp, err := client.POSTV2("https://latest-test-api.lygou.cc/order/interior/quickorder/complete", map[string]interface{}{
+		"user_id": userId,
+		"god_id":  godId,
+	})
+	if err != nil {
+		icelog.Error(err.Error())
+	}
+	if resp.StatusCode == 200 {
+		icelog.Info("支付成功,调用php服务成功")
+		return
+	}
+	ms, _ := resp.ReadAll()
+	var ress protocol.Message
+	err = json.Unmarshal(ms, &ress)
+	icelog.Info("支付成功,调用php失败：",
+		ress.Errmsg)
+}
 
-	// listcon()
-	return
+func channel() {
+	ch := make(chan int, 2)
+	for i := 0; i <= 10; i++ {
+		// i := 1
+		// for {
+		select {
 
-	// t, _ := time.ParseInLocation("2006-01-02 15:04:05", timeStr+" 23:59:59", time.Local)
-	// timeStr := time.Now().Format("2006-01-02")
-	// t2, _ := time.ParseInLocation("2006-01-02", time.Now().Format("2006-01-02"), time.Local)
-	// second := t2.AddDate(0, 0, 1).Unix() - time.Now().Unix()
-	// fmt.Println(timeStr, t, t2)
-	// fmt.Println(t.Unix() + 1)
-	// fmt.Println(t2.AddDate(0, 0, 1).Unix() - time.Now().Unix())
+		case ch <- i:
+			fmt.Println(i, "%%%") // 0,2,4,6,8
 
-	// return
-	//
-	// mapt()
-	//
-	// userinfo()
-	// Cmd(frame.TODO())
-	// return
-	// // mm := new(gameserver.Room)
-	// mm.Black = 2
-	// mm.White = 4
-	// if mm.InRoom == nil {
-	// 	mm.InRoom = make(map[int64]int)
-	// 	mm.InRoom[mm.Black] = 1
-	//
-	// }
-	// if mm.InRoom[4] != 2 {
-	// 	fmt.Println(3444)
-	//
-	// }
-	//
-	// fmt.Println(mm.InRoom, mm)
-	// return
-	//
-	// var aa []*http.Server
-	// if aa != nil && len(aa) >= 2 {
-	// 	fmt.Println(11)
-	// }
-	// fmt.Println(aa)
-	//
-	// return
-	// for i := 0; i < 2; i++ {
-	// 	rand.Seed(int64(time.Now().UnixNano()))
-	// 	fmt.Println(rand.Intn(2))
-	// }
-	// return
+		case x := <-ch:
+			fmt.Println(x)        // 0,2,4,6,8
+			fmt.Println(i, "&&&") // 0,2,4,6,8
+		default:
+			fmt.Println(i, "$$$") // 0,2,4,6,8
 
-	// var i,j int32
-	// arr := make([][]int32,0,15)
+		}
 
-	// for i = 1; i <= 10; i++ {
-	// 	for j = 1; j <= 10; j++ {
-	// 		arr = append(arr,[]int32{i,j})
-	// 	}
-	// }
-	// fmt.Println(arr,arrToRepeat(arr))
+		// i++
+	}
 
-	// return
-	// var m int
-	// m = -1
-	// fmt.Println(m)
-	// // for m < 5{
-	// // 	fmt.Print(m,&m)
-	// // 	m++
-	// // }
-	//
-	// return
-	// for _, j := range Board {
-	// 	fmt.Println(j)
-	//
-	// }
+}
+func testint() {
+	var eee int
+	var ss = "1"
+	fmt.Printf("%+v", eee)
+	// fmt.Printf("%v", eee)
+	fmt.Printf("%v", ss)
+	fmt.Printf("%s", ss)
+
+}
+
+func Test2(t *testing.T) {
+	slice := []int{0, 1, 2, 3}
+	m := make(map[int]int)
+
+	for key, val := range slice {
+		fmt.Printf("%+v", val)
+		m[key] = val
+	}
+
+	if v, ok := m[8]; ok {
+		fmt.Print(v, 111111111)
+	}
+	for k, v := range m {
+		fmt.Printf("\n key: %d, value: %d \n", k, v)
+	}
+
+	const (
+		mutexLocked = 1 << iota
+		mutexWoken
+		mutexStarving
+		mutexWaiterShift = iota
+	)
+	sn2 := &struct {
+		age  int
+		name string
+	}{age: 11, name: "qq"}
+	str := "123¡" + "abc"
+
+	fmt.Print("&333333", mutexLocked, mutexWoken, mutexStarving, mutexWaiterShift)
+	fmt.Print("&&&&&&&&&&", (*sn2).age, sn2.name, str)
 }
 
 // 初始化一个17*17的棋盘，把四周用9填充，棋盘点用0填充

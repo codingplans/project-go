@@ -30,7 +30,8 @@
     },
     "Port": 3306,
     "Psw": "laoyuegoutest",
-    "User": "qa"
+    "User": "qa",
+    "Logmode": true
   },
   "mysql_gameserver_cfg": {
     "DbName": "gameserver",
@@ -40,7 +41,8 @@
     },
     "Port": 3306,
     "Psw": "laoyuegoutest",
-    "User": "qa"
+    "User": "qa",
+    "Logmode": true
   },
   "mysql_chatroom_cfg": {
     "DbName": "chatroom",
@@ -50,7 +52,8 @@
     },
     "Port": 3306,
     "Psw": "laoyuegoutest",
-    "User": "qa"
+    "User": "qa",
+    "Logmode": true
   },
   "mysql_feed_cfg": {
     "DbName": "feed",
@@ -60,7 +63,8 @@
     },
     "Port": 3306,
     "Psw": "laoyuegoutest",
-    "User": "qa"
+    "User": "qa",
+    "Logmode": true
   },
   "nsq_cfg": {
     "lookups": [
@@ -79,6 +83,17 @@
     "Addr": "r-bp1c567a657a6e14.redis.rds.aliyuncs.com:6379",
     "DBNo": 0,
     "Psw": "LOYOGOU2016redis"
+  },
+  "es": {
+    "host": [
+      "http://es-cn-mp90zsqsu000m4d08.elasticsearch.aliyuncs.com:9200"
+    ],
+    "password": "TEeOVJHwRY1U",
+    "pw_index": "play_qa",
+    "pw_index_redefine": "god_game_qa",
+    "pw_quick_order": "quick_order_qa",
+    "pw_type": "peiwan_stats",
+    "username": "elastic"
   },
   "wsaddr": ":12345"
 }
