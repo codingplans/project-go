@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/labstack/gommon/log"
+	"gopkg.in/olivere/elastic.v5"
 	"iceberg/frame"
 	"iceberg/frame/icelog"
 	"iceberg/frame/protocol"
@@ -12,6 +14,7 @@ import (
 	"laoyuegou.pb/gameserver/pb/gobang"
 	"laoyuegou.pb/imapi/pb"
 	"math/rand"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -29,27 +32,92 @@ const (
 	WHITE_FIVE = int(2)
 )
 
-func testslice() {
+func Testslice(T *testing.T) {
 
-	// var i ,j =1,1
-	for i := 9; i >= 1; i-- {
-		for j := 1; j < i+1; j++ {
-			fmt.Print(i, "*", j, "=", j*i, " ")
-		}
-		fmt.Print("\n")
+	arr := [50]int64{12, 12123, 23, 123, 1, 24, 124, 124, 14, 1234, 23, 4235, 23523}
+
+	userIds := ""
+	for _, userId := range arr {
+		userIds += fmt.Sprintf("%d,", userId)
+	}
+	userIds = userIds[0 : len(userIds)-1]
+	log.Printf(userIds)
+}
+
+func Testintstring(T *testing.T) {
+	var ss int64
+	ss = 111
+	icelog.Infof("%+v", strconv.FormatInt(ss, 10))
+}
+func Testmapappend(T *testing.T) {
+
+	aa := elastic.GeoPointFromLatLon(1, 2)
+
+	log.Printf("%+v", aa)
+}
+
+func Testerror(T *testing.T) {
+	var err error
+	icelog.Info(err)
+	err = fmt.Errorf("%v", 123123)
+	icelog.Info(err.Error())
+}
+
+type Person struct {
+	age int
+}
+
+func TestLists(T *testing.T) {
+	a := [5]int{1, 2, 3, 4, 5}
+	s := a[3:4:5]
+	fmt.Println(cap(s))
+}
+
+func TestMaps(T *testing.T) {
+	banGame := make(map[int64]int64)
+
+	banGame = nil
+	if _, ok := banGame[123]; ok {
+		fmt.Println("ok")
+	} else {
+		fmt.Println("not!!!")
+
+	}
+
+}
+
+func TestPanic(T *testing.T) {
+	var v int
+	defer panic(333)
+	if v == 0 {
+		panic("123")
 	}
 }
 
+func TestName(t *testing.T) {
+	var s string
+	s = "Aabcdefg"
+
+	fmt.Printf("%d , %f", s[0], s[0])
+}
+
 func main() {
-	testslice()
+	TestName(nil)
+	// TestPanic()
+	// TestMaps()
+	// TestLists()
+	// Testerror()
+	// Testmapappend()
+	// Testintstring()
+	// Testslice()
 	// counts()
-	// Test2(&testing.T{})
-	// testint()
+	// Test2(&Testing.T{})
+	// Testint()
 	// channel()
 	// CompletePayOrder(234, 1896)
 	// https()
-	// testarr()
-	// chantest()
+	// Testarr()
+	// chanTest()
 
 	// gotoFun()
 	// TestFor()
@@ -59,7 +127,7 @@ func main() {
 	// mapinit()
 	// timess()
 	// timeseco¡nd()
-	// maptest()
+	// mapTest()
 	// fmt.Print(1/2 + 1)
 	// fmt.Print(2 / 2)
 	// fmt.Print(1 % 2)
@@ -79,7 +147,7 @@ func main() {
 	// }
 
 	// tt := JSONTime{time.Now()}
-	// arrtest()
+	// arrTest()
 
 	// Shuffle()
 	// golang()
@@ -245,7 +313,7 @@ func boo() [][]Pieces {
 	}
 	return board
 }
-func TestFor() {
+func TestFor(T *testing.T) {
 	var data int
 	for i := 0; i < 10; i++ {
 		data++
@@ -294,7 +362,7 @@ func gotoFun() {
 	}(readChannl)
 }
 
-func testarr() {
+func Testarr(T *testing.T) {
 	var arr []int64
 
 	arr = append(arr, 1)
@@ -311,12 +379,11 @@ func testarr() {
 }
 
 func https() {
-
 	client := http_api.NewClient()
-
 	// resp, err := client.GETV1("https://latest-test-api.lygou.cc/order/plorder/is_show?god_id=13100179", nil)
-	resp, err := client.POSTV2("https://latest-test-api.lygou.cc/order/interior/quickorder/disable-auto-grab", map[string]interface{}{
-		"god_id": 1896,
+	resp, err := client.POSTV2("https://quickorder-staging-api.lygou.cc/order/interior/quickorder/disable-auto-grab", map[string]interface{}{
+		"god_ids": 1896,
+		"reason":  1,
 	})
 	if err != nil {
 		icelog.Error(err.Error())
@@ -324,7 +391,7 @@ func https() {
 	qq, err := resp.ReadAll()
 	var ress protocol.Message
 	err = json.Unmarshal(qq, &ress)
-	icelog.Info(ress)
+	icelog.Info(ress, resp)
 
 	// resp.Body.Close()
 }
@@ -371,7 +438,7 @@ func channel() {
 	}
 
 }
-func testint() {
+func Testint(T *testing.T) {
 	var eee int
 	var ss = "1"
 	fmt.Printf("%+v", eee)
@@ -381,7 +448,7 @@ func testint() {
 
 }
 
-func Test2(t *testing.T) {
+func Test2(T *testing.T) {
 	slice := []int{0, 1, 2, 3}
 	m := make(map[int]int)
 

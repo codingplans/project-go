@@ -7,8 +7,8 @@ import (
 	"laoyuegou.com/cache"
 	"os"
 	"path/filepath"
-	"plorder/key"
 	"testgo/config"
+	"testing"
 )
 
 // CacheStore 缓存组件封装
@@ -22,22 +22,33 @@ var (
 )
 
 func main() {
-	TestRedis()
+	TestRedis(nil)
 }
 
-func TestRedis() {
+func TestRedis(T *testing.T) {
 	re := connRedis()
 	c := re.Redis.Get()
-	res := false
-	orderId := "201912111134024854111189511"
-	// 通过哈希获取订单映射关系
-	quickOrderId, _ := redis.String(c.Do("HGET", key.RKPlOrderIdQuickOrderIdMap(), orderId))
-	// quickOrderId, _ := redis.String(c.Do("HGET", "PHP:PlOrderId:QuickOrderId:Map", orderId))
-	if quickOrderId != "" {
-		res, _ = redis.Bool(c.Do("sismember", key.RKIsAutoGrabOrder(quickOrderId), 1896))
+	defer c.Close()
+	// endTime := time.Now().Unix() - 100
+	endTime := 120
+	arr, _ := redis.Int64s(c.Do("zrangebyscore", "qqqs", endTime, 222))
+
+	icelog.Infof("%+v", arr)
+
+	for _, godId := range arr {
+		icelog.Infof("%+v", godId)
 	}
 
-	icelog.Infof("%+v,%+v,%+v,%+v,%+v  &&&&&&&&&&&&", quickOrderId, res, key.RKPlOrderIdQuickOrderIdMap(), key.RKIsAutoGrabOrder(quickOrderId), orderId)
+	// res := false
+	// orderId := "201912111134024854111189511"
+	// // 通过哈希获取订单映射关系
+	// quickOrderId, _ := redis.String(c.Do("HGET", key.RKPlOrderIdQuickOrderIdMap(), orderId))
+	// // quickOrderId, _ := redis.String(c.Do("HGET", "PHP:PlOrderId:QuickOrderId:Map", orderId))
+	// if quickOrderId != "" {
+	// 	res, _ = redis.Bool(c.Do("sismember", key.RKIsAutoGrabOrder(quickOrderId), 1896))
+	// }
+	//
+	// icelog.Infof("%+v,%+v,%+v,%+v,%+v  &&&&&&&&&&&&", quickOrderId, res, key.RKPlOrderIdQuickOrderIdMap(), key.RKIsAutoGrabOrder(quickOrderId), orderId)
 
 	// isGrabOrder, _ := redis.String(c.Do("hget", "PHP:PlOrderId:QuickOrderId:Map", "20191210204042485411114551"))
 	// isGrabOrder, _ := redis.Bool(c.Do("sismember", core.RKGodAutoGrabGames(10593099), 4))
