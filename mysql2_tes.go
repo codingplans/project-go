@@ -10,29 +10,31 @@ import (
 	"os"
 	"path/filepath"
 	"testgo/config"
-	"testing"
 )
 
 func main() {
-	// CalculateScore(206603129, 4, 200)
+	// fmt.Println(1231)
 	TestSql()
 	// res := GetGodPotentialLevel(10592941, 15)
 	// icelog.Infof("%+v", res)
 }
 
-func TestSql(T *testing.T) {
+func TestSql() {
 	dao := ConnMysql()
 
-	userId := int64(8)
-	// var data model3.PrivacyCfg
-	data := model3.PrivacyCfg{
-		UserID:         userId,
-		IsShowSHB:      2,
-		IsShowChatroom: 2,
-		IsShowDistance: 2,
-		IsShowNear:     2,
-	}
-	err := dao.dbr.Table("privacy_cfg").Where("user_id  = ?", userId).Limit(1).Take(&data).Error
+	userId := int64(1896)
+	var data model3.PrivacyCfg
+	// data := model3.PrivacyCfg{
+	// 	UserID:         userId,
+	// 	IsShowSHB:      2,
+	// 	IsShowChatroom: 2,
+	// 	IsShowDistance: 2,
+	// 	IsShowNear:     2,
+	// }
+	err := dao.dbr.Table("privacy_cfg").Where("user_id  = ?", userId).
+		Assign("is_show_chatroom", 10).
+		Assign("is_show_near", 10).
+		FirstOrCreate(&data).Error
 	if err != nil {
 	}
 	icelog.Infof("%+v", &data, err)
@@ -56,6 +58,7 @@ func ConnMysql() *SqlStore {
 	config.Init(*cfgFile)
 	icelog.SetLevel(*logLevel)
 	mysql := config.DefaultConfig.MysqlAppMain
+
 	sqlStore := new(SqlStore)
 	dsnr := fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		mysql.User, mysql.Psw, mysql.Host.Read, mysql.Port, mysql.DbName)

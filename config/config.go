@@ -16,6 +16,7 @@ type Config struct {
 	ClientTimeoutMinutes     time.Duration      `json:"client_timeout_minutes"`
 	BroadcastQueueSize       int                `json:"broadcast_queue_size"`
 	HeartbeatIntervalSeconds time.Duration      `json:"heartbeat_interval_seconds"`
+	RedisProdOrder           config.RedisCfg    `json:"redis_prod_order"`
 	RedisAuth                config.RedisCfg    `json:"redis_auth"`
 	RedisLoop                config.RedisCfg    `json:"redis_loop"`
 	NsqCfg                   config.NsqCfg      `json:"nsq_cfg"`
@@ -24,7 +25,13 @@ type Config struct {
 	MysqlChatroomCfg         config.MysqlCfg    `json:"mysql_chatroom_cfg"`
 	MysqlFeedCfg             config.MysqlCfg    `json:"mysql_feed_cfg"`
 	MaxClientCount           int                `json:"max_client_count"`
-	DotKafka                 config.KafkaCfg    `json:"dotKafka"`
+	ShenceCfg                struct {
+		Switch  bool   `json:"switch"`
+		Host    string `json:"host"`
+		Timeout int    `json:"timeout"`
+		Project string `json:"project"`
+	} `json:"shenceCfg"` // 神策埋点统计
+	DotKafka config.KafkaCfg `json:"dotKafka"`
 }
 
 func Init(filepath string) {

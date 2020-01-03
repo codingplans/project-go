@@ -5,14 +5,12 @@ import (
 	"fmt"
 	"github.com/labstack/gommon/log"
 	"gopkg.in/olivere/elastic.v5"
-	"iceberg/frame"
 	"iceberg/frame/icelog"
 	"iceberg/frame/protocol"
 	"laoyuegou.com/http_api"
 	"laoyuegou.com/util"
 	"laoyuegou.pb/gameserver/pb"
 	"laoyuegou.pb/gameserver/pb/gobang"
-	"laoyuegou.pb/imapi/pb"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -63,10 +61,6 @@ func Testerror(T *testing.T) {
 	icelog.Info(err.Error())
 }
 
-type Person struct {
-	age int
-}
-
 func TestLists(T *testing.T) {
 	a := [5]int{1, 2, 3, 4, 5}
 	s := a[3:4:5]
@@ -97,8 +91,10 @@ func TestPanic(T *testing.T) {
 func TestName(t *testing.T) {
 	var s string
 	s = "Aabcdefg"
+	s = strconv.Itoa(1)
 
 	fmt.Printf("%d , %f", s[0], s[0])
+
 }
 
 func main() {
@@ -222,15 +218,6 @@ func main() {
 	//
 	// }
 }
-
-const a = 10 << iota
-
-const (
-	b = 10 << iota * iota
-	c
-	d
-	e
-)
 
 // const (
 // 	// c = 10
@@ -569,7 +556,6 @@ func slices() {
 		})
 	}
 	Shuffle(tempBoard)
-
 	icelog.Info(tempBoard, "打乱后的数组", tempBoard[2].X)
 
 }
@@ -596,79 +582,6 @@ func maptest() {
 		icelog.Info(n, ok)
 	}
 
-}
-
-func timesecond() {
-	icelog.Info("123")
-
-	time.Sleep(time.Duration(5) * time.Second)
-	icelog.Info("456")
-
-}
-
-func CheckWin() bool {
-	var x, y, c int
-	re := AddStone(x, y, c)
-	if re > 0 {
-		return true
-	}
-	return false
-}
-
-// 落子
-func AddStone(x, y, cStone int) int {
-	nResult := -1
-	if cStone == BLACK_STONE {
-		if IsFive(x, y, BLACK_STONE, 0) {
-			nResult = BLACK_FIVE
-		}
-	} else if cStone == WHITE_STONE {
-		if IsFive(x, y, WHITE_STONE, 0) {
-			nResult = WHITE_FIVE
-		}
-	}
-	return nResult
-}
-
-// 放置棋子
-func SetStone(x, y, cStone int) {
-	Board[x+1][y+1] = cStone
-}
-
-/*
-判断是否连5，nDir参数：方向  1横的  2 竖的 3 斜线 4 反斜线
-*/
-func IsFive(x, y, cStone, nDir int) bool {
-	if nDir > 0 {
-		if Board[x+1][y+1] != EMPTY_STONE {
-			return false
-		}
-
-		if count := CountDirection(x, y, cStone, nDir); count > 4 {
-			return true
-		}
-
-	} else {
-		for i := 1; i < 5; i++ {
-			if IsFive(x, y, cStone, i) {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func Cmd(c frame.Context) {
-	msg := "有人评论了你的动态"
-	imapipb.SendMessage(c, &imapipb.SendMessageReq{
-		Thread:      imapipb.CreateNotificationMessageThread(40002).ThreadString(),
-		FromId:      1992576,
-		ToId:        1896,
-		ContentType: imapipb.MESSAGE_CONTENT_TYPE_NEW_CMD,
-		Subtype:     40002,
-		Message:     msg,
-		Pt:          imapipb.PLATFORM_TYPE_PLATFORM_TYPE_APP,
-	})
 }
 
 func userinfo() {
@@ -713,104 +626,4 @@ func mapt() {
 	fmt.Print("********")
 
 	fmt.Print(Event, Event[len(Event)-1], Event[0]["X"])
-}
-
-/*
-横坐标，纵坐标，颜色，方向（- | / \）
-*/
-func CountDirection(x, y, cStone, nDir int) int {
-
-	SetStone(x, y, cStone) // 放置作为判断
-
-	nLine := 1
-
-	switch nDir {
-
-	case 1: // horizontal direction
-		i := x
-		for i > 0 {
-			if Board[i-1][y+1] == cStone {
-				nLine++
-			} else {
-				break
-			}
-		}
-
-		i = x + 2
-		for i < BOARD_SIZE+1 {
-			if Board[i+1][y+1] == cStone {
-				nLine++
-			} else {
-				break
-			}
-		}
-		break
-	case 2: // vertial direction
-		i := y
-		for i > 0 {
-			if Board[x+1][i-1] == cStone {
-				nLine++
-			} else {
-				break
-			}
-		}
-
-		i = y + 2
-		for i < BOARD_SIZE+1 {
-			if Board[x+1][i+1] == cStone {
-				nLine++
-			} else {
-				break
-			}
-		}
-		break
-	case 3: // diagonal direction - '/'
-		i := x
-		j := y
-		for i > 0 && j > 0 {
-			if Board[i-1][j-1] == cStone {
-				nLine++
-			} else {
-				break
-			}
-		}
-
-		i = x + 2
-		j = y + 2
-		for i < BOARD_SIZE+1 && j < BOARD_SIZE+1 {
-			if Board[i+1][j+1] == cStone {
-				nLine++
-			} else {
-				break
-			}
-		}
-		break
-
-	case 4: // diagonal direction - '\'
-
-		i := x
-		j := y + 2
-		for i > 0 && j < BOARD_SIZE+1 {
-			if Board[i-1][j+1] == cStone {
-				nLine++
-			} else {
-				break
-			}
-		}
-
-		i = x + 2
-		j = y
-		for i < BOARD_SIZE+1 && j > 0 {
-			if Board[i+1][j-1] == cStone {
-				nLine++
-			} else {
-				break
-			}
-		}
-		break
-	default:
-		break
-	}
-	SetStone(x, y, EMPTY_STONE) // 还原置空
-	return nLine
 }

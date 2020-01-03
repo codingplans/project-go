@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"iceberg/frame/icelog"
 	"laoyuegou.com/cache"
@@ -30,14 +31,17 @@ func TestRedis(T *testing.T) {
 	c := re.Redis.Get()
 	defer c.Close()
 	// endTime := time.Now().Unix() - 100
-	endTime := 120
-	arr, _ := redis.Int64s(c.Do("zrangebyscore", "qqqs", endTime, 222))
+	// endTime := 120
+	// arr, _ := redis.Int64s(c.Do("zrangebyscore", "qqqs", endTime, 222))
 
-	icelog.Infof("%+v", arr)
+	// icelog.Infof("%+v", arr)
+	arr, _ := redis.Strings(c.Do("keys", "GOD:{*}:LOT"))
+	fmt.Printf("%+v", arr)
 
-	for _, godId := range arr {
-		icelog.Infof("%+v", godId)
-	}
+	// for _, godId := range arr {
+	// c.Do("DEL", godId)
+	// fmt.Printf("%+v \n", godId)
+	// }
 
 	// res := false
 	// orderId := "201912111134024854111189511"
@@ -101,8 +105,9 @@ func connRedis() *CacheStore {
 	config.Init(*cfgFile2)
 	icelog.SetLevel(*logLevel2)
 
+	redisCfg := config.DefaultConfig.RedisProdOrder
 	cacheStore := new(CacheStore)
-	icelog.Info(config.DefaultConfig.RedisAuth.Addr, config.DefaultConfig.RedisAuth.Psw)
-	cacheStore.Redis = cache.NewRedisPool(config.DefaultConfig.RedisAuth.Addr, config.DefaultConfig.RedisAuth.Psw, 3, 300)
+	icelog.Info(redisCfg.Addr, redisCfg.Psw)
+	cacheStore.Redis = cache.NewRedisPool(redisCfg.Addr, redisCfg.Psw, 3, 300)
 	return cacheStore
 }

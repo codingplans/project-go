@@ -84,6 +84,17 @@
     "DBNo": 0,
     "Psw": "LOYOGOU2016redis"
   },
+  "redis_prod_order": {
+    "Addr": "r-bp1d3973083dd134304.redis.rds.aliyuncs.com:6379",
+    "DBNo": 0,
+    "Psw": "LOYOGOU2016redis"
+  },
+  "shenceCfg": {
+    "host": "https://shen.lygou.cc/sa",
+    "project": "test",
+    "switch": true,
+    "timeout": 5000
+  },
   "es": {
     "host": [
       "http://es-cn-mp90zsqsu000m4d08.elasticsearch.aliyuncs.com:9200"
