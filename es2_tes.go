@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"gopkg.in/olivere/elastic.v5"
 	"iceberg/frame/icelog"
+	"laoyuegou.pb/godgame/model"
+	"strings"
 )
 
 type EsCfg struct {
@@ -20,19 +22,44 @@ func main() {
 
 func testEs() []*elastic.SearchHit {
 	es := connEs()
-	searchService := es.UpdateByQuery().Index("god_game_qa").Type("peiwan_stats")
-	query := elastic.NewTermQuery("god_id", 1992252)
+	// searchService := es.UpdateByQuery().Index("god_game_qa").Type("peiwan_stats")
 
-	// searchService = searchService.Query(query).Script(elastic.NewScriptInline(fmt.Sprintf("ctx._source.%s=%v", "gender", 33)))
+	// query := elastic.NewTermQuery("god_id", 1992252)
+	searchService := es.Search().Index("god_game_qa").Type("peiwan_stats")
 
-	searchService = searchService.Query(query).Script(elastic.NewScriptInline(fmt.Sprintf("ctx._source.%s=%v", "location2['lon']",
-		float64(121.408171)))).Script(elastic.NewScriptInline(fmt.Sprintf("ctx._source.%s=%v", "location2['lat']", float64(31.171419))))
+	query := elastic.NewBoolQuery()
+
+	k := elastic.NewGeoDistanceSort("location2").Point(float64(31.1713), float64(121.412)).
+		Order(true).
+		Unit("km").
+		SortMode("max").
+		GeoDistance("plane")
+	icelog.Info(k)
+
+	q := elastic.NewGeoDistanceQuery("location2").
+		GeoPoint(elastic.GeoPointFromLatLon(float64(31.1713), float64(121.412))).
+		Distance("100km")
+	query = query.Filter(q)
+
+	searchService = searchService.Query(query).From(int(0)).
+		Size(int(50)).
+		// Sort("weight", false).
+		// Sort("_score", false).
+		// Sort("lts", false).
+		SortBy(k)
+
+		// Sort("location2", true).
+		// Pretty(true)
+	ee, _ := k.Source()
+	bs, _ := json.Marshal(ee)
+	icelog.Infof("%s", string(bs))
 
 	// searchService = searchService.Query(query).XSource()
 	// st, _ := elastic.NewScriptInline(fmt.Sprintf("ctx._source.%s=%v", "location2.lat", 111)).Source()
 	// icelog.Infof("%s", elastic.NewScriptInline(fmt.Sprintf("ctx._source.%s=%v", "gender", 12)))
 	// ss, _ := json.Marshal(st)
 	// icelog.Infof("%s", string(ss))
+
 	resp, err := searchService.
 		Do(context.Background())
 
@@ -40,38 +67,40 @@ func testEs() []*elastic.SearchHit {
 		icelog.Debug(err.Error())
 		return nil
 	}
+	icelog.Infof("%+v,&&&&&& %+v")
+
 	// fmt.Printf("query cost %d millisecond.\n", resp.TookInMillis)
-	icelog.Infof("%+v,&&&&&& %+v", resp)
+	// icelog.Infof("%+v,&&&&&& %+v", resp)
 	// if resp.Hits.TotalHits == 0 {
 	// 	return nil
 	// }
-	// if resp != nil {
-	//
-	// 	var into godgamepb.QueryQuickOrderResp_Data
-	// 	err := json.Unmarshal(*resp.Hits.Hits[0].Source, &into)
-	// 	icelog.Infof("%+v @@@@@@^^^^^^^@", into)
-	// 	icelog.Info(err)
-	//
-	// 	for _, item := range resp.Hits.Hits {
-	// 		if seq := strings.Split(item.Id, "-"); len(seq) == 2 {
-	// 			// icelog.Info(item.Id, "###", resp.Hits.TotalHits)
-	// 			// var into godgamepb.QueryQuickOrderResp_Data
-	// 			var into godgamepb.QueryQuickOrderResp_Data
-	// 			json.Unmarshal(*item.Source, &into)
-	// 			icelog.Infof("%+v @@@@@@@", into)
-	//
-	// 			if bs, err := item.Source.MarshalJSON(); err == nil {
-	// 				icelog.Infof("%s", string(bs))
-	//
-	// 				// json.Unmarshal(bs)
-	//
-	// 			}
-	// 			// data := item.Source.UnmarshalJSON(into)
-	// 		}
-	// 	}
-	// 	return resp.Hits.Hits
-	//
-	// }
+	if resp != nil {
+
+		// var into godgamepb.QueryQuickOrderResp_Data
+		// err := json.Unmarshal(*resp.Hits.Hits[0].Source, &into)
+		// icelog.Infof("%+v @@@@@@^^^^^^^@", into)
+		// icelog.Info(err)
+
+		for _, item := range resp.Hits.Hits {
+			if seq := strings.Split(item.Id, "-"); len(seq) == 2 {
+				// icelog.Info(item.Id, "###", resp.Hits.TotalHits, "\n")
+				var into model.ESGodGameRedefine
+				json.Unmarshal(*item.Source, &into)
+				ee := len(item.Sort)
+				icelog.Infof("%+v %% %+v   ^^^   %+v    @@@@@@@", item.Id, item.Sort[ee-1])
+
+				// if bs, err := item.Source.MarshalJSON(); err == nil {
+				// 	icelog.Infof("%s", string(bs))
+				//
+				// 	// json.Unmarshal(bs)
+				//
+				// }
+				// data := item.Source.UnmarshalJSON(into)
+			}
+		}
+		return resp.Hits.Hits
+
+	}
 	return nil
 }
 

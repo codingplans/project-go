@@ -1,42 +1,53 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 )
 
-type kk struct {
-	Key   int    `json:"key"`
-	Value string `json:"value"`
-}
-
 func Testmaps() {
-	// temp := make([]int, 2, 122)
-	// temp = append(temp, 123)
 
-	// aa := int64(40011212)
-	// bb := float32(0.12) * 100
+	res := recursive(1)
+	print(res)
 
-	// fmt.Println(temp, len(temp), cap(temp))
-	// discounts := map[float32]interface{}{
-	// 	1:   "保持原价",
-	// 	0.9: "9折优惠",
-	// 	0.8: "8折优惠",
-	// }
-	// discounts := 90
-	// var discounts map[int32]interface{}
-
-	kk := float32(0.8)
-	aa := int64(kk * 100)
-	// discounts = append(discounts, map[int]string{
-	// 100: "保持原价",
-	// 90:  "9折优惠",
-	// 80:  "8折优惠",
-	// })
-
-	fmt.Printf("%+v", aa)
-	// fmt.Println((aa * int64(bb)) / 100)
 }
+
+func recursive(left int) int {
+	print(left, "\n")
+
+	if left == 10 {
+		return (left + 1) * 2
+	}
+
+	return recursive((left + 1)) * 2
+}
+
+// func Test19(t *testing.T) {
+// 	s := make([]map[string]int, 10)
+// 	delete(s[1], "h")
+// 	fmt.Println(s)
+// }
 
 func main() {
+
+	type User struct {
+		UserId   int    `json:"user_id" bson:"123123"`
+		UserName string `json:"user_name" bson:"3333"`
+	}
+	// 输出json格式
+	u := &User{UserId: 1, UserName: "tony"}
+	j, _ := json.Marshal(u)
+	fmt.Println(string(j))
+	// 输出内容：{"user_id":1,"user_name":"tony"}
+
+	// 获取tag中的内容
+	t := reflect.TypeOf(u)
+	fields := t.Elem()
+	field := t.Elem().Field(1)
+	fmt.Println(field.Tag.Get("json"), fields.Name())
+	fmt.Println(field.Tag.Get("bson"))
+
+	// Test19(nil)
 	Testmaps()
 }
