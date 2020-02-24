@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"iceberg/frame/icelog"
+	"laoyuegou.pb/godgame/model"
 	model3 "laoyuegou.pb/user/model"
 	"os"
 	"path/filepath"
@@ -13,8 +14,9 @@ import (
 )
 
 func main() {
-	// fmt.Println(1231)
-	TestSql()
+	fmt.Println(HasGodGame(18961))
+	// TestSql()
+
 	// res := GetGodPotentialLevel(10592941, 15)
 	// icelog.Infof("%+v", res)
 }
@@ -49,6 +51,18 @@ func TestSql() {
 	// }
 	// icelog.Info(orders)
 	return
+}
+
+// 是否有申请通过的品类
+func HasGodGame(godId int64) bool {
+	dao := ConnMysql()
+	var games model.GodGame
+	err := dao.dbr.Table("play_god_games").Select("gameid").Where("userid=? AND status=?", godId, 1).First(&games).Error
+	if err != nil {
+		icelog.Errorf("Has godgame status [%d] error:%s", godId, err.Error())
+		return false
+	}
+	return true
 }
 
 func ConnMysql() *SqlStore {
