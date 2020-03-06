@@ -4,7 +4,118 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"runtime"
+	"sync"
 )
+
+func main() {
+	// gotuni()
+	// reflects()
+	// appendtest()
+	appends()
+}
+func appends() {
+	i := new([]int)
+	i = &[]int{1}
+
+	*i = append(*i, 1, 2, 3)
+
+	aa := map[int]int{}
+	aa[12] = 21
+	aa[122] = 22
+	aa[121] = 212
+	if ss, ok := aa[22]; !ok {
+		println(ok, ss)
+	}
+	fmt.Println(cap(*i), aa)
+}
+
+func appendtest() {
+	idd := []int{12, 23, 12, 22, 11, 33}
+	ids := append(idd, 12)
+	ids = append(idd, 32)
+	ids = append(idd, 32)
+	ids = append(idd, 12)
+	ids = append(idd, 2)
+	fmt.Printf("%+v", ids)
+	fmt.Printf("%d", len(ids))
+
+	ids = RemoveRepByLoop(ids)
+	fmt.Printf("%+v", ids)
+	fmt.Printf("%d", len(ids))
+
+}
+
+// 通过两重循环过滤重复元素
+func RemoveRepByLoop(slc []int) []int {
+	result := []int{} // 存放结果
+	for i := range slc {
+		flag := true
+		for j := range result {
+			if slc[i] == result[j] {
+				flag = false // 存在重复元素，标识为false
+				break
+			}
+		}
+		if flag { // 标识为false，不添加进结果
+			result = append(result, slc[i])
+		}
+	}
+	return result
+}
+
+func gotuni() {
+	runtime.GOMAXPROCS(20)
+	wg := sync.WaitGroup{}
+
+	i := uint16(1024)
+	// j:=1
+
+	// println(9999991 ^ 2)
+	println(i >> 2)
+	println(i << 2)
+	return
+	// if int(i+j)>>1
+	// for i := 0; i < 10; i++ {
+	// 	wg.Add(1)
+	// 	go func(v int) {
+	// 		println(v)
+	// 		wg.Done()
+	// 		println(v, "###")
+	//
+	// 	}(i)
+	// }
+
+	// wg.Wait()
+	wg.Wait()
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		println(i, "***")
+		j := i
+		go func() {
+			println(j, "￥￥￥")
+			wg.Done()
+		}()
+	}
+
+	// println(j, "￥￥￥")
+
+	println(123)
+}
+
+func reflects() {
+
+	stu := student{
+		name:   "qqq",
+		number: 1,
+	}
+
+	t := reflect.TypeOf(stu)
+
+	fmt.Printf("%+v\n", t)
+	fmt.Printf("%+u", t)
+}
 
 func Testmaps() {
 
@@ -30,7 +141,34 @@ func recursive(left int) int {
 // 	fmt.Println(s)
 // }
 
-func main() {
+type student struct {
+	name   string
+	number int64
+}
+
+func Testmap() bool {
+
+	m := make(map[string]*student)
+
+	data := []student{
+		{name: "qwe", number: 123},
+		{name: "sss", number: 222},
+		{name: "ddd", number: 444},
+	}
+
+	for k, _ := range data {
+		m[data[k].name] = &data[k]
+		fmt.Println(data[k].number)
+	}
+
+	fmt.Printf("%+v,%+v", data, m["qwe"].number)
+	return true
+}
+
+func other() {
+
+	Testmap()
+	return
 
 	var uniprice int64
 	sadas := 0.8
