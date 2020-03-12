@@ -3,17 +3,169 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"reflect"
 	"runtime"
 	"sync"
+	"time"
 )
 
-func main() {
-	// gotuni()
-	// reflects()
-	// appendtest()
-	appends()
+type student struct {
+	name   string
+	number int64
 }
+
+func main() {
+	// array()
+	// syncpool()
+	// stringtojson()
+	// wgs()
+	println(reverse(508200))
+}
+
+func reverse(x int32) int32 {
+	var num int64
+	x64 := int64(x)
+	println(x64)
+	for x64 != 0 {
+		num = num*10 + x64%10
+		x64 = x64 / 10
+		println(num*10, "www", x64%10)
+		println(x64)
+		println(num)
+
+	}
+	// 使用 math 包中定义好的最大最小值
+	if num > math.MaxInt32 || num < math.MinInt32 {
+		return 0
+	}
+	return int32(num)
+}
+
+func wgs() {
+	runtime.GOMAXPROCS(1)
+	wg := sync.WaitGroup{}
+
+	wg.Add(20)
+	for i := 0; i < 10; i++ {
+		go func() {
+			fmt.Println("A: ", i)
+			wg.Done()
+		}()
+	}
+
+	for i := 0; i < 10; i++ {
+		go func(i int) {
+			fmt.Println("B: ", i)
+			wg.Done()
+		}(i)
+	}
+
+	wg.Wait()
+}
+
+func locks() {
+	var L *sync.RWMutex
+	L = new(sync.RWMutex)
+	L.Lock()
+
+}
+func stringtojson() {
+	jstring := `{"id":1,"name":"zhang"}`
+	jMap := make(map[string]interface{})
+	_ = json.Unmarshal([]byte(jstring), &jMap)
+	fmt.Printf("%+v", jMap)
+}
+
+func syncpool() {
+
+	chi := &sync.Pool{
+		New: func() interface{} {
+			return 0
+		},
+	}
+
+	cc := &sync.Pool{
+		New: func() interface{} {
+			return student{
+				name:   "",
+				number: 0,
+			}
+		},
+	}
+
+	cc.Put(student{
+		name:   "12",
+		number: 333,
+	})
+	chi.Put(student{
+		name:   "12",
+		number: 333,
+	})
+	chi.Put(100)
+	chi.Put(200)
+	chi.Put(600)
+	chi.Put(400)
+	chi.Put(500)
+	chi.Put(50)
+	chi.Put(50)
+	chi.Put(50)
+	chi.Put(50)
+	chi.Put(50)
+	defer defertime(3)
+	defer defertime(4)
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v \n", chi.Get())
+	fmt.Printf("%+v 1212\n", cc.Get())
+	defer defertime(1)
+	defer defertime(2)
+	return
+}
+
+func defertime(i int) {
+	println(time.Now().Unix(), i)
+}
+
+func array() {
+	var arrs []int
+	arrs = append(arrs, 1)
+	arrs = append(arrs, 1)
+	arrs = append(arrs, 1)
+	fmt.Printf("%+v \n", cap(arrs))
+
+	arr := [10]int{1, 12, 22}
+	arr[5] = 1
+	arr[9] = arr[0]
+	fmt.Printf("%d", cap(arr))
+
+}
+func tickers() {
+	// 打点器和定时器的机制有点相似：一个通道用来发送数据。
+	// 这里我们在这个通道上使用内置的 `range` 来迭代值每隔
+	// 500ms 发送一次的值。
+	ticker := time.NewTicker(time.Millisecond * 500)
+	go func() {
+		for t := range ticker.C {
+			fmt.Println("Tick at", t)
+		}
+	}()
+
+	// 打点器可以和定时器一样被停止。一旦一个打点停止了，
+	// 将不能再从它的通道中接收到值。我们将在运行后 1600ms
+	// 停止这个打点器。
+	time.Sleep(time.Millisecond * 21600)
+	ticker.Stop()
+	fmt.Println("Ticker stopped")
+}
+
 func appends() {
 	i := new([]int)
 	i = &[]int{1}
@@ -140,11 +292,6 @@ func recursive(left int) int {
 // 	delete(s[1], "h")
 // 	fmt.Println(s)
 // }
-
-type student struct {
-	name   string
-	number int64
-}
 
 func Testmap() bool {
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	sa "github.com/sensorsdata/sa-sdk-go"
+	// sa "github.com/sensorsdata/sa-sdk-go"
 	"iceberg/frame/icelog"
 	"laoyuegou.com/shence"
 	"plorder/config"
@@ -20,7 +20,7 @@ type PLOrder struct {
 
 func main() {
 	// TestRedis()
-	testshence()
+	// testshence()
 }
 
 func testshence() {
