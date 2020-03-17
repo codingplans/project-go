@@ -20,7 +20,28 @@ func main() {
 	// syncpool()
 	// stringtojson()
 	// wgs()
-	println(reverse(508200))
+	// println(reverse(508200))
+	chanss()
+}
+
+func chanss() {
+	c := make(chan int)
+	defer close(c)
+	go func() {
+		// time.Sleep(time.Second * 3)
+
+		c <- 4
+		c <- 3
+	}()
+
+	println(123)
+
+	i := <-c
+
+	println(cap(c), i)
+	println(cap(c), <-c)
+	println(len(c))
+
 }
 
 func reverse(x int32) int32 {

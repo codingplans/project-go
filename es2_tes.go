@@ -6,7 +6,6 @@ import (
 	"gopkg.in/olivere/elastic.v5"
 	"iceberg/frame/icelog"
 	"laoyuegou.pb/godgame/model"
-	"strings"
 )
 
 type EsCfg struct {
@@ -29,75 +28,50 @@ func testEs() []*elastic.SearchHit {
 
 	query := elastic.NewBoolQuery()
 
-	k := elastic.NewGeoDistanceSort("location2").Point(float64(31.1713), float64(121.412)).
-		Order(true).
-		Unit("km").
-		SortMode("max").
-		GeoDistance("plane")
-	icelog.Info(k)
+	// query = query.Must(elastic.NewTermsQuery("god_level", []int{1, 3}))
 
-	q := elastic.NewGeoDistanceQuery("location2").
-		GeoPoint(elastic.GeoPointFromLatLon(float64(31.1713), float64(121.412))).
-		Distance("100km")
-	query = query.Filter(q)
+	arr := []int64{7, 9, 11, 13, 15, 17, 19, 149}
+	aa := make([]interface{}, 0)
+	for _, v := range arr {
+		aa = append(aa, v)
+	}
 
-	searchService = searchService.Query(query).From(int(0)).
-		Size(int(50)).
-		// Sort("weight", false).
-		// Sort("_score", false).
-		// Sort("lts", false).
-		SortBy(k)
+	icelog.Info(aa)
+	query = query.Must(elastic.NewTermsQuery("highest_level_id", aa...))
 
-		// Sort("location2", true).
-		// Pretty(true)
-	ee, _ := k.Source()
-	bs, _ := json.Marshal(ee)
-	icelog.Infof("%s", string(bs))
-
-	// searchService = searchService.Query(query).XSource()
-	// st, _ := elastic.NewScriptInline(fmt.Sprintf("ctx._source.%s=%v", "location2.lat", 111)).Source()
-	// icelog.Infof("%s", elastic.NewScriptInline(fmt.Sprintf("ctx._source.%s=%v", "gender", 12)))
-	// ss, _ := json.Marshal(st)
+	// ss, _ := json.Marshal(query)
 	// icelog.Infof("%s", string(ss))
 
+	searchService = searchService.Query(query)
+
 	resp, err := searchService.
+		Size(50).
+		// Sort("highest_level_id_score", true).
+		// Sort("emails", true).
 		Do(context.Background())
 
+	// 检查是否正常返回
 	if err != nil {
 		icelog.Debug(err.Error())
 		return nil
 	}
-	icelog.Infof("%+v,&&&&&& %+v")
-
-	// fmt.Printf("query cost %d millisecond.\n", resp.TookInMillis)
-	// icelog.Infof("%+v,&&&&&& %+v", resp)
-	// if resp.Hits.TotalHits == 0 {
-	// 	return nil
-	// }
+	// 打印结果
 	if resp != nil {
-
-		// var into godgamepb.QueryQuickOrderResp_Data
-		// err := json.Unmarshal(*resp.Hits.Hits[0].Source, &into)
-		// icelog.Infof("%+v @@@@@@^^^^^^^@", into)
-		// icelog.Info(err)
+		var pwObj model.ESGodGameRedefine
+		icelog.Infof("%+v ****** %+v   ", len(resp.Hits.Hits))
 
 		for _, item := range resp.Hits.Hits {
-			if seq := strings.Split(item.Id, "-"); len(seq) == 2 {
-				// icelog.Info(item.Id, "###", resp.Hits.TotalHits, "\n")
-				var into model.ESGodGameRedefine
-				json.Unmarshal(*item.Source, &into)
-				ee := len(item.Sort)
-				icelog.Infof("%+v %% %+v   ^^^   %+v    @@@@@@@", item.Id, item.Sort[ee-1])
-
-				// if bs, err := item.Source.MarshalJSON(); err == nil {
-				// 	icelog.Infof("%s", string(bs))
-				//
-				// 	// json.Unmarshal(bs)
-				//
-				// }
-				// data := item.Source.UnmarshalJSON(into)
+			if err = json.Unmarshal(*item.Source, &pwObj); err != nil {
+				icelog.Infof("%+v %######", pwObj)
 			}
+
+			icelog.Infof("%+v ****** %+v   ^^^   %+v    @@@@@@@", pwObj.GodID, pwObj.HighestLevelID, pwObj.HighestLevelIdScore)
+
+			// icelog.Infof("%+v %######", pwObj.)
+
 		}
+
+		// aa, _ := json.Marshal(resp.Hits.Hits)
 		return resp.Hits.Hits
 
 	}
