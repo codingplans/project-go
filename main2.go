@@ -21,7 +21,27 @@ func main() {
 	// stringtojson()
 	// wgs()
 	// println(reverse(508200))
-	chanss()
+	// chanss()
+	// synconce()
+	println(333)
+	time.Sleep(2 * time.Second)
+}
+
+func synconce() {
+	var con sync.Once
+	var temp int
+	println(temp)
+	go con.Do(func() {
+		println(222)
+		temp = 1
+		time.Sleep(3 * time.Second)
+		println(25555)
+
+	})
+	time.Sleep(1 * time.Second)
+	println(temp)
+	time.Sleep(3 * time.Second)
+	println(temp)
 }
 
 func chanss() {
