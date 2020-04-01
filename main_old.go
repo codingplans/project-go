@@ -365,7 +365,7 @@ func Testarr(T *testing.T) {
 
 }
 
-func https() {
+func httpss() {
 	client := http_api.NewClient()
 	// resp, err := client.GETV1("https://latest-test-api.lygou.cc/order/plorder/is_show?god_id=13100179", nil)
 	resp, err := client.POSTV2("https://quickorder-staging-api.lygou.cc/order/interior/quickorder/disable-auto-grab", map[string]interface{}{

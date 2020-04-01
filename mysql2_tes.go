@@ -5,7 +5,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	"iceberg/frame/icelog"
+	icelog "gitlab.corp.laoyuegou.com/go/irpc/pkg/ilog"
 	"laoyuegou.pb/godgame/model"
 	model3 "laoyuegou.pb/user/model"
 	"os"

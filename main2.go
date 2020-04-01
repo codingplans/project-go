@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"os"
 	"reflect"
 	"runtime"
+	"runtime/trace"
 	"sync"
 	"time"
 )
@@ -16,15 +18,54 @@ type student struct {
 }
 
 func main() {
-	// array()
-	// syncpool()
-	// stringtojson()
-	// wgs()
-	// println(reverse(508200))
-	// chanss()
-	// synconce()
-	println(333)
-	time.Sleep(2 * time.Second)
+	// 	// array()
+	// 	// syncpool()
+	// 	// stringtojson()
+	// 	// wgs()
+	// 	// println(reverse(508200))
+	// 	// chanss()
+	// 	// synconce()
+	//
+	// 	deferlook()
+
+	//nowTime()
+	f, _ := os.Create("trace.out")
+	defer f.Close()
+	trace.Start(f)
+	defer trace.Stop()
+	keepalloc()
+	keepalloc2()
+}
+
+func keepalloc2() {
+	for i := 0; i < 100000; i++ {
+		go func() {
+			select {}
+		}()
+	}
+}
+
+var cache = map[interface{}]interface{}{}
+
+func keepalloc() {
+	for i := 0; i < 10000; i++ {
+		m := make([]byte, 1<<10)
+		cache[i] = m
+	}
+}
+
+func nowTime() {
+	t, _ := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
+
+	fmt.Println(t.Unix() - (8 * 3600))
+}
+
+func deferlook() {
+	defer print(1)
+	defer print(2)
+	defer print(3)
+
+	print(4)
 }
 
 func synconce() {
