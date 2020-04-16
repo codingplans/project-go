@@ -29,6 +29,11 @@ func main() {
 	// 	deferlook()
 
 	//nowTime()
+	memless()
+
+}
+
+func memless() {
 	f, _ := os.Create("trace.out")
 	defer f.Close()
 	trace.Start(f)
