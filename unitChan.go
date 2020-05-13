@@ -45,9 +45,11 @@ func (e asyncExecutor) Start() {
 			println("当前运行数：", e.runnerCount)
 			select {
 			case obj := <-e.pool:
+				println("执行定制方法")
 				obj()
 				// e.runnerCount--
 			case <-e.stopChan:
+				close(e.stopChan)
 				println("close chan")
 				break
 			default:
@@ -68,8 +70,8 @@ func (e asyncExecutor) Execute(handler HandlerFunc) {
 		}
 	}()
 	go func() {
+		defer e.jobsWaitGroup.Done()
 		e.pool <- handler
-		e.jobsWaitGroup.Done()
 		e.runnerCount++
 	}()
 
@@ -78,11 +80,13 @@ func (e asyncExecutor) Execute(handler HandlerFunc) {
 func (e asyncExecutor) WaitAndStop() {
 	// TODO
 	e.jobsWaitGroup.Wait()
+	fmt.Println("当前运行数：：：", e.runnerCount)
 	if e.runnerCount == 0 {
 		e.stopChan <- true
 	}
+
 	close(e.pool)
-	defer close(e.stopChan)
+	// defer close(e.stopChan)
 	println("over~")
 
 }

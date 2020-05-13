@@ -10,7 +10,20 @@ import (
 
 func main() {
 	// chann()
+	// guibingsort()
 
+	t := make(chan int, 1)
+	select {
+	case <-t:
+		println(1)
+	case <-time.After(2 * time.Second):
+		println("timeout !!")
+	}
+
+}
+
+// 归并排序
+func guibingsort() {
 	a1 := []int{1, 3, 5, 7, 9}
 	b1 := []int{2, 4, 6, 8, 10}
 	c1 := []int{}
@@ -44,7 +57,6 @@ func main() {
 	}
 
 	fmt.Println("排序后：", c1)
-
 }
 
 func chann() {
