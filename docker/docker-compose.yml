@@ -1,0 +1,207 @@
+version: '3'
+
+networks:
+  gateway:
+
+# volumes:
+#   service_config:
+#     data:
+
+
+services:
+########################  etcd-cluster  ########################
+  etcd1:
+    container_name: etcd1
+    image: bitnami/etcd:3
+    restart: always
+    environment:
+      - ETCD_NAME=etcd1
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd1:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd1:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+    networks:
+      - gateway
+    ports:
+      - 2379
+      - 2380
+  etcd2:
+    container_name: etcd2
+    image: bitnami/etcd:3
+    restart: always
+    environment:
+      - ETCD_NAME=etcd2
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd2:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd1:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+    networks:
+      - gateway
+    ports:
+      - 2379
+      - 2380
+  etcd3:
+    container_name: etcd3
+    image: bitnami/etcd:3
+    restart: always
+    environment:
+      - ETCD_NAME=etcd3
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd3:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd3:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+    networks:
+      - gateway
+    ports:
+      - 2379
+      - 2380
+########################  mysql5.7  ########################
+  mysql5.7:
+    container_name: mysql5.7
+    image: mysql:5.7
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    networks:
+      - gateway
+    ports:
+      - 3306:3306
+########################  redis  ########################
+  redis:
+    container_name: redis
+    image: bitnami/redis:latest
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - gateway
+    ports:
+      - 6379:6379
+  
+  
+########################  user_center ########################
+  user_center:
+    container_name: user_center
+    image: centos
+    restart: always
+    volumes:
+      - "../sms/build/sms:/sms"
+      - "../sms/build/sms.toml:/sms.toml"
+    command: /sms --config-path=/sms.toml
+    networks:
+      - gateway
+
+      
+########################  nsq  ########################
+#  nsqlookupd:
+#    container_name: nsqlookupd
+#    image: nsqio/nsq
+#    restart: always
+#    command: /nsqlookupd
+#    networks:
+#      - gateway
+#    ports:
+#      - 4160:4160
+#      - 4161:4161
+#  nsqd:
+#    container_name: nsqd
+#    image: nsqio/nsq
+#    restart: always
+#    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160
+#    depends_on:
+#      - nsqlookupd
+#    networks:
+#      - gateway
+#    ports:
+#      - 4150:4150
+#      - 4151:4151
+#  nsqadmin:
+#    container_name: nsqadmin
+#    image: nsqio/nsq
+#    restart: always
+#    command: /nsqadmin --nsqd-http-address=nsqd:4151
+#    depends_on:
+#      - nsqd
+#    networks:
+#      - gateway
+#    ports:
+#      - 4171:4171
+########################  gateway ########################
+#  gateway-internal:
+#    container_name: gateway-internal
+#    image: centos
+#    restart: always
+#    volumes:
+#      - "./build/irpc-gateway:/irpc-gateway"
+#      - "./build/gateway-internal.json:/gateway-internal.json"
+#    command: /irpc-gateway --config-path=/gateway-internal.json
+#    depends_on:
+#      - etcd1
+#      - etcd2
+#      - etcd3
+#      - mysql5.7
+#      - redis
+#      - nsqd
+#      - nsqlookupd
+#    networks:
+#      - gateway
+#    ports:
+#      - 8001:8001
+#  gateway-app:
+#    container_name: gateway-app
+#    image: centos
+#    restart: always
+#    volumes:
+#      - "./build/irpc-gateway:/irpc-gateway"
+#      - "./build/gateway-app.json:/gateway-app.json"
+#    command: /irpc-gateway --config-path=/gateway-app.json
+#    depends_on:
+#      - etcd1
+#      - etcd2
+#      - etcd3
+#      - mysql5.7
+#      - redis
+#      - nsqd
+#      - nsqlookupd
+#    networks:
+#      - gateway
+#    ports:
+#      - 8000:8000
+#########################  sms ########################
+#  sms:
+#    container_name: sms
+#    image: centos
+#    restart: always
+#    volumes:
+#      - "../sms/build/sms:/sms"
+#      - "../sms/build/sms.toml:/sms.toml"
+#    command: /sms --config-path=/sms.toml
+#    networks:
+#      - gateway
+#
+#########################  im.warden ########################
+#  warden:
+#    container_name: warden
+#    image: centos
+#    restart: always
+#    volumes:
+#      - "../im/warden/build/warden:/warden"
+#      - "../im/warden/build/warden.toml:/warden.toml"
+#    command: /warden --config-path=/warden.toml
+#    networks:
+#      - gateway
+
+
