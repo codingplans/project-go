@@ -10,7 +10,6 @@ import (
 	model3 "laoyuegou.pb/user/model"
 	"os"
 	"path/filepath"
-	"testgo/config"
 )
 
 func main() {
