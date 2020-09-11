@@ -18,6 +18,7 @@ require (
 	github.com/segmentio/kafka-go v0.3.7
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.5.0
+	github.com/spf13/viper v1.7.1 // indirect
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.0.0-20200729194436-6467de6f59a7 // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
