@@ -33,11 +33,24 @@ type PayWay struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
+type ll struct {
+	List []*PayWay
+}
+
 func main() {
+
+	DATA = &PayWay{
+		Id:   222,
+		Name: "222",
+	}
 
 	ch := make(chan int, 0)
 
-	// fmt.Printf("%v", i())
+	println(DATA.Name)
+
+	ss := *DATA
+
+	println(ss.Id)
 
 	<-ch
 }

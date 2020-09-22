@@ -1,8 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/go-kratos/kratos/pkg/cache/redis"
+	"github.com/go-kratos/kratos/pkg/conf/paladin"
+	"github.com/go-kratos/kratos/pkg/container/pool"
+	xtime "github.com/go-kratos/kratos/pkg/time"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"github.com/prometheus/common/log"
@@ -18,22 +23,51 @@ var DB *gorm.DB
 var DBB gorm.SQLCommon
 
 func main() {
-	// var err error
 
-	// var bills []model.MemberTransaction
-	// DB.Find(&bills, "deal_id=?", 1590)
-	// var member model.Member
-	// aa := "id=?"
-	// DB.Model(member).Take(&member, aa, 1)
-	// member.Email = "24"
-	// DB.Save(&member)
-	// DB.Model(member).Update("email", "222")
-	// DB.Model(member).UpdateColumn("email_auth", 1)
+	GetRecommend(5)
+	RS.Kdo("set", "www", 123)
+	aa, _ := redis.String(RS.Kdo("get", "www"))
 
-	// fmt.Printf("%+v", bills[0])
+	log.Info(aa)
+	// RS
 
-	ss := GetSuperiorUsers(1)
-	fmt.Printf("%+v", ss)
+}
+
+var RS *redis.Redis
+
+var (
+	cfg redis.Config
+	ct  paladin.Map
+)
+
+func GetRecommend(userId int64) {
+	var data model.MemberLevel
+	// data := d.GetMemberLevel(userId)
+	DB.Table("member_transaction").Take(&data, "member_id=?", userId)
+	// var num1, num2 int64
+	// 找自己下面的一级人
+	// DB.Table("member_transaction").Where("before_id=?", userId).Count(&num1)
+
+	var ss []*model.MemberTransaction
+	// like := fmt.Sprintf("%s%d/%s", data.Records, data.MemberID, "%")
+	DB.Table("member_transaction").
+		// Select("id,amount as records").
+		// Where("before_id!=?", userId).
+		// Where("records like ?", like).
+		// Group("member_id").
+		Find(&ss)
+
+	bs, _ := json.Marshal(ss)
+	RS.Kdo("set", "www", string(bs))
+	ll, _ := redis.Bytes(RS.Kdo("get", "www"))
+
+	json.Unmarshal(ll, &ss)
+	for _, v := range ss {
+		log.Info(v)
+	}
+	// log.Info(num1, num2, ll)
+	// data.Records
+
 }
 
 // 获取上级承兑商 账户
@@ -186,14 +220,16 @@ func calldb(mm model.Member) (err error) {
 
 func init() {
 	ConnMysql()
+	NewRedis1()
+
 }
 
 func ConnMysql() {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	os.Chdir(dir)
 	flag.Parse()
-	cfg := "dbuser:pass!23word@tcp(192.168.3.8:3306)/user_center?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
-	// cfg := "root:root@tcp(127.0.0.1:23306)/user_center?timeout=1s&readTimeout=3s&writeTimeout=3s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
+	// cfg := "dbuser:pass!23word@tcp(192.168.3.8:3306)/user_center?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
+	cfg := "root:root@tcp(127.0.0.1:23306)/user_center?timeout=1s&readTimeout=3s&writeTimeout=3s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
 	var err error
 	DB, err = gorm.Open("mysql", cfg)
 	DBB = DB.CommonDB()
@@ -206,4 +242,33 @@ func ConnMysql() {
 // SqlStore mysql读/写库客户端封装
 type SqlStore struct {
 	*gorm.DB
+}
+
+func NewRedis1() (r *redis.Redis, cf func(), err error) {
+	// if err = paladin.Get("redis.toml").Unmarshal(&ct); err != nil {
+	// 	return
+	// }
+	// if err = ct.Get("Client").UnmarshalTOML(&cfg); err != nil {
+	// 	return
+	// }
+
+	cfg = redis.Config{
+		Addr:         "127.0.0.1:6379",
+		DialTimeout:  xtime.Duration(90 * time.Second),
+		ReadTimeout:  xtime.Duration(90 * time.Second),
+		WriteTimeout: xtime.Duration(90 * time.Second),
+		SlowLog:      xtime.Duration(90 * time.Second),
+		Name:         "user_center",
+		Proto:        "tcp",
+		// *pool.Config: &pool.Config{Active: 12},
+	}
+	cfg.Config = &pool.Config{
+		Active:      10,
+		Idle:        5,
+		IdleTimeout: xtime.Duration(90 * time.Second),
+	}
+	RS = redis.NewRedis(&cfg)
+	cf = func() { r.Close() }
+	// err = ping(RS)
+	return RS, cf, err
 }

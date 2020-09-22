@@ -5,7 +5,6 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	icelog "gitlab.corp.laoyuegou.com/go/irpc/pkg/ilog"
 	"laoyuegou.pb/godgame/model"
 	model3 "laoyuegou.pb/user/model"
 	"os"
@@ -17,7 +16,6 @@ func main() {
 	// TestSql()
 
 	// res := GetGodPotentialLevel(10592941, 15)
-	// icelog.Infof("%+v", res)
 }
 
 func TestSql() {
@@ -38,7 +36,6 @@ func TestSql() {
 		FirstOrCreate(&data).Error
 	if err != nil {
 	}
-	icelog.Infof("%+v", &data, err)
 	//
 	// var orders []model2.Order
 	// err := dao.dbr.Table("play_order").Where("buyer = ?", 1896).
@@ -48,7 +45,6 @@ func TestSql() {
 	// if err != nil {
 	// 	panic(err.Error())
 	// }
-	// icelog.Info(orders)
 	return
 }
 
@@ -58,7 +54,6 @@ func HasGodGame(godId int64) bool {
 	var games model.GodGame
 	err := dao.dbr.Table("play_god_games").Select("gameid").Where("userid=? AND status=?", godId, 1).First(&games).Error
 	if err != nil {
-		icelog.Errorf("Has godgame status [%d] error:%s", godId, err.Error())
 		return false
 	}
 	return true
@@ -69,7 +64,6 @@ func ConnMysql() *SqlStore {
 	os.Chdir(dir)
 	flag.Parse()
 	config.Init(*cfgFile)
-	icelog.SetLevel(*logLevel)
 	mysql := config.DefaultConfig.MysqlAppMain
 
 	sqlStore := new(SqlStore)

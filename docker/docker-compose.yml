@@ -1,0 +1,18 @@
+version: "3.7"
+networks:
+  gateway:
+
+services:
+  ubuntu20:
+    image: ubuntu:20.10
+    container_name: ubuntu20
+    restart: always
+    tty: true
+    volumes:
+      - /Users/darren/go:/go
+      - /Users/darren/go:/src
+      - /Users/darren/Downloads:/var/Downloads
+    networks:
+      - gateway
+    ports:
+      - 9988:9988
