@@ -5,12 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"github.com/go-kratos/kratos/pkg/cache/redis"
-	"github.com/go-kratos/kratos/pkg/conf/paladin"
 	"github.com/go-kratos/kratos/pkg/container/pool"
 	xtime "github.com/go-kratos/kratos/pkg/time"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"github.com/prometheus/common/log"
+	"github.com/shopspring/decimal"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -24,21 +24,65 @@ var DBB gorm.SQLCommon
 
 func main() {
 
-	GetRecommend(5)
-	RS.Kdo("set", "www", 123)
-	aa, _ := redis.String(RS.Kdo("get", "www"))
+	// GetRecommend(5)
+	// RS.Kdo("set", "www", 123)
+	// aa, _ := redis.String(RS.Kdo("get", "www"))
+	// var total1 float64
 
-	log.Info(aa)
+	type res struct {
+		Total1 decimal.Decimal `gorm:"column:total1"`
+	}
+	var Res1, Res2, Res3 res
+
+	today := time.Now().Format("2006-01-02")
+	month := time.Now().Format("2006-01")
+	year := time.Now().Format("2006")
+
+	query := DB.Table("member_transaction").
+		Select("sum(amount) as total1").
+		Where("member_id=?", 5).
+		Where("amount>0").
+		Where("type=?", 8)
+
+	query.Where("create_time>?", today).
+		Scan(&Res1)
+
+	query.Where("create_time>?", month).
+		Scan(&Res2)
+
+	query.Where("create_time>?", year).
+		Scan(&Res3)
+	log.Info(Res1, Res2, Res3)
+	return
+	userId := 10172
+	var data model.MemberLevel
+	DB.Table("member_level").Take(&data, "member_id=?", userId)
+
+	var num2 int64
+	var list []*model.MemberLevel
+	var like string
+	like = fmt.Sprintf("%s%d/", data.Records, userId)
+	DB.Table("member_level").
+		Where("member_level.before_id!=?", userId).
+		Where("member_level.records like ?", like+"%").
+		Joins("JOIN member_level as b ON b.member_id = member_level.before_id AND b.before_id != ?", userId).
+		Find(&list)
+
+	// 遍历出 2 级用户数量
+	for _, v := range list {
+		arr := strings.Split(v.Records, like)
+		ss := arr[len(arr)-1]
+		repet := strings.Split(ss, "/")
+		log.Info(ss, "****", v.ID, "&&&&7", repet, "   ", len(repet), num2)
+		// 不是 2 级则跳过
+		if len(repet) != 3 {
+			continue
+		}
+		num2++
+	}
+	log.Info(num2)
 	// RS
-
 }
-
-var RS *redis.Redis
-
-var (
-	cfg redis.Config
-	ct  paladin.Map
-)
 
 func GetRecommend(userId int64) {
 	var data model.MemberLevel
@@ -228,8 +272,8 @@ func ConnMysql() {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	os.Chdir(dir)
 	flag.Parse()
-	// cfg := "dbuser:pass!23word@tcp(192.168.3.8:3306)/user_center?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
-	cfg := "root:root@tcp(127.0.0.1:23306)/user_center?timeout=1s&readTimeout=3s&writeTimeout=3s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
+	cfg := "dbuser:pass!23word@tcp(192.168.3.8:3306)/user_center?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
+	// cfg := "root:root@tcp(127.0.0.1:23306)/user_center?timeout=1s&readTimeout=3s&writeTimeout=3s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
 	var err error
 	DB, err = gorm.Open("mysql", cfg)
 	DBB = DB.CommonDB()

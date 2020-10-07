@@ -46,13 +46,45 @@ func main() {
 
 	ch := make(chan int, 0)
 
-	println(DATA.Name)
+	// var ss sync.Map
 
-	ss := *DATA
+	// ss.LoadOrStore("qqq", "1")
+	// ss.LoadOrStore("www", "2")
+	// ss.LoadOrStore("ddd", "3")
+	// aa, err := ss.Load("qqq")
+	// log.Info(aa, err)
+	// ExampleGmail()
+	// t := time.Now().Format("2006-01-02")
+	// ts := t.Unix() - int64(t.Minute()) - int64(t.Second()) - int64(t.Sub())
+	// timeStr := time.Now().Format("2006-01-02")
+	timeStr := time.Now().Format("2006-01")
+	fmt.Println("timeStr:", timeStr)
+	t, _ := time.Parse("2006-01", timeStr)
+	timeNumber := t.Unix()
+	fmt.Println("timeNumber:", timeNumber)
 
-	println(ss.Id)
+	// aa := t.AddDate(0, 0, -1)
+	// log.Info(ts)
 
 	<-ch
+}
+
+func ExampleGmail() {
+	println(222)
+	e := email.NewEmail()
+	e.From = "zzyphp@gmail.com"
+	e.To = []string{"darrenzzy@126.com"}
+	// e.Bcc = []string{"darrenzzy@126.com"}
+	// e.Cc = []string{"darrenzzy@126.com"}
+	e.Subject = "Awesome Subject"
+	e.Text = []byte("Text Body is, of course, supported!\n")
+	e.HTML = []byte("<h1>Fancy Html is supported, too!</h1>\n")
+	err := e.Send("smtp.gmail.com:587", smtp.PlainAuth("", e.From, "facaiba123", "smtp.gmail.com"))
+	if err != nil {
+		log.Info(err.Error())
+
+	}
+	println(333333)
 }
 
 func cmdd() {

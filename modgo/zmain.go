@@ -169,7 +169,7 @@ func generateTrees(n int) []*TreeNode {
 	return helper(1, n)
 }
 
-type TreeNode struct {
+type TreeNode1 struct {
 	i     int
 	Left  *TreeNode
 	Right *TreeNode
