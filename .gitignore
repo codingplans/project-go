@@ -3,3 +3,5 @@ user
 *.yaml
 *.yml
 *.toml
+mysqldata
+mysqldata/*node_modules
