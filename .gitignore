@@ -4,4 +4,5 @@ user
 *.yml
 *.toml
 mysqldata
-mysqldata/*node_modules
+mysqldata/*
+node_modules
