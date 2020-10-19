@@ -6,3 +6,4 @@ user
 mysqldata
 mysqldata/*
 node_modules
+*.exe
