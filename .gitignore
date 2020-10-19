@@ -7,3 +7,4 @@ mysqldata
 mysqldata/*
 node_modules
 *.exe
+*.jar
