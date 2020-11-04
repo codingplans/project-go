@@ -20,6 +20,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/elazarl/goproxy v0.0.0-20200809112317-0581fc3aee2d // indirect
 	github.com/envoyproxy/go-control-plane v0.9.4 // indirect
+	github.com/gavv/httpexpect/v2 v2.1.0 // indirect
 	github.com/go-kratos/kratos v0.5.1-0.20200526160825-521d240568d0
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -71,7 +72,6 @@ require (
 	gopkg.in/cheggaaa/pb.v1 v1.0.25 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1 // indirect
-	moul.io/http2curl v1.0.0 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 
 )

@@ -1,6 +1,6 @@
 version: "3.7"
-networks:
-  gateway:
+#networks:
+#  gateway:
 
 services:
   # ubuntu20:
@@ -32,11 +32,11 @@ services:
       - ./mysqldata:/var/lib/mysql
       - ./my.cnf:/etc/my.cnf
     restart: 'always'
-    command: [
-      '--character-set-server=utf8',
-    ]
-    networks:
-      - gateway
+#    command: [
+#      '--character-set-server=utf8',
+#    ]
+#    networks:
+#      - gateway
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "--protocol=tcp"]
       timeout: 20s
