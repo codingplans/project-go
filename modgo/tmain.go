@@ -21,7 +21,8 @@ var DATA *PayWay
 
 type PayWay struct {
 	//    支付id
-	Id int64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id  int64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Ids int64 `protobuf:"varint,2,opt,name=id,proto3" json:"ids,omitempty"`
 	// 支付名称
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
@@ -33,14 +34,35 @@ func main() {
 
 	ch := make(chan int, 0)
 
-	aa := map[string]int64{
-		"sss": 1212,
-	}
+	currentTime := time.Now()
+	currentTime1 := time.Now().AddDate(0, 0, 10)
+	aa := currentTime1.Sub(currentTime).Hours()
+	lastTime, err := time.ParseInLocation("20060102", currentTime.AddDate(0, 0, -1).Format("20060102"), time.Local)
+	log.Infof("%v  %v  %v", aa, lastTime, err)
 
-	aa["www"] = 122
-	ss := aa["www"]
-	log.Info(aa["www"], ss)
+	path := strings.Split("2020-11-20T15:00+08:00", "+")[0]
+
+	timestamp := currentTime.Add(-time.Hour).Hour()
+
+	rand.Seed(time.Now().UnixNano())
+	fmt.Println(timestamp, rand.Int31n(20), "\n", 10/7)
+
+	rate := "{\"id\":1000,\"ids\":100}"
+	ww := &PayWay{}
+	json.Unmarshal([]byte(rate), &ww)
+
+	log.Info(fmt.Sprintf("%.4f,%.4f \n", 2123.12312, 111.21212), time.Now().Unix(), path, "\n", ww, timestamp)
+
 	<-ch
+}
+
+func MsToTime(ms string) (time.Time, error) {
+	msInt, err := strconv.ParseInt(ms, 10, 64)
+	if err != nil {
+		return time.Time{}, err
+	}
+	tm := time.Unix(0, msInt*int64(time.Millisecond))
+	return tm, nil
 }
 
 func Post(path string, param map[string]interface{}) (content []byte, err error) {
@@ -96,15 +118,6 @@ type Rain struct {
 	PrizeAmounts []int64 `json:"prize_amounts"`
 	PrizeKey     string  `json:"prize_key"`
 	PrizeType    string  `json:"prize_type"`
-}
-
-func MsToTime(ms string) (time.Time, error) {
-	msInt, err := strconv.ParseInt(ms, 10, 64)
-	if err != nil {
-		return time.Time{}, err
-	}
-	tm := time.Unix(0, msInt*int64(time.Millisecond))
-	return tm, nil
 }
 
 // 判断时间是当年的第几周
