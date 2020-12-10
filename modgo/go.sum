@@ -145,6 +145,8 @@ github.com/go-kratos/kratos v0.4.1/go.mod h1:7/Px2vF82mm4bn5zWMOySpXUs1kqO6iyuyt
 github.com/go-kratos/kratos v0.4.2/go.mod h1:wVD2rlFEbngad4iTKppaOeSFDTYtdx530yxdsT7ZkNY=
 github.com/go-kratos/kratos v0.5.0 h1:GvlFXqFiHPAzIfziPCJm2UmBX/5GXVxHaR7K+Gb7D/M=
 github.com/go-kratos/kratos v0.5.0/go.mod h1:blOq6FeNF6fpjDiQpi0HWAarpDcCJGrWDJrMcMIV0N8=
+github.com/go-kratos/kratos v0.5.1-0.20200526160825-521d240568d0 h1:3i3dkec1HyT78qcetUlTrRhZA+Q5jgFOQkpAVi+2MhE=
+github.com/go-kratos/kratos v0.5.1-0.20200526160825-521d240568d0/go.mod h1:blOq6FeNF6fpjDiQpi0HWAarpDcCJGrWDJrMcMIV0N8=
 github.com/go-logfmt/logfmt v0.3.0/go.mod h1:Qt1PoO58o5twSAckw1HlFXLmHsOX5/0LbT9GBnD5lWE=
 github.com/go-logfmt/logfmt v0.4.0/go.mod h1:3RMwSq7FuexP4Kalkev3ejPJsZTpXXBr9+V4qmtdjCk=
 github.com/go-ole/go-ole v1.2.4/go.mod h1:XCwSNxSkXRo4vlyPy93sltvi/qJq0jqQhjqQNIwKuxM=
