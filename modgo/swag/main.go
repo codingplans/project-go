@@ -31,7 +31,9 @@ func main() {
 		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	println("http://10.0.42.181:8080/swagger/index.html")
-	r.Run(":8080")
+
+	r.Run(":7777")
 
 }

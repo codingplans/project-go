@@ -29,7 +29,7 @@ var doc = `{
         "/sign_info": {
             "post": {
                 "produces": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "tags": [
                     "天气面板"
@@ -99,6 +99,15 @@ var doc = `{
                     "web提现页面"
                 ],
                 "summary": "提现信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -121,6 +130,15 @@ var doc = `{
                     "web提现页面"
                 ],
                 "summary": "提现记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
