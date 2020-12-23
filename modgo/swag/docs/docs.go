@@ -26,20 +26,277 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/sign_info": {
+        "/award_video": {
             "post": {
+                "description": "AwardVideo",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "天气面板"
                 ],
-                "operationId": "2",
+                "summary": "看视频奖励",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardVideo"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/helper.ParamAwardVideoResp"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/daily": {
+            "post": {
+                "description": "Daily",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "近 5 天天气信息",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamWeatherInfo"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/helper.DailyStyle"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/hourly": {
+            "post": {
+                "description": "Hourly",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "近 24 小时 天气信息",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamWeatherInfo"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/helper.DailyStyle"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/info": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "旧版兼容 彩云api",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamWeatherInfo"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamWeatherInfoResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/now_time": {
+            "post": {
+                "description": "NowTime",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "当天天气信息",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamWeatherInfo"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.RealTime"
+                        }
+                    }
+                }
+            }
+        },
+        "/sign_info": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "SignInfo 签到信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/warm_remind": {
+            "post": {
+                "description": "WarmRemind",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "温度提醒",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamWarmRemindResp"
                         }
                     }
                 }
@@ -151,9 +408,254 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/wx/auth_code/decrypt": {
+            "post": {
+                "description": "authCode 换 openId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "web提现页面"
+                ],
+                "summary": "authCode 换 openId",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamCode2OpenId"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.AuthCodeResp"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "helper.AuthCodeResp": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "expires_in": {
+                    "type": "integer"
+                },
+                "openid": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string"
+                },
+                "unionid": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.ConfigTask": {
+            "type": "object",
+            "properties": {
+                "award_num": {
+                    "type": "integer"
+                },
+                "award_type": {
+                    "type": "string"
+                },
+                "current_num": {
+                    "type": "integer"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "max_num": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "1待完成 2待领取 3已完成",
+                    "type": "integer"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "task_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.DailyStyle": {
+            "type": "object",
+            "properties": {
+                "aqi": {
+                    "type": "number"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "skycon": {
+                    "type": "string"
+                },
+                "sunrise": {
+                    "type": "string"
+                },
+                "sunset": {
+                    "type": "string"
+                },
+                "temperature_max": {
+                    "type": "string"
+                },
+                "temperature_min": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.HourlyStyle": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "integer"
+                },
+                "skycon": {
+                    "type": "string"
+                },
+                "temperature": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.ParamAwardVideo": {
+            "type": "object",
+            "properties": {
+                "award_key": {
+                    "description": "翻倍奖励秘钥",
+                    "type": "string"
+                },
+                "award_type": {
+                    "description": "奖励类型 1 温差 2 倒计时 3 任务 4签到 5新人红包",
+                    "type": "integer"
+                },
+                "base_coin": {
+                    "description": "原来奖励金币数量",
+                    "type": "integer"
+                },
+                "multiple": {
+                    "description": "倍数",
+                    "type": "integer"
+                },
+                "uid": {
+                    "description": "用户 id",
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamAwardVideoResp": {
+            "type": "object",
+            "properties": {
+                "had_cash": {
+                    "type": "string"
+                },
+                "had_coin": {
+                    "type": "integer"
+                },
+                "task": {
+                    "type": "object",
+                    "$ref": "#/definitions/helper.ConfigTask"
+                }
+            }
+        },
+        "helper.ParamCode2OpenId": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "authcode 码",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "可选参数",
+                    "type": "string"
+                }
+            }
+        },
+        "helper.ParamWarmRemindResp": {
+            "type": "object",
+            "properties": {
+                "notice": {
+                    "description": "提醒",
+                    "type": "string"
+                }
+            }
+        },
+        "helper.ParamWeatherInfo": {
+            "type": "object",
+            "properties": {
+                "city_code": {
+                    "type": "string"
+                },
+                "lat": {
+                    "type": "number"
+                },
+                "lng": {
+                    "type": "number"
+                },
+                "time": {
+                    "description": "客户端访问时间",
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "integer"
+                },
+                "weatherType": {
+                    "description": "查看天气的类型",
+                    "type": "string"
+                }
+            }
+        },
+        "helper.ParamWeatherInfoResp": {
+            "type": "object",
+            "properties": {
+                "daily": {
+                    "description": "日数据",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helper.DailyStyle"
+                    }
+                },
+                "hourly": {
+                    "description": "小时数据",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helper.HourlyStyle"
+                    }
+                },
+                "realtime": {
+                    "description": "当前信息",
+                    "type": "object",
+                    "$ref": "#/definitions/helper.RealTime"
+                }
+            }
+        },
         "helper.ParamWithdrawDeal": {
             "type": "object",
             "properties": {
@@ -200,6 +702,22 @@ var doc = `{
                 }
             }
         },
+        "helper.RealTime": {
+            "type": "object",
+            "properties": {
+                "alert_desc": {
+                    "description": "预警详细文字描述",
+                    "type": "string"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "forecast_keypoint": {
+                    "description": "生活指数预报的详细描述，可能为空",
+                    "type": "string"
+                }
+            }
+        },
         "helper.WithdrawGoods": {
             "type": "object",
             "properties": {
@@ -210,6 +728,10 @@ var doc = `{
                 "bank": {
                     "description": "支付方式",
                     "type": "string"
+                },
+                "cash_type": {
+                    "description": "0 ：48 小时到账 ； 1 实时到账",
+                    "type": "integer"
                 },
                 "current_day_withdraw_num": {
                     "description": "当日提现次数",
@@ -231,6 +753,9 @@ var doc = `{
                     "description": "商品性质 一次性 多次",
                     "type": "string"
                 },
+                "group": {
+                    "type": "integer"
+                },
                 "max_withdraw_num": {
                     "description": "最大提现次数",
                     "type": "integer"
@@ -245,39 +770,47 @@ var doc = `{
                 }
             }
         },
+        "helper.WithdrawInnerOrderDealData": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "数额",
+                    "type": "integer"
+                },
+                "goods": {
+                    "description": "商品",
+                    "type": "object",
+                    "$ref": "#/definitions/helper.WithdrawGoods"
+                },
+                "is_first": {
+                    "description": "是否第一次提现 1 否 2 是",
+                    "type": "integer"
+                },
+                "order": {
+                    "type": "object",
+                    "properties": {
+                        "order_id": {
+                            "description": "订单 id",
+                            "type": "integer"
+                        },
+                        "order_no": {
+                            "description": "订单号",
+                            "type": "string"
+                        }
+                    }
+                },
+                "ticket_num": {
+                    "description": "现金券",
+                    "type": "integer"
+                }
+            }
+        },
         "helper.WithdrawInnerOrderDealResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "object",
-                    "properties": {
-                        "amount": {
-                            "description": "数额",
-                            "type": "integer"
-                        },
-                        "goods": {
-                            "description": "商品",
-                            "type": "object",
-                            "$ref": "#/definitions/helper.WithdrawGoods"
-                        },
-                        "order": {
-                            "type": "object",
-                            "properties": {
-                                "order_id": {
-                                    "description": "订单 id",
-                                    "type": "integer"
-                                },
-                                "order_no": {
-                                    "description": "订单号",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "ticket_num": {
-                            "description": "现金券",
-                            "type": "integer"
-                        }
-                    }
+                    "$ref": "#/definitions/helper.WithdrawInnerOrderDealData"
                 },
                 "error_code": {
                     "type": "integer"
@@ -373,16 +906,6 @@ var doc = `{
                     "type": "integer"
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "ApiKeyAuth": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        },
-        "BasicAuth": {
-            "type": "basic"
         }
     }
 }`

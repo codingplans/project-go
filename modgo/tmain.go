@@ -6,7 +6,6 @@ import (
 	"git.digittraders.com/exchange/pkg/lib"
 	"github.com/jordan-wright/email"
 	"github.com/prometheus/common/log"
-	"github.com/shopspring/decimal"
 	"math"
 	"math/rand"
 	"net/http"
@@ -32,27 +31,11 @@ type ll struct {
 }
 
 func main() {
-
 	ch := make(chan int, 0)
-	hadCash, _ := decimal.NewFromInt(175).Div(decimal.NewFromInt32(10000)).Float64()
-	aa := decimal.NewFromFloat(math.Floor(5.48*100) / 100).Round(1).String()
-	aaaaa := fmt.Sprintf("%.2f", float64(1506/10000))
-	currentTime := time.Now()
-	log.Infof("%v  %v  %v", aa, math.Floor(hadCash*100)/100, hadCash)
 
-	path := strings.Split("2020-11-20T15:00+08:00", "+")[0]
-
-	timestamp := currentTime.Add(-time.Hour).Hour()
-	aas, _ := decimal.NewFromInt(1506).DivRound(decimal.NewFromInt(10000), 2).Float64()
-
-	rand.Seed(time.Now().UnixNano())
-	fmt.Println(timestamp, rand.Int31n(20), "\n", aaaaa, float64(1506/10000), aas)
-
-	rate := "{\"id\":1000,\"ids\":100}"
-	ww := &PayWay{}
-	json.Unmarshal([]byte(rate), &ww)
-
-	log.Info(fmt.Sprintf("%.4f,%.4f \n", 2123.12312, 111.21212), time.Now().Unix(), path, "\n", ww, timestamp)
+	ss := []int{1, 2, 3, 4, 5, 6, 7}
+	ss = ss[0:]
+	log.Info(ss)
 
 	<-ch
 }
