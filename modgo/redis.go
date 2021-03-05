@@ -18,24 +18,27 @@ func main() {
 
 func Rkwithdrew() {
 	tt := time.Now().Format("20060102")
-	uid := int64(3505)
+	uid := int64(5875173148)
 	keys := make([]string, 20)
 	key := RedisHashGoodsOnce(uid, 0)
-	keys = append(keys, key, "day_withdraw_num_"+tt+"_com.money.calendarweather.lite")
-	keys = append(keys, key, "idtf_gods_5fb8489e-7fc2-11ea-899f-dca90496ac471")
-	keys = append(keys, key, "5fb8489e-7fc2-11ea-899f-dca90496ac471")
-	keys = append(keys, key, "bank_acnt_com.money.calendarweather.lite_origin_wxpay_test") // 提现账户
-	keys = append(keys, key, "day_withdraw_num_"+tt+"_com.money.calendarweather.lite")
+	keys = append(keys, key, "day_withdraw_num_"+tt+"_com.money.caishenweather.lite")
+	keys = append(keys, key, "a82da074-73e6-48d7-b187-f9655dd62a81")
+	keys = append(keys, key, "bank_acnt_com.money.caishenweather.lite_origin_wxpay_test") // 提现账户
+	keys = append(keys, key, "day_withdraw_num_"+tt+"_com.money.caishenweather.lite")
 	keys = append(keys, key, "user_goods_once_"+fmt.Sprintf("%d", uid)+"")
 	keys = append(keys, key, "user_goods_daily_"+fmt.Sprintf("%d", uid)+"_"+tt+"")
 	keys = append(keys, key, "account_"+fmt.Sprintf("%d", uid)+"")
 	keys = append(keys, key, "user_ticket_"+fmt.Sprintf("%d", uid)+"")
-	keys = append(keys, key, "notice_flow_com.money.calendarweather.lite")
+	keys = append(keys, key, "notice_flow_com.money.caishenweather.lite")
 	keys = append(keys, key, "daily_income_"+fmt.Sprintf("%d", uid)+"_"+tt+"")
 
+	// list, eee := redis.Bytes(RSs.Kdo("keys", fmt.Sprintf("%d*", uid)))
+	// RSs.Kdo("keys", fmt.Sprintf("*%d", uid))
+	// RSs.Kdo("keys", fmt.Sprintf("*%d*", uid))
+	// fmt.Printf("%+v22%+v", list, eee)
 	for _, v := range keys {
 		_, erre := RSs.Kdo("del", v)
-		println(erre)
+		log.Error(erre)
 	}
 }
 
@@ -45,6 +48,14 @@ var (
 	RSs *redis.Redis
 )
 
+// 提现某个商品的次数
+func RedisHashGoodsOnce(uid int64, group int64) string {
+	if group == 0 {
+		return fmt.Sprintf("user_goods_once_%d", uid)
+	} else {
+		return fmt.Sprintf("user_goods_once_%d_%d", uid, group)
+	}
+}
 func NewRedis() (r *redis.Redis, cf func(), err error) {
 	// if err = paladin.Get("redis.toml").Unmarshal(&ct); err != nil {
 	// 	return

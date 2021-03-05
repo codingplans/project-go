@@ -26,6 +26,38 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/award_offline": {
+            "post": {
+                "description": "AwardOffLine",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "离线收益",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
+                        }
+                    }
+                }
+            }
+        },
         "/award_video": {
             "post": {
                 "description": "AwardVideo",
@@ -61,10 +93,39 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/helper.ParamAwardVideoResp"
-                            }
+                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/award_watch": {
+            "post": {
+                "description": "AwardWatch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "【商业化模块】看视频领金币",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
                         }
                     }
                 }
@@ -158,6 +219,70 @@ var doc = `{
                 }
             }
         },
+        "/incentive_100_redpack_entrance": {
+            "post": {
+                "description": "Incentive100Entrance",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商业化"
+                ],
+                "summary": "百元红包入口",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/xconfig.IncentiveEntranceResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/incentive_100_redpack_info": {
+            "post": {
+                "description": "Incentive100Info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商业化"
+                ],
+                "summary": "百元红包",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/xconfig.IncentiveInfoResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/incentive_100_update_progress": {
+            "post": {
+                "description": "Incentive100UpdateProgress",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商业化"
+                ],
+                "summary": "百元红包 更新进度+1",
+                "responses": {
+                    "200": {}
+                }
+            }
+        },
         "/info": {
             "post": {
                 "consumes": [
@@ -193,6 +318,234 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/helper.ParamWeatherInfoResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "上传登录",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamLogin"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamLoginResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/lucky_draw_do_millstone": {
+            "post": {
+                "description": "CashWheelMillstone",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "现金大转盘"
+                ],
+                "summary": "大转盘领取累计奖励",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamMillstone"
+                        }
+                    }
+                ]
+            }
+        },
+        "/lucky_draw_do_redpack": {
+            "post": {
+                "description": "CashWheelOpenRedPacket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "现金大转盘"
+                ],
+                "summary": "大转盘领取开到的红包",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamOpenRedPacket"
+                        }
+                    }
+                ]
+            }
+        },
+        "/lucky_draw_info": {
+            "post": {
+                "description": "CashWheelInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "现金大转盘"
+                ],
+                "summary": "大转盘信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        "/lucky_draw_play": {
+            "post": {
+                "description": "CashWheelPlay",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "现金大转盘"
+                ],
+                "summary": "大转盘抽奖",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamStatisticIncentive"
+                        }
+                    }
+                ]
+            }
+        },
+        "/new_user_gift_info": {
+            "post": {
+                "description": "UserGiftInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "新人礼信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamUserGiftInfoResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/new_user_gift_reward": {
+            "post": {
+                "description": "UserGiftInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "新人礼信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamUserGiftInfoResp"
                         }
                     }
                 }
@@ -265,6 +618,88 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistic_action": {
+            "post": {
+                "description": "StatisticAction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "设备验证信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamStatisticAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamStatisticAction"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistic_incentive_incr": {
+            "post": {
+                "description": "StatisticIncentiveIncr",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商业化"
+                ],
+                "summary": "百元红包",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamStatisticIncentive"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/xconfig.IncentiveInfoResp"
                         }
                     }
                 }
@@ -475,36 +910,6 @@ var doc = `{
                 }
             }
         },
-        "helper.ConfigTask": {
-            "type": "object",
-            "properties": {
-                "award_num": {
-                    "type": "integer"
-                },
-                "award_type": {
-                    "type": "string"
-                },
-                "current_num": {
-                    "type": "integer"
-                },
-                "desc": {
-                    "type": "string"
-                },
-                "max_num": {
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "1待完成 2待领取 3已完成",
-                    "type": "integer"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "task_type": {
-                    "type": "string"
-                }
-            }
-        },
         "helper.DailyStyle": {
             "type": "object",
             "properties": {
@@ -545,11 +950,48 @@ var doc = `{
                 }
             }
         },
+        "helper.LifeSuggestion": {
+            "type": "object",
+            "properties": {
+                "airing": {
+                    "description": "晾晒",
+                    "type": "string"
+                },
+                "dressing": {
+                    "description": "Dating    string ` + "`" + `json:\"dating\"` + "`" + `    // 约会指数",
+                    "type": "string"
+                },
+                "fishing": {
+                    "description": "钓鱼指数",
+                    "type": "string"
+                },
+                "flu": {
+                    "description": "感冒指数",
+                    "type": "string"
+                },
+                "sport": {
+                    "description": "运动指数",
+                    "type": "string"
+                },
+                "sunscreen": {
+                    "description": "防晒指数",
+                    "type": "string"
+                },
+                "travel": {
+                    "description": "旅游指数",
+                    "type": "string"
+                },
+                "uv": {
+                    "description": "紫外线指数",
+                    "type": "string"
+                }
+            }
+        },
         "helper.ParamAwardVideo": {
             "type": "object",
             "properties": {
-                "award_key": {
-                    "description": "翻倍奖励秘钥",
+                "award_name": {
+                    "description": "奖励类型 (兼容老版本新字段)",
                     "type": "string"
                 },
                 "award_type": {
@@ -573,15 +1015,17 @@ var doc = `{
         "helper.ParamAwardVideoResp": {
             "type": "object",
             "properties": {
+                "award_coins": {
+                    "type": "integer"
+                },
                 "had_cash": {
                     "type": "string"
                 },
                 "had_coin": {
                     "type": "integer"
                 },
-                "task": {
-                    "type": "object",
-                    "$ref": "#/definitions/helper.ConfigTask"
+                "is_award_watch_times": {
+                    "type": "boolean"
                 }
             }
         },
@@ -595,6 +1039,101 @@ var doc = `{
                 "source": {
                     "description": "可选参数",
                     "type": "string"
+                }
+            }
+        },
+        "helper.ParamLogin": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "description": "账号名称",
+                    "type": "string"
+                },
+                "login_type": {
+                    "description": "1 手机 2 微信",
+                    "type": "integer"
+                },
+                "uid": {
+                    "description": "用户 id",
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamLoginResp": {
+            "type": "object",
+            "properties": {
+                "is_withdrew_03": {
+                    "description": "是否提现过",
+                    "type": "boolean"
+                },
+                "open_id": {
+                    "description": "微信 openid",
+                    "type": "string"
+                },
+                "user_info": {
+                    "type": "object"
+                }
+            }
+        },
+        "helper.ParamMillstone": {
+            "type": "object",
+            "properties": {
+                "millstone_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamOpenRedPacket": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.ParamStatisticAction": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "登录状态 已登录：\"login\" 未登录 \"notlogin\"",
+                    "type": "string"
+                }
+            }
+        },
+        "helper.ParamStatisticIncentive": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "times": {
+                    "type": "integer"
+                },
+                "tu": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.ParamUserGiftInfoResp": {
+            "type": "object",
+            "properties": {
+                "can_reward": {
+                    "description": "是否可以领取",
+                    "type": "boolean"
+                },
+                "cash": {
+                    "description": "奖励额度",
+                    "type": "string"
+                },
+                "had_cash": {
+                    "type": "string"
+                },
+                "had_coin": {
+                    "type": "integer"
+                },
+                "reward_cash": {
+                    "description": "奖励数额",
+                    "type": "integer"
                 }
             }
         },
@@ -618,6 +1157,10 @@ var doc = `{
                 },
                 "lng": {
                     "type": "number"
+                },
+                "TestGroup": {
+                    "description": "实验组",
+                    "type": "string"
                 },
                 "time": {
                     "description": "客户端访问时间",
@@ -714,6 +1257,19 @@ var doc = `{
                 },
                 "forecast_keypoint": {
                     "description": "生活指数预报的详细描述，可能为空",
+                    "type": "string"
+                },
+                "humidity": {
+                    "description": "湿度",
+                    "type": "string"
+                },
+                "life_suggestion": {
+                    "description": "Comfort          string ` + "`" + `json:\"comfort\"` + "`" + `           // 舒适指数",
+                    "type": "object",
+                    "$ref": "#/definitions/helper.LifeSuggestion"
+                },
+                "warm_remind": {
+                    "description": "提示",
                     "type": "string"
                 }
             }
@@ -903,6 +1459,104 @@ var doc = `{
                     "type": "string"
                 },
                 "time_unix": {
+                    "type": "integer"
+                }
+            }
+        },
+        "xconfig.Incentive100Group": {
+            "type": "object",
+            "properties": {
+                "head_img": {
+                    "type": "string"
+                },
+                "me": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "integer"
+                }
+            }
+        },
+        "xconfig.Incentive100Notice": {
+            "type": "object",
+            "properties": {
+                "head_img": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "xconfig.IncentiveEntranceResp": {
+            "type": "object",
+            "properties": {
+                "enable": {
+                    "type": "boolean"
+                },
+                "expire_time": {
+                    "type": "integer"
+                },
+                "notice": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/xconfig.Incentive100Notice"
+                    }
+                },
+                "period": {
+                    "type": "string"
+                }
+            }
+        },
+        "xconfig.IncentiveInfoResp": {
+            "type": "object",
+            "properties": {
+                "day_num": {
+                    "type": "integer"
+                },
+                "expire_time": {
+                    "type": "integer"
+                },
+                "group_rank": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/xconfig.Incentive100Group"
+                    }
+                },
+                "has_rewarded": {
+                    "type": "boolean"
+                },
+                "last_update_ts": {
+                    "type": "integer"
+                },
+                "max_progress": {
+                    "type": "integer"
+                },
+                "notice": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/xconfig.Incentive100Notice"
+                    }
+                },
+                "period": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "toast": {
+                    "type": "string"
+                },
+                "today_remain": {
+                    "type": "integer"
+                },
+                "today_time": {
                     "type": "integer"
                 }
             }

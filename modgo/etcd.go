@@ -14,7 +14,7 @@ func main() {
 		DialTimeout: 5 * time.Second,
 	})
 
-	cli.Do(clientv3.OpPut())
+	cli.Do(context.TODO(), clientv3.OpPut("sss", "sss"))
 	aa, err := cli.Status(context.TODO(), "localhost:32785")
 	fmt.Printf("%+v,%+v", aa, err)
 }

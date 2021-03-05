@@ -249,7 +249,7 @@ func ConnMysql() {
 var dbHandle *gorm.DB
 
 // 提现某个商品的次数
-func RedisHashGoodsOnce(uid int64, group int64) string {
+func RedisHashGoodsO1nce(uid int64, group int64) string {
 	if group == 0 {
 		return fmt.Sprintf("user_goods_once_%d", uid)
 	} else {

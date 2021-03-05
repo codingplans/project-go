@@ -1,6 +1,9 @@
 package main
 
 import (
+	"crypto/hmac"
+	"crypto/md5"
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"git.digittraders.com/exchange/pkg/lib"
@@ -11,6 +14,7 @@ import (
 	"net/http"
 	"net/smtp"
 	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -32,12 +36,61 @@ type ll struct {
 
 func main() {
 	ch := make(chan int, 0)
+	text := "fff${LastDateOfMonth(3)}ffff aa2021年02月30日aaa${LastDateOfMonth(123)}aaa     "
+	mach := "\\$\\{LastDateOfMonth.([0-9]+.)\\}"
+	re, _ := regexp.Compile(mach)
 
-	ss := []int{1, 2, 3, 4, 5, 6, 7}
-	ss = ss[0:]
-	log.Info(ss)
+	// 取出所有符合规则日期
+	list := re.FindAllString(text, -1)
+	re1, _ := regexp.Compile("[0-9]+")
+	log.Info("替换前：", text, "\n")
+
+	// 遍历替换不同日期
+	for _, v := range list {
+		dayString := re1.Find([]byte(v))
+		days, _ := strconv.Atoi(string(dayString))
+		// 获取目标日期
+		targetDate := LastDateOfMonth(days, time.Now())
+		// 整合当前替换规则
+		curDate := "\\$\\{LastDateOfMonth.(" + string(dayString) + ".)\\}"
+		// 生成当前替换规则
+		re1, _ := regexp.Compile(curDate)
+		// 执行替换
+		text = re1.ReplaceAllString(text, targetDate)
+	}
+
+	log.Info("替换后：", text, "\n")
 
 	<-ch
+}
+
+// param: days 为多少天以后
+// return: 今天+days 天之后的日期,所在月的最后一天, 按"2006年01月02日"格式化
+func LastDateOfMonth(days int, ct time.Time) string {
+	d := ct.AddDate(0, 0, days)              // time.Now()可以换成支持测试环境调时间的方法
+	firstDate := d.AddDate(0, 0, -d.Day()+1) // 当月的第一天
+	lastDate := firstDate.AddDate(0, 1, -1)  // 当月的最后一天
+	return lastDate.Format("2006年01月02日")
+}
+
+// genHMACmd5 generates a hash signature
+func genHMACMD5(ciphertext, key []byte) []byte {
+	mac := hmac.New(md5.New, key)
+	mac.Write([]byte(ciphertext))
+	hmac := mac.Sum(nil)
+	return hmac
+}
+
+func GetAccessKey(publicKey, secret string) string {
+	hmap := genHMACMD5([]byte(publicKey), []byte(secret))
+	stringHmac := b64.StdEncoding.EncodeToString(hmap)
+	return stringHmac
+}
+func encodeFullUrl(url string) string {
+	// url = urlencode(url)
+	// url = str_replace("%2F", "/", url)
+	// url = str_replace("%3A", ":", url)
+	return url
 }
 
 func MsToTime(ms string) (time.Time, error) {

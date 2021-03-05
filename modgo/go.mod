@@ -59,6 +59,7 @@ require (
 	github.com/tsuna/gohbase v0.0.0-20190502052937-24ffed0537aa // indirect
 	github.com/urfave/cli v1.20.0 // indirect
 	github.com/urfave/cli/v2 v2.1.1 // indirect
+	go.uber.org/zap v1.14.1
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
 	golang.org/x/sys v0.0.0-20200916084744-dbad9cb7cb7a // indirect
 	golang.org/x/text v0.3.3
