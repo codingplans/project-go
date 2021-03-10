@@ -737,6 +737,47 @@ var doc = `{
                 }
             }
         },
+        "/warning_list": {
+            "post": {
+                "description": "WarningList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "预警信息",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamWeatherInfo"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/weather_mgr.WarningListResp"
+                        }
+                    }
+                }
+            }
+        },
         "/withdraw_deal": {
             "post": {
                 "description": "发起提现，下单",
@@ -936,20 +977,6 @@ var doc = `{
                 }
             }
         },
-        "helper.HourlyStyle": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "integer"
-                },
-                "skycon": {
-                    "type": "string"
-                },
-                "temperature": {
-                    "type": "string"
-                }
-            }
-        },
         "helper.LifeSuggestion": {
             "type": "object",
             "properties": {
@@ -971,10 +998,6 @@ var doc = `{
                 },
                 "sport": {
                     "description": "运动指数",
-                    "type": "string"
-                },
-                "sunscreen": {
-                    "description": "防晒指数",
                     "type": "string"
                 },
                 "travel": {
@@ -1025,6 +1048,10 @@ var doc = `{
                     "type": "integer"
                 },
                 "is_award_watch_times": {
+                    "type": "boolean"
+                },
+                "is_guide": {
+                    "description": "判断是否跳引导页面",
                     "type": "boolean"
                 }
             }
@@ -1149,6 +1176,10 @@ var doc = `{
         "helper.ParamWeatherInfo": {
             "type": "object",
             "properties": {
+                "apiType": {
+                    "description": "华风 api 类型 用于拼path",
+                    "type": "string"
+                },
                 "city_code": {
                     "type": "string"
                 },
@@ -1158,7 +1189,7 @@ var doc = `{
                 "lng": {
                     "type": "number"
                 },
-                "TestGroup": {
+                "testGroup": {
                     "description": "实验组",
                     "type": "string"
                 },
@@ -1180,22 +1211,23 @@ var doc = `{
             "properties": {
                 "daily": {
                     "description": "日数据",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/helper.DailyStyle"
-                    }
+                    "type": "object",
+                    "$ref": "#/definitions/weather_mgr.DailyResp"
                 },
                 "hourly": {
                     "description": "小时数据",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/helper.HourlyStyle"
-                    }
+                    "type": "object",
+                    "$ref": "#/definitions/weather_mgr.HourlyResp"
                 },
                 "realtime": {
                     "description": "当前信息",
                     "type": "object",
-                    "$ref": "#/definitions/helper.RealTime"
+                    "$ref": "#/definitions/weather_mgr.TodayResp"
+                },
+                "warning_list": {
+                    "description": "预警信息",
+                    "type": "object",
+                    "$ref": "#/definitions/weather_mgr.WarningListResp"
                 }
             }
         },
@@ -1267,6 +1299,10 @@ var doc = `{
                     "description": "Comfort          string ` + "`" + `json:\"comfort\"` + "`" + `           // 舒适指数",
                     "type": "object",
                     "$ref": "#/definitions/helper.LifeSuggestion"
+                },
+                "rain_desc": {
+                    "description": "降水描述，可能为空",
+                    "type": "string"
                 },
                 "warm_remind": {
                     "description": "提示",
@@ -1460,6 +1496,178 @@ var doc = `{
                 },
                 "time_unix": {
                     "type": "integer"
+                }
+            }
+        },
+        "weather_mgr.DailyResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/weather_mgr.DailyStyle"
+                    }
+                }
+            }
+        },
+        "weather_mgr.DailyStyle": {
+            "type": "object",
+            "properties": {
+                "aqi": {
+                    "type": "number"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "skycon": {
+                    "type": "string"
+                },
+                "sunrise": {
+                    "type": "string"
+                },
+                "sunset": {
+                    "type": "string"
+                },
+                "temperature_max": {
+                    "type": "string"
+                },
+                "temperature_min": {
+                    "type": "string"
+                }
+            }
+        },
+        "weather_mgr.HourlyResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/weather_mgr.HourlyStyle"
+                    }
+                }
+            }
+        },
+        "weather_mgr.HourlyStyle": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "integer"
+                },
+                "skycon": {
+                    "type": "string"
+                },
+                "temperature": {
+                    "type": "string"
+                }
+            }
+        },
+        "weather_mgr.LifeSuggestion": {
+            "type": "object",
+            "properties": {
+                "airing": {
+                    "description": "晾晒",
+                    "type": "string"
+                },
+                "dressing": {
+                    "description": "穿衣指数",
+                    "type": "string"
+                },
+                "fishing": {
+                    "description": "钓鱼指数",
+                    "type": "string"
+                },
+                "flu": {
+                    "description": "感冒指数",
+                    "type": "string"
+                },
+                "sport": {
+                    "description": "运动指数",
+                    "type": "string"
+                },
+                "travel": {
+                    "description": "旅游指数",
+                    "type": "string"
+                },
+                "uv": {
+                    "description": "紫外线指数",
+                    "type": "string"
+                }
+            }
+        },
+        "weather_mgr.TodayResp": {
+            "type": "object",
+            "properties": {
+                "alert_desc": {
+                    "description": "预警详细文字描述",
+                    "type": "string"
+                },
+                "comfort": {
+                    "description": "舒适指数",
+                    "type": "string"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "forecast_keypoint": {
+                    "description": "生活指数预报的详细描述，可能为空",
+                    "type": "string"
+                },
+                "humidity": {
+                    "description": "湿度",
+                    "type": "string"
+                },
+                "life_suggestion": {
+                    "type": "object",
+                    "$ref": "#/definitions/weather_mgr.LifeSuggestion"
+                },
+                "rain_desc": {
+                    "description": "降水描述，可能为空",
+                    "type": "string"
+                },
+                "warm_remind": {
+                    "description": "提示",
+                    "type": "string"
+                }
+            }
+        },
+        "weather_mgr.Warning": {
+            "type": "object",
+            "properties": {
+                "alert_desc": {
+                    "description": "预警详细文字描述",
+                    "type": "string"
+                },
+                "sender": {
+                    "description": "发布者",
+                    "type": "string"
+                },
+                "warning_level": {
+                    "description": "预警级别",
+                    "type": "string"
+                },
+                "warning_title": {
+                    "description": "预警抬头",
+                    "type": "string"
+                },
+                "warning_type": {
+                    "description": "预警类型",
+                    "type": "string"
+                },
+                "warning_type_en": {
+                    "description": "预警类型英文",
+                    "type": "string"
+                }
+            }
+        },
+        "weather_mgr.WarningListResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "description": "预警列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/weather_mgr.Warning"
+                    }
                 }
             }
         },
