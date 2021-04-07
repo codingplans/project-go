@@ -6,9 +6,10 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
-	"git.digittraders.com/exchange/pkg/lib"
 	"github.com/jordan-wright/email"
 	"github.com/prometheus/common/log"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"math"
 	"math/rand"
 	"net/http"
@@ -18,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"testgo/modgo/xzap"
 	"time"
 )
 
@@ -34,8 +36,84 @@ type ll struct {
 	List []*PayWay
 }
 
+func interfaceIsNil(x interface{}) {
+	if x == nil {
+		fmt.Println("empty interface")
+		return
+	}
+	fmt.Println("non-empty interface")
+}
 func main() {
-	ch := make(chan int, 0)
+	ch := make(chan struct{})
+
+	// var x interface{} = nil
+	// var y *int = nil
+	// interfaceIsNil(x)
+	// interfaceIsNil(y)
+
+	aa1 := "aaa" + "222你好"
+	var aa2 strings.Builder
+	aa2.WriteString(aa1)
+	aa2.WriteString("24444")
+	xzap.Info("aaa",
+		zap.Any("aa", aa2.String()),
+		zap.Any("aa", aa2.Len()),
+	)
+	<-ch
+	panicdefer()
+}
+
+const letterBytes = "ssabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLabMNOPQRSTUVWabcXYZ"
+
+// 随机字符串
+func randomString(n int) string {
+	b := make([]byte, n)
+	rand.Seed(120)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
+}
+func panicdefer() {
+	a := 1
+	b := 2
+	defer calc(a, calc(a, b, "0"), "1")
+	a = 0
+	defer calc(a, calc(a, b, "3"), "2")
+}
+
+func calc(x, y int, s string) int {
+	fmt.Println(s)
+	fmt.Println(x, y, x+y)
+	return x + y
+}
+
+func parti(a []int, l, r int) int {
+	f := a[l]
+	for l < r {
+		for l < r && a[r] >= f {
+			r--
+		}
+		a[l] = a[r]
+		for l < r && a[l] <= f {
+			l++
+			a[r] = a[l]
+		}
+	}
+	a[l] = f
+	return l
+}
+func bbb(a []int, l, r int) []int {
+	if l < r {
+		p := parti(a, l, r)
+		bbb(a, l, p-1)
+		bbb(a, p+1, r)
+	}
+
+	return a
+}
+
+func zhengzebiaoda() string {
 	text := "fff${LastDateOfMonth(3)}ffff aa2021年02月30日aaa${LastDateOfMonth(123)}aaa     "
 	mach := "\\$\\{LastDateOfMonth.([0-9]+.)\\}"
 	re, _ := regexp.Compile(mach)
@@ -58,10 +136,23 @@ func main() {
 		// 执行替换
 		text = re1.ReplaceAllString(text, targetDate)
 	}
+	return text
+}
 
-	log.Info("替换后：", text, "\n")
+func valueing() {
+	var v int = 1
+	var p *int
+	var w interface{}
 
-	<-ch
+	fmt.Println(p == nil, w == nil, v)
+	p = &v
+	w = (*int)(nil)
+	fmt.Println(p == nil, w == nil, v)
+	p = nil
+	w = p
+	fmt.Println(p == nil, w == nil, v)
+	fmt.Printf("%+v,,,%+v", p, w)
+	fmt.Println(w == nil, w)
 }
 
 // param: days 为多少天以后
@@ -254,31 +345,15 @@ func aaaa() (float64, float64, float64) {
 	return aa, fee, level_two_fee
 }
 
-func authgoogle() {
-	fmt.Println("-----------------开启二次认证----------------------")
-	// user := "testxx1111@qq.com"
-	// secret, code := lib.InitAuth(user)
-	secret, code := "YTL5YDXZF5GOOALE5HYN2BH7LYYZOFXL", "981135"
-	fmt.Println(secret, 8888, code)
-
-	fmt.Println("-----------------信息校验----------------------")
-
-	// secret最好持久化保存在
-	// 验证,动态码(从谷歌验证器获取或者freeotp获取)
-	bool, err := lib.NewGoogleAuth().VerifyCode(secret, code)
-	if bool {
-		fmt.Println("√")
-	} else {
-		fmt.Println("X", err)
-	}
-}
-
 func ddddwg() {
 	// funcName()
 	var wg sync.WaitGroup
-	wg.Add(11)
-	go dddf()
-	go dddf()
+	wg.Add(1)
+	wg.Done()
+	wg.Done()
+
+	// go dddf()
+	// go dddf()
 
 	// discov()
 	wg.Wait()
@@ -315,5 +390,12 @@ func ddddwg() {
 func dddf() {
 	for i := 1; i < 10; i++ {
 		defer println(i)
+	}
+}
+
+func init() {
+	err := xzap.InitZLog([]string{"stderr", "/tmp/kang.log"}, zapcore.DebugLevel)
+	if err != nil {
+		panic(err)
 	}
 }

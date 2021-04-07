@@ -1,11 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/prometheus/common/log"
 	"golang.org/x/text/feature/plural"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
-	"golang.org/x/text/message/catalog"
 )
 
 //go:generate gotext -srclang=en update -out=./catalog/catalog.go -lang=en,el
@@ -31,23 +29,35 @@ var entries = [...]entry{
 }
 
 func init() {
-	for _, e := range entries {
-		tag := language.MustParse(e.tag)
-		switch msg := e.msg.(type) {
-		case string:
-			message.SetString(tag, e.key, msg)
-		case catalog.Message:
-			message.Set(tag, e.key, msg)
-		case []catalog.Message:
-			message.Set(tag, e.key, msg...)
-		}
-	}
+	// for _, e := range entries {
+	// 	tag := language.MustParse(e.tag)
+	// 	switch msg := e.msg.(type) {
+	// 	case string:
+	// 		message.SetString(tag, e.key, msg)
+	// 	case catalog.Message:
+	// 		message.Set(tag, e.key, msg)
+	// 	case []catalog.Message:
+	// 		message.Set(tag, e.key, msg...)
+	// 	}
+	// }
 }
 func main() {
-	p := message.NewPrinter(language.Chinese)
-	p.Printf("Hello World")
-	p.Printf("Hello World")
-	p.Printf("Hello World!\n")
+
+	var v int
+	var p *int
+	var w interface{}
+	fmt.Println(p == nil, w == nil)
+	p = &v
+	w = (*int)(nil)
+	fmt.Println(p == nil, w == nil)
+	p = nil
+	w = p
+	fmt.Println(p == nil, w == nil)
+
+	// p := message.NewPrinter(language.Chinese)
+	// p.Printf("Hello World")
+	// p.Printf("Hello World")
+	// p.Printf("Hello World!\n")
 }
 
 func maxDepth(root *TreeNode) int {

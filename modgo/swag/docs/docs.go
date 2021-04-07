@@ -26,6 +26,47 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/award_countdown": {
+            "post": {
+                "description": "AwardCountdown",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "领取倒计时奖励",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardCountdownReq"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardCountdownResp"
+                        }
+                    }
+                }
+            }
+        },
         "/award_offline": {
             "post": {
                 "description": "AwardOffLine",
@@ -53,6 +94,38 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/helper.ParamAwardVideoResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/award_sunny": {
+            "post": {
+                "description": "AwardSunny",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "晴天奖励",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamUserGiftInfoResp"
                         }
                     }
                 }
@@ -94,6 +167,47 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/helper.ParamAwardVideoResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/award_walk": {
+            "post": {
+                "description": "AwardWalk",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "出行奖励",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardWalk"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamUserGiftInfoResp"
                         }
                     }
                 }
@@ -170,6 +284,70 @@ var doc = `{
                             "items": {
                                 "$ref": "#/definitions/helper.DailyStyle"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/ez_config": {
+            "post": {
+                "description": "UserGiftInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "获取 EZ 配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamEZConfigResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_countdown": {
+            "post": {
+                "description": "GetCountdown",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "获取倒计时奖励",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardCountdownResp"
                         }
                     }
                 }
@@ -534,6 +712,15 @@ var doc = `{
                 "summary": "新人礼信息",
                 "parameters": [
                     {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamUserGiftInfoReq"
+                        }
+                    },
+                    {
                         "type": "string",
                         "description": "校验 Auth-Token ",
                         "name": "Auth-Token",
@@ -586,7 +773,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/helper.RealTime"
+                            "$ref": "#/definitions/weather_mgr.TodayResp"
                         }
                     }
                 }
@@ -705,6 +892,41 @@ var doc = `{
                 }
             }
         },
+        "/walk_config": {
+            "post": {
+                "description": "WalkConfig",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "出行配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/helper.ParamWalkConfigResp"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/warm_remind": {
             "post": {
                 "description": "WarmRemind",
@@ -732,47 +954,6 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/helper.ParamWarmRemindResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/warning_list": {
-            "post": {
-                "description": "WarningList",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "预警信息",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamWeatherInfo"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/weather_mgr.WarningListResp"
                         }
                     }
                 }
@@ -928,6 +1109,15 @@ var doc = `{
         }
     },
     "definitions": {
+        "helper.Ads": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            }
+        },
         "helper.AuthCodeResp": {
             "type": "object",
             "properties": {
@@ -948,6 +1138,31 @@ var doc = `{
                 },
                 "unionid": {
                     "type": "string"
+                }
+            }
+        },
+        "helper.Countdown": {
+            "type": "object",
+            "properties": {
+                "coins": {
+                    "description": "奖励金币数量",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "领取奖励编号",
+                    "type": "integer"
+                },
+                "next_time": {
+                    "description": "下次领取时间",
+                    "type": "integer"
+                },
+                "step": {
+                    "description": "时间间隔",
+                    "type": "integer"
+                },
+                "times": {
+                    "description": "已经领取次数",
+                    "type": "integer"
                 }
             }
         },
@@ -977,36 +1192,50 @@ var doc = `{
                 }
             }
         },
-        "helper.LifeSuggestion": {
+        "helper.ParamAwardCountdownReq": {
             "type": "object",
             "properties": {
-                "airing": {
-                    "description": "晾晒",
+                "id": {
+                    "description": "领取奖励编号",
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamAwardCountdownResp": {
+            "type": "object",
+            "properties": {
+                "award_coins": {
+                    "type": "integer"
+                },
+                "can_award": {
+                    "description": "是否可以继续领取 0 可以 1 不可以",
+                    "type": "integer"
+                },
+                "had_cash": {
+                    "description": "奖励数额",
                     "type": "string"
                 },
-                "dressing": {
-                    "description": "Dating    string ` + "`" + `json:\"dating\"` + "`" + `    // 约会指数",
-                    "type": "string"
+                "had_coin": {
+                    "type": "integer"
                 },
-                "fishing": {
-                    "description": "钓鱼指数",
-                    "type": "string"
+                "list": {
+                    "description": "奖励列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helper.Countdown"
+                    }
                 },
-                "flu": {
-                    "description": "感冒指数",
-                    "type": "string"
+                "today_coins": {
+                    "description": "当天获取总数量",
+                    "type": "integer"
                 },
-                "sport": {
-                    "description": "运动指数",
-                    "type": "string"
+                "today_times": {
+                    "description": "当天获取总次数",
+                    "type": "integer"
                 },
-                "travel": {
-                    "description": "旅游指数",
-                    "type": "string"
-                },
-                "uv": {
-                    "description": "紫外线指数",
-                    "type": "string"
+                "total_times": {
+                    "description": "当天总次数",
+                    "type": "integer"
                 }
             }
         },
@@ -1056,6 +1285,15 @@ var doc = `{
                 }
             }
         },
+        "helper.ParamAwardWalk": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "description": "领取等级",
+                    "type": "integer"
+                }
+            }
+        },
         "helper.ParamCode2OpenId": {
             "type": "object",
             "properties": {
@@ -1066,6 +1304,16 @@ var doc = `{
                 "source": {
                     "description": "可选参数",
                     "type": "string"
+                }
+            }
+        },
+        "helper.ParamEZConfigResp": {
+            "type": "object",
+            "properties": {
+                "ads_map": {
+                    "description": "广告控制 map",
+                    "type": "object",
+                    "$ref": "#/definitions/helper.Ads"
                 }
             }
         },
@@ -1141,6 +1389,15 @@ var doc = `{
                 }
             }
         },
+        "helper.ParamUserGiftInfoReq": {
+            "type": "object",
+            "properties": {
+                "user_level": {
+                    "description": "新人等级，给 0：0.3； 1：0.2；  2：0.1；",
+                    "type": "integer"
+                }
+            }
+        },
         "helper.ParamUserGiftInfoResp": {
             "type": "object",
             "properties": {
@@ -1158,8 +1415,37 @@ var doc = `{
                 "had_coin": {
                     "type": "integer"
                 },
+                "has_reward_time": {
+                    "description": "已领取的次数",
+                    "type": "integer"
+                },
                 "reward_cash": {
                     "description": "奖励数额",
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamWalkConfigResp": {
+            "type": "object",
+            "properties": {
+                "award_num": {
+                    "description": "领取规格",
+                    "type": "integer"
+                },
+                "can_award": {
+                    "description": "可否领取 2 可以 1 不可以",
+                    "type": "integer"
+                },
+                "can_double": {
+                    "description": "是否可以翻倍 2 可以 1 不可以",
+                    "type": "integer"
+                },
+                "level": {
+                    "description": "领取等级",
+                    "type": "integer"
+                },
+                "step": {
+                    "description": "步数",
                     "type": "integer"
                 }
             }
@@ -1273,39 +1559,6 @@ var doc = `{
                 },
                 "phone": {
                     "description": "下单手机号",
-                    "type": "string"
-                }
-            }
-        },
-        "helper.RealTime": {
-            "type": "object",
-            "properties": {
-                "alert_desc": {
-                    "description": "预警详细文字描述",
-                    "type": "string"
-                },
-                "date": {
-                    "type": "integer"
-                },
-                "forecast_keypoint": {
-                    "description": "生活指数预报的详细描述，可能为空",
-                    "type": "string"
-                },
-                "humidity": {
-                    "description": "湿度",
-                    "type": "string"
-                },
-                "life_suggestion": {
-                    "description": "Comfort          string ` + "`" + `json:\"comfort\"` + "`" + `           // 舒适指数",
-                    "type": "object",
-                    "$ref": "#/definitions/helper.LifeSuggestion"
-                },
-                "rain_desc": {
-                    "description": "降水描述，可能为空",
-                    "type": "string"
-                },
-                "warm_remind": {
-                    "description": "提示",
                     "type": "string"
                 }
             }
@@ -1602,7 +1855,7 @@ var doc = `{
                     "type": "string"
                 },
                 "comfort": {
-                    "description": "舒适指数",
+                    "description": "出行 tips",
                     "type": "string"
                 },
                 "date": {
@@ -1624,8 +1877,20 @@ var doc = `{
                     "description": "降水描述，可能为空",
                     "type": "string"
                 },
+                "walk_remind": {
+                    "description": "出行建议",
+                    "type": "string"
+                },
                 "warm_remind": {
                     "description": "提示",
+                    "type": "string"
+                },
+                "wind_dir_day": {
+                    "description": "风文案",
+                    "type": "string"
+                },
+                "wind_scale_day": {
+                    "description": "风级别",
                     "type": "string"
                 }
             }
