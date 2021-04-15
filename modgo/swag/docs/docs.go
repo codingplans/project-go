@@ -892,6 +892,88 @@ var doc = `{
                 }
             }
         },
+        "/task_do": {
+            "post": {
+                "description": "TaskDo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商业化"
+                ],
+                "summary": "做福利任务",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/xconfig.FreeTask"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/task_list": {
+            "post": {
+                "description": "TaskList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商业化"
+                ],
+                "summary": "获取福利任务",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamTaskGet"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamTaskListResp"
+                        }
+                    }
+                }
+            }
+        },
         "/walk_config": {
             "post": {
                 "description": "WalkConfig",
@@ -1314,6 +1396,10 @@ var doc = `{
                     "description": "广告控制 map",
                     "type": "object",
                     "$ref": "#/definitions/helper.Ads"
+                },
+                "dialog_red_packet_count_down_close_count_down_enable": {
+                    "description": "倒计时关闭按钮",
+                    "type": "boolean"
                 }
             }
         },
@@ -1386,6 +1472,31 @@ var doc = `{
                 },
                 "tu": {
                     "type": "string"
+                }
+            }
+        },
+        "helper.ParamTaskGet": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string"
+                },
+                "task_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "helper.ParamTaskListResp": {
+            "type": "object",
+            "properties": {
+                "tasks": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/xconfig.FreeTask"
+                    }
                 }
             }
         },
@@ -1527,6 +1638,10 @@ var doc = `{
                 "bank_account": {
                     "description": "账户",
                     "type": "string"
+                },
+                "demotion_id": {
+                    "description": "风险 降级 id",
+                    "type": "integer"
                 },
                 "device": {
                     "type": "object",
@@ -1933,6 +2048,86 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/weather_mgr.Warning"
                     }
+                }
+            }
+        },
+        "xconfig.FreeTask": {
+            "type": "object",
+            "properties": {
+                "action_key": {
+                    "type": "string"
+                },
+                "award_num": {
+                    "type": "integer"
+                },
+                "award_type": {
+                    "description": "奖励类型 用于记录发金币 label",
+                    "type": "string"
+                },
+                "button": {
+                    "type": "string"
+                },
+                "count_down": {
+                    "description": "任务领取间隔倒计时",
+                    "type": "integer"
+                },
+                "current_num": {
+                    "type": "integer"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "descv2": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "boolean"
+                },
+                "max_num": {
+                    "type": "integer"
+                },
+                "max_time": {
+                    "type": "integer"
+                },
+                "min_app_version": {
+                    "type": "integer"
+                },
+                "need_reaching_target": {
+                    "type": "boolean"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "reward": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "1待完成 2待领取 3已完成",
+                    "type": "integer"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "target": {
+                    "type": "integer"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "task_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "integer"
                 }
             }
         },
