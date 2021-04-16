@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/jordan-wright/email"
 	"github.com/prometheus/common/log"
-	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"math"
 	"math/rand"
@@ -21,7 +20,6 @@ import (
 	"sync"
 	"testgo/modgo/xzap"
 	"time"
-	"unsafe"
 )
 
 var DATA *PayWay
@@ -52,32 +50,25 @@ func main() {
 	// interfaceIsNil(x)
 	// interfaceIsNil(y)
 
-	bb := []int{1}
+	a := make(chan struct{})
+	t := time.NewTimer(time.Second)
 
-	aa1 := "aba" + "222你好"
+	defer t.Stop()
+	for {
+		select {
+		case <-a:
+			println(222)
 
-	var aa2 strings.Builder
-	aa2.WriteString(aa1)
-	aa2.WriteString("24444")
+		case <-t.C:
+			println(111)
 
-	aa := "asd11"
-	num := &aa
-	pp := (*float32)(unsafe.Pointer(num))
-	CurrentNum := 1
-	aa3 := (2 << 0) / 2
-	countDown := int64((2 << (CurrentNum - 1) / 2) * 60)
-	fmt.Printf("%T,\n %T,%f", num, pp, *pp)
-	xzap.Info("aaa",
-		zap.Any("aa", aa2.Len()),
-		zap.Any("aa", countDown),
-		zap.Any("aa", bb[1:]),
-		zap.Any("aa", bb[:1]),
-		zap.Any("aa", aa3),
-	)
-	aa2.Grow(1000)
-	// aa2.Reset()
+		}
+	}
+
+	// xzap.Info("aaa",
+	// 	zap.Any("aa", aa2.Len()),
+	// )
 	// runtime.GC()
-	println(aa2.Cap())
 	<-ch
 	panicdefer()
 }

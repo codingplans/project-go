@@ -15,7 +15,7 @@ import (
 
 func Test_Problem438(t *testing.T) {
 
-	flas := problem("aacblcfaancbasxcbaba", "cba")
+	flas := problem("abcbac", "cba")
 	fmt.Printf("%v", flas)
 }
 
@@ -24,31 +24,30 @@ func problem(s, p string) []int {
 	count := 0
 	flas := []int{}
 	for k := range p {
-		m[p[k]-'a']++
+		m[p[k]]++
 		count++
 	}
-	fmt.Printf("%v", m)
+
 	for k := range s {
+		count2 := count
 		i := 0
-		fmt.Printf("%v\n", flas)
-
-		for count > 0 {
-			println(k, i, count, m[s[k+i]-'a'])
-
-			if m[s[k+i]-'a'] > 0 {
-				println(4444)
-				count--
-				i++
-			} else {
-				println(3333333)
-				count += i
-				break
-			}
+		m2 := m
+		for count2 >= 0 && k+i < len(s) && m2[s[k+i]] > 0 {
+			// if m2[s[k+i]] > 0 {
+			// 命中减一
+			count2--
+			m2[s[k+i]]--
+			i++
+			// } else {
+			// 否则调回来
+			// count2 += i
+			// break
+			// }
 		}
-		println(count, i)
 		if count == i {
 			flas = append(flas, k)
 		}
+		m2[s[k+i]]++
 
 	}
 	return flas
