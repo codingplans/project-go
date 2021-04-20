@@ -50,20 +50,17 @@ func main() {
 	// interfaceIsNil(x)
 	// interfaceIsNil(y)
 
-	a := make(chan struct{})
-	t := time.NewTimer(time.Second)
+	a := 1
 
-	defer t.Stop()
-	for {
-		select {
-		case <-a:
-			println(222)
-
-		case <-t.C:
-			println(111)
-
-		}
+	switch a {
+	case 12:
+		println(111)
+	case 2:
+		println(222)
+		// default:
+		// 	println(111)
 	}
+	println(4444)
 
 	// xzap.Info("aaa",
 	// 	zap.Any("aa", aa2.Len()),
