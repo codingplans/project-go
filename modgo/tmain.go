@@ -50,8 +50,17 @@ func main() {
 	// interfaceIsNil(x)
 	// interfaceIsNil(y)
 
-	a := 1
+	var ww interface{}
 
+	ww = "1"
+
+	a := 100002
+
+	aa := "1"
+	println(a%100+1, a>>8)
+	if aa == ww {
+		println(999)
+	}
 	switch a {
 	case 12:
 		println(111)

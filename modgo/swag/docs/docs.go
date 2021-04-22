@@ -245,6 +245,105 @@ var doc = `{
                 }
             }
         },
+        "/change_bean": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后门接口"
+                ],
+                "summary": "后门 修改数据 提现券",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamChangeBean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/xconfig.IncentiveEntranceResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/change_cash": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后门接口"
+                ],
+                "summary": "后门 修改数据 现金",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamChangeCash"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/xconfig.IncentiveEntranceResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/change_coin": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后门接口"
+                ],
+                "summary": "后门 修改数据 改金币",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamChangeBean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/xconfig.IncentiveEntranceResp"
+                        }
+                    }
+                }
+            }
+        },
         "/daily": {
             "post": {
                 "description": "Daily",
@@ -912,7 +1011,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/xconfig.FreeTask"
+                            "$ref": "#/definitions/helper.FreeTask"
                         }
                     },
                     {
@@ -1036,6 +1135,47 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/helper.ParamWarmRemindResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/warningly": {
+            "post": {
+                "description": "WarningList",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "天气面板"
+                ],
+                "summary": "预警信息",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/weather_mgr.WeatherReq"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/weather_mgr.WarningListResp"
                         }
                     }
                 }
@@ -1191,6 +1331,164 @@ var doc = `{
         }
     },
     "definitions": {
+        "account.Account": {
+            "type": "object",
+            "properties": {
+                "account_name": {
+                    "type": "string"
+                },
+                "account_region": {
+                    "type": "string"
+                },
+                "account_type": {
+                    "type": "integer"
+                },
+                "activation_code": {
+                    "type": "string"
+                },
+                "activation_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/account.ActivationInfo"
+                },
+                "auth_3p_name": {
+                    "type": "string"
+                },
+                "auth_info_3p": {
+                    "type": "string"
+                },
+                "exp_date": {
+                    "type": "integer"
+                },
+                "forbidden": {
+                    "type": "boolean"
+                },
+                "media_source": {
+                    "type": "integer"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "account.ActivationInfo": {
+            "type": "object",
+            "properties": {
+                "activate_timestamp": {
+                    "type": "integer"
+                },
+                "activate_type": {
+                    "type": "integer"
+                },
+                "android_id": {
+                    "type": "string"
+                },
+                "api_level": {
+                    "type": "string"
+                },
+                "app_name": {
+                    "type": "string"
+                },
+                "app_version": {
+                    "type": "string"
+                },
+                "apple_token": {
+                    "type": "string"
+                },
+                "channel_code": {
+                    "type": "string"
+                },
+                "device_info": {
+                    "type": "string"
+                },
+                "device_verified": {
+                    "type": "string"
+                },
+                "dpi": {
+                    "type": "string"
+                },
+                "gaid": {
+                    "type": "string"
+                },
+                "host_app_name": {
+                    "type": "string"
+                },
+                "host_app_version": {
+                    "type": "string"
+                },
+                "identifier": {
+                    "type": "string"
+                },
+                "idfa": {
+                    "type": "string"
+                },
+                "idfv": {
+                    "type": "string"
+                },
+                "imei": {
+                    "type": "string"
+                },
+                "last_activation_code": {
+                    "type": "string"
+                },
+                "locale": {
+                    "type": "string"
+                },
+                "mac_address": {
+                    "type": "string"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "meta_data": {
+                    "type": "string"
+                },
+                "mnc": {
+                    "type": "string"
+                },
+                "os_name": {
+                    "type": "string"
+                },
+                "os_version": {
+                    "type": "string"
+                },
+                "package_name": {
+                    "type": "string"
+                },
+                "pysical_size": {
+                    "type": "string"
+                },
+                "recommend_channel": {
+                    "type": "string"
+                },
+                "release": {
+                    "type": "string"
+                },
+                "resolution": {
+                    "type": "string"
+                },
+                "simid": {
+                    "type": "string"
+                },
+                "sys_app": {
+                    "type": "boolean"
+                },
+                "timestamp": {
+                    "type": "integer"
+                },
+                "upgrade_timestamp": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
         "helper.Ads": {
             "type": "object",
             "additionalProperties": {
@@ -1271,6 +1569,86 @@ var doc = `{
                 },
                 "temperature_min": {
                     "type": "string"
+                }
+            }
+        },
+        "helper.FreeTask": {
+            "type": "object",
+            "properties": {
+                "action_key": {
+                    "type": "string"
+                },
+                "award_num": {
+                    "type": "integer"
+                },
+                "award_type": {
+                    "description": "奖励类型 用于记录发金币 label",
+                    "type": "string"
+                },
+                "button": {
+                    "type": "string"
+                },
+                "count_down": {
+                    "description": "任务领取间隔倒计时",
+                    "type": "integer"
+                },
+                "current_num": {
+                    "type": "integer"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "descv2": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "boolean"
+                },
+                "max_num": {
+                    "type": "integer"
+                },
+                "max_time": {
+                    "type": "integer"
+                },
+                "min_app_version": {
+                    "type": "integer"
+                },
+                "need_reaching_target": {
+                    "type": "boolean"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "reward": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "1待完成 2待领取 3已完成",
+                    "type": "integer"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "target": {
+                    "type": "integer"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "task_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "integer"
                 }
             }
         },
@@ -1372,6 +1750,22 @@ var doc = `{
             "properties": {
                 "level": {
                     "description": "领取等级",
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamChangeBean": {
+            "type": "object",
+            "properties": {
+                "num": {
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamChangeCash": {
+            "type": "object",
+            "properties": {
+                "num": {
                     "type": "integer"
                 }
             }
@@ -1495,7 +1889,7 @@ var doc = `{
                 "tasks": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/xconfig.FreeTask"
+                        "$ref": "#/definitions/helper.FreeTask"
                     }
                 }
             }
@@ -1693,6 +2087,10 @@ var doc = `{
                     "description": "0 ：48 小时到账 ； 1 实时到账",
                     "type": "integer"
                 },
+                "category": {
+                    "description": "商品性质 金币、提现券",
+                    "type": "string"
+                },
                 "current_day_withdraw_num": {
                     "description": "当日提现次数",
                     "type": "integer"
@@ -1723,6 +2121,13 @@ var doc = `{
                 "show": {
                     "description": "是否页面展示",
                     "type": "boolean"
+                },
+                "sub_goods": {
+                    "description": "提现券商品",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helper.WithdrawGoods"
+                    }
                 },
                 "ticket_num": {
                     "description": "现金券数量",
@@ -2021,6 +2426,10 @@ var doc = `{
                     "description": "发布者",
                     "type": "string"
                 },
+                "warning_id": {
+                    "description": "预警id",
+                    "type": "string"
+                },
                 "warning_level": {
                     "description": "预警级别",
                     "type": "string"
@@ -2051,83 +2460,37 @@ var doc = `{
                 }
             }
         },
-        "xconfig.FreeTask": {
+        "weather_mgr.WeatherReq": {
             "type": "object",
             "properties": {
-                "action_key": {
+                "api_type": {
+                    "description": "api类型",
                     "type": "string"
                 },
-                "award_num": {
-                    "type": "integer"
-                },
-                "award_type": {
-                    "description": "奖励类型 用于记录发金币 label",
+                "city_code": {
                     "type": "string"
                 },
-                "button": {
+                "lat": {
+                    "type": "number"
+                },
+                "lng": {
+                    "type": "number"
+                },
+                "sessionBase": {
+                    "type": "object",
+                    "$ref": "#/definitions/ysession.SessionParam"
+                },
+                "test_group": {
+                    "description": "实验组",
                     "type": "string"
                 },
-                "count_down": {
-                    "description": "任务领取间隔倒计时",
+                "uid": {
+                    "description": "ass",
                     "type": "integer"
                 },
-                "current_num": {
-                    "type": "integer"
-                },
-                "desc": {
+                "weather_type": {
+                    "description": "查看天气的类型",
                     "type": "string"
-                },
-                "descv2": {
-                    "type": "string"
-                },
-                "enable": {
-                    "type": "boolean"
-                },
-                "max_num": {
-                    "type": "integer"
-                },
-                "max_time": {
-                    "type": "integer"
-                },
-                "min_app_version": {
-                    "type": "integer"
-                },
-                "need_reaching_target": {
-                    "type": "boolean"
-                },
-                "progress": {
-                    "type": "integer"
-                },
-                "reward": {
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "1待完成 2待领取 3已完成",
-                    "type": "integer"
-                },
-                "tag": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "target": {
-                    "type": "integer"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "task_type": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "weight": {
-                    "type": "integer"
                 }
             }
         },
@@ -2225,6 +2588,27 @@ var doc = `{
                     "type": "integer"
                 },
                 "today_time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "ysession.SessionParam": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "object",
+                    "$ref": "#/definitions/account.Account"
+                },
+                "curSpanId": {
+                    "type": "integer"
+                },
+                "preSpanId": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "sendTsMillisec": {
                     "type": "integer"
                 }
             }
