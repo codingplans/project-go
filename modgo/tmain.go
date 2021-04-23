@@ -50,31 +50,24 @@ func main() {
 	// interfaceIsNil(x)
 	// interfaceIsNil(y)
 
-	var ww interface{}
+	aa := []*PayWay{}
+	aa = append(aa, &PayWay{
+		Id:  123,
+		Ids: 123,
+	})
+	aa = append(aa, &PayWay{
+		Id:  222,
+		Ids: 222,
+	})
+	aa = append(aa, &PayWay{
+		Id:  333,
+		Ids: 333,
+	})
 
-	ww = "1"
-
-	a := 100002
-
-	aa := "1"
-	println(a%100+1, a>>8)
-	if aa == ww {
-		println(999)
+	for k, v := range aa {
+		fmt.Println(v, k)
 	}
-	switch a {
-	case 12:
-		println(111)
-	case 2:
-		println(222)
-		// default:
-		// 	println(111)
-	}
-	println(4444)
 
-	// xzap.Info("aaa",
-	// 	zap.Any("aa", aa2.Len()),
-	// )
-	// runtime.GC()
 	<-ch
 	panicdefer()
 }
