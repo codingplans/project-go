@@ -35,7 +35,7 @@ var tests = []test{
 		NewNode(2,
 			NewNode(1,
 				NewNode(1,
-					NewNode(1,
+					NewNode(2,
 						NewNode(1,
 							nil))))))},
 
@@ -51,27 +51,66 @@ var tests = []test{
 			NewNode(2,
 				NewNode(3,
 					NewNode(2,
-						NewNode(1,
-							nil))))))},
+						NewNode(2,
+							NewNode(1,
+								nil)))))))},
+	{NewNode(1,
+		NewNode(2,
+			NewNode(3,
+				NewNode(3,
+					NewNode(3,
+						NewNode(2,
+							NewNode(1,
+								nil)))))))},
+	{NewNode(1,
+		NewNode(2, NewNode(1, nil)))},
+	{NewNode(1,
+		NewNode(2, nil))},
 	{NewNode(1, nil)},
 }
 
 func Test_upToDayUp(t *testing.T) {
 	for k := range tests {
 		rs := isPalindrome(tests[k].ListNode)
-		println(rs)
+		println("是否为回文链表：", rs)
 	}
 }
 
-/**
- * Definition for singly-linked list.
- * type ListNode struct {
- *     Val int
- *     Next *ListNode
- * }
- */
 func isPalindrome(head *ListNode) bool {
+	if head.Next == nil {
+		return true
+	}
+	temp := head
+	slow := head.Next
+	for temp.Next != nil && temp.Next.Next != nil {
+		temp = temp.Next.Next
+		// 慢指针：
 
+		slow = slow.Next
+	}
+
+	// 反转链表 slow
+	slow = reset(slow)
+	for slow != nil {
+		if head.Val != slow.Val {
+			return false
+		}
+		head = head.Next
+		slow = slow.Next
+	}
+	return true
+}
+
+func reset(head *ListNode) *ListNode {
+	var news, next *ListNode
+	now := head
+	for now != nil {
+		next = now.Next
+		now.Next = news
+		news = now
+		now = next
+	}
+	return news
 }
 
 func isPalindromeV2(head *ListNode) bool {
