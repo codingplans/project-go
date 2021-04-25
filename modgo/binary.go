@@ -1,14 +1,12 @@
 package main
 
-import "fmt"
-
 type TreeNode struct {
 	Left  *TreeNode
 	Right *TreeNode
-	Value int
+	Value string
 }
 
-var DefaultValue int = -1024
+var DefaultValue string = "#"
 
 func InsertNodeToTree(tree *TreeNode, node *TreeNode) {
 	if tree == nil {
@@ -32,7 +30,7 @@ func InsertNodeToTree(tree *TreeNode, node *TreeNode) {
 	}
 }
 
-func InitTree(values ...int) (root *TreeNode) {
+func InitTree(values ...string) (root *TreeNode) {
 	rootNode := TreeNode{Value: DefaultValue, Right: nil, Left: nil}
 	for _, value := range values {
 		node := TreeNode{Value: value}
@@ -42,64 +40,38 @@ func InitTree(values ...int) (root *TreeNode) {
 }
 
 func main() {
-	treeNode := InitTree(5, 4, 6, 8, 9, 7, 1, 3, 2)
-	tmp := treeNode
-	for tmp != nil {
-		fmt.Println(tmp.Value)
-		if tmp.Left != nil {
-			tmp = tmp.Left
-		}
-		tmp = tmp.Left
-		// tmp = tmp.Right
-	}
+	treeNode := InitTree("A", "B", "C", "D", "E", "F", "G")
+	levelOrderBottoms(treeNode)
 
-	// initBinary()
-	// binary()
 }
 
-//
-// type Node struct {
-// 	left  *Node
-// 	right *Node
-// 	data  int
-// }
-//
-// var Nd *Node
-//
-// // 二叉树
-// func binary() {
-// 	for Nd != nil {
-// 		println(Nd.data, "\n")
-// 		Nd = Nd.left
-// 	}
-//
-// }
-//
-// func initBinary() {
-// 	// Nd = &Node{data: 100}
-// 	i := 1
-// 	for i < 40 {
-// 		tm := &Node{data: i + 1}
-// 		i++
-// 		InsertNodeToTree(Nd, tm)
-// 	}
-// }
-//
-// func InsertNodeToTree(tree, node *Node) {
-// 	if tree == nil {
-// 		tree = node
-// 	}
-// 	if tree.data > node.data {
-// 		if tree.left == nil {
-// 			tree.left = &Node{data: 1}
-// 		}
-// 		InsertNodeToTree(tree.left, node)
-// 	}
-// 	if tree.data < node.data {
-// 		if tree.right == nil {
-// 			tree.right = &Node{data: 1}
-// 		}
-// 		InsertNodeToTree(tree.right, node)
-//
-// 	}
-// }
+func levelOrderBottoms(root *TreeNode) [][]string {
+	levelOrder := [][]string{}
+	if root == nil {
+		println(122)
+		return levelOrder
+	}
+	queue := []*TreeNode{}
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		level := []string{}
+		size := len(queue)
+		for i := 0; i < size; i++ {
+			node := queue[0]
+			queue = queue[1:]
+			println(node.Value, 999)
+			level = append(level, node.Value)
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		levelOrder = append(levelOrder, level)
+	}
+	for i := 0; i < len(levelOrder)/2; i++ {
+		levelOrder[i], levelOrder[len(levelOrder)-1-i] = levelOrder[len(levelOrder)-1-i], levelOrder[i]
+	}
+	return levelOrder
+}
