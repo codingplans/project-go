@@ -33,13 +33,15 @@ func main() {
 
 	ch := make(chan int, 0)
 
-	aa := map[string]int64{
-		"sss": 1212,
-	}
+	aa := "eyJzdGF0dXMiOiIxIiwicmVnZW9jb2RlIjp7ImFkZHJlc3NDb21wb25lbnQiOnsiY2l0eSI6W10sInByb3ZpbmNlIjoi6YeN5bqG5biCIiwiYWRjb2RlIjoiNTAwMTUzIiwiZGlzdHJpY3QiOiLojaPmmIzljLoiLCJ0b3duY29kZSI6IjUwMDE1MzAwMTAwMCIsInN0cmVldE51bWJlciI6eyJudW1iZXIiOiI3NOWPtyIsImxvY2F0aW9uIjoiMTA1LjU5NzA5MywyOS40MTYxNjkiLCJkaXJlY3Rpb24iOiLopb8iLCJkaXN0YW5jZSI6Ijg4LjE4MDYiLCJzdHJlZXQiOiLlrp3ln47kuJzot68ifSwiY291bnRyeSI6IuS4reWbvSIsInRvd25zaGlwIjoi5piM5YWD6KGX6YGTIiwiYnVzaW5lc3NBcmVhcyI6W1tdXSwiYnVpbGRpbmciOnsibmFtZSI6W10sInR5cGUiOltdfSwibmVpZ2hib3Job29kIjp7Im5hbWUiOltdLCJ0eXBlIjpbXX0sImNpdHljb2RlIjoiMDIzIn0sImZvcm1hdHRlZF9hZGRyZXNzIjoi6YeN5bqG5biC6I2j5piM5Yy65piM5YWD6KGX6YGT5a6d5Z+O5Lic6LevIn0sImluZm8iOiJPSyIsImluZm9jb2RlIjoiMTAwMDAifQo="
 
-	aa["www"] = 122
-	ss := aa["www"]
-	log.Info(aa["www"], ss)
+	ww := map[string]interface{}{}
+
+	err := json.Unmarshal([]byte(aa), &ww)
+
+	log.Infof("asd %+v ,,%+v,,,", ww, err)
+
+	// log.Info(aa["sss"], ss.Name, aa)
 	<-ch
 }
 
