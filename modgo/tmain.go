@@ -6,13 +6,11 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/jordan-wright/email"
 	"github.com/prometheus/common/log"
 	"go.uber.org/zap/zapcore"
 	"math"
 	"math/rand"
 	"net/http"
-	"net/smtp"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -44,6 +42,12 @@ func interfaceIsNil(x interface{}) {
 }
 func main() {
 	ch := make(chan struct{})
+	log.Info("替换前：", 123, "\n")
+
+	for {
+		time.Sleep(1 * time.Second)
+		fmt.Println(time.Now().Unix())
+	}
 
 	// var x interface{} = nil
 	// var y *int = nil
@@ -316,24 +320,6 @@ func chanaa(ch1 chan int, ch2 chan int) {
 		// time.Sleep(3 * time.Second)
 	}
 
-}
-
-func ExampleGmail() {
-	println(222)
-	e := email.NewEmail()
-	e.From = "zzyphp@gmail.com"
-	e.To = []string{"darrenzzy@126.com"}
-	// e.Bcc = []string{"darrenzzy@126.com"}
-	// e.Cc = []string{"darrenzzy@126.com"}
-	e.Subject = "Awesome Subject"
-	e.Text = []byte("Text Body is, of course, supported!\n")
-	e.HTML = []byte("<h1>Fancy Html is supported, too!</h1>\n")
-	err := e.Send("smtp.gmail.com:587", smtp.PlainAuth("", e.From, "facaiba123", "smtp.gmail.com"))
-	if err != nil {
-		log.Info(err.Error())
-
-	}
-	println(333333)
 }
 
 func cmdd() {
