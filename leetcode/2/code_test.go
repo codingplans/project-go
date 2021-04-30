@@ -64,12 +64,12 @@ func Test_upToDayUp(t *testing.T) {
 		travlist(list)
 		println("初始化2")
 		travlist(list2)
-
+		CreateList(list)
 		// nl := addTwoNumbers(list, list2)
-		nl := addTwoNumbersV2(list, list2)
+		// nl := addTwoNumbersV2(list, list2)
 		// nl := addTwoNumbersV3(list, list2)
 		println("翻转后")
-		travlist(nl)
+		// travlist(nl)
 
 	}
 
@@ -190,6 +190,24 @@ func addTwoNumbersV2(l1 *ListNode, l2 *ListNode) *ListNode {
 		}
 	}
 	return head.Next
+}
+
+func CreateList(list *ListNode) {
+	head := &ListNode{Val: 0}
+	p := head
+
+	x := 0
+	for list != nil {
+		x++
+		p.Next = &ListNode{Val: x}
+		p = p.Next
+		list = list.Next
+		println("吸进去！！！")
+		travlist(head.Next)
+	}
+
+	travlist(head.Next)
+
 }
 
 func revert(list *ListNode) *ListNode {

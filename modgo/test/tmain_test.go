@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"reflect"
 	"regexp"
 	"strconv"
 	"testing"
@@ -22,6 +24,18 @@ func TestWeiyi(t *testing.T) {
 	t.Log(aa | bb)
 	t.Log(aa ^ bb)
 
+}
+
+func TestArrEq(t *testing.T) {
+	aa := []byte{1, 2, 3}
+	bb := []byte{1, 2, 3}
+	cc := []byte{1, 3, 2}
+	dd := []int{1, 3, 2}
+
+	println(bytes.Equal(aa, bb))
+	println(reflect.DeepEqual(aa, cc))
+	println(reflect.DeepEqual(dd, cc))
+	println(reflect.DeepEqual(aa, bb))
 }
 
 func TestSliceRange(t *testing.T) {
