@@ -2,6 +2,7 @@ package _00_init_code
 
 import (
 	"fmt"
+	"github.com/Darrenzzy/testgo/structures"
 	"testing"
 )
 
@@ -49,35 +50,27 @@ var tests = []test{
 // 思考：
 // 方案一： 递归统计每个节点下最大橘子节点和，
 
-// Definition for a binary tree node.
-type TreeNode struct {
-	Val   int
-	Left  *TreeNode
-	Right *TreeNode
-}
-
 var sums = 0
 
-func maxPathSum(root *TreeNode) int {
-
+func maxPathSum(root *structures.TreeNode) int {
 	if root == nil {
 		return 0
 	}
-	sum := recursive(root)
-	return sum
+	recursive(root)
+	return sums
 }
 
 // 递归方法 recursive
-func recursive(node *TreeNode) int {
+func recursive(node *structures.TreeNode) int {
 	if node == nil {
 		return 0
 	}
-	fmt.Println(node.Val)
-	if node.Left != nil || node.Right != nil {
-		sums += max(recursive(node.Left), recursive(node.Right))
-	}
-	sums = node.Val + sums
-	return sums
+	l := recursive(node.Left)
+	r := recursive(node.Right)
+	p := node.Val + l + r
+	// fmt.Println(node.Val, p, sums)
+	sums = max(p, sums)
+	return node.Val + max(l, r)
 }
 
 func max(x, y int) int {
@@ -90,22 +83,10 @@ func max(x, y int) int {
 func Test_upToDayUp(t *testing.T) {
 	for k1 := range tests {
 		fmt.Println("初始化")
-
-		for k := range tests[k1].Lists {
-			fmt.Println(tests[k1].Lists[k])
-
-		}
-		pre := 1
+		// 快速生成二叉树
+		tree := structures.Ints2TreeNode(tests[k1].Lists)
+		pre := maxPathSum(tree)
 		fmt.Println("结果：", pre)
 
 	}
-}
-
-func CreateTree(node *TreeNode, v int) {
-	if node == nil {
-		node = &TreeNode{
-			Val: v,
-		}
-	}
-
 }

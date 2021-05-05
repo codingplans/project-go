@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/Darrenzzy/testgo/structures"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -10,19 +11,95 @@ import (
 	"time"
 )
 
+func TestBfs(t *testing.T) {
+	// 初始化树
+	tree := structures.Ints2TreeNode([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+	// BfsTree(tree)
+	DfsTreeV2(tree)
+	// DfsTree(tree)
+	BfsTree(tree)
+}
+
+// 深度遍历
+func DfsTree(tree *structures.TreeNode) {
+	if tree == nil {
+		return
+	}
+	fmt.Println(tree.Val)
+	if tree.Left != nil {
+		DfsTree(tree.Left)
+	}
+	if tree.Right != nil {
+		DfsTree(tree.Right)
+	}
+}
+
+// 深度遍历 压栈处理
+func DfsTreeV2(tree *structures.TreeNode) {
+	if tree == nil {
+		return
+	}
+	var stack []*structures.TreeNode
+	// 先压栈顶元素
+	stack = []*structures.TreeNode{tree}
+	for len(stack) != 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		fmt.Println(node.Val)
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+	}
+
+}
+
+// 广度遍历 队列实现
+func BfsTree(tree *structures.TreeNode) {
+	if tree == nil {
+		return
+	}
+	var node []*structures.TreeNode
+	node = []*structures.TreeNode{tree}
+	for len(node) != 0 {
+
+		t := node[0]
+		fmt.Println(t.Val, len(node))
+		node = node[1:]
+
+		l := t.Left
+		if l != nil {
+			node = append(node, l)
+		}
+		r := t.Right
+		if r != nil {
+			node = append(node, r)
+		}
+
+	}
+
+}
+
 func TestWeiyi(t *testing.T) {
+	// 000011
 	aa := 3
+	// 0000100
 	bb := 4
 	t.Log(aa >> 1)
 	t.Log(aa << 10)
-	// 判断奇偶
+	// 取相反数
 	t.Log(^99)
+	// 异位或
 	t.Log(15 | 20)
 	t.Log(99 | 91)
+	// 判断奇偶
+	// 异位与
 	t.Log(bb & 1)
+	//
 	t.Log(aa ^ bb)
 	t.Log(aa | bb)
-	t.Log(aa ^ bb)
 
 }
 
