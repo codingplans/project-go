@@ -12,6 +12,30 @@ import (
 // 不考虑答案输出的顺序。
 // 来源：力扣（LeetCode）
 // 链接：https://leetcode-cn.com/problems/find-all-anagrams-in-a-string
+// 示例 1:
+//
+// 输入:
+// s: "cbaebabacd" p: "abc"
+//
+// 输出:
+// [0, 6]
+//
+// 解释:
+// 起始索引等于 0 的子串是 "cba", 它是 "abc" 的字母异位词。
+// 起始索引等于 6 的子串是 "bac", 它是 "abc" 的字母异位词。
+//  示例 2:
+//
+// 输入:
+// s: "abab" p: "ab"
+//
+// 输出:
+// [0, 1, 2]
+//
+// 解释:
+// 起始索引等于 0 的子串是 "ab", 它是 "ab" 的字母异位词。
+// 起始索引等于 1 的子串是 "ba", 它是 "ab" 的字母异位词。
+// 起始索引等于 2 的子串是 "ab", 它是 "ab" 的字母异位词。
+//
 
 func Test_Problem438(t *testing.T) {
 
@@ -20,6 +44,34 @@ func Test_Problem438(t *testing.T) {
 }
 
 func problem(s, p string) []int {
+
+	mach := [26]int{}
+	// mach := []byte{}
+	// 先把 p 放到数组中
+	for k := range p {
+		mach[p[k]-'a']++
+	}
+	ls := len(s)
+	l := 0
+	// 存对应下标
+	keys := []int{}
+	// 一一比对
+	for l < ls {
+		m2 := mach
+		i := 0
+		for l+i < ls && m2[s[l+i]-'a'] > 0 {
+			m2[s[l+i]-'a']--
+			i++
+		}
+		if i == len(p) {
+			keys = append(keys, l)
+		}
+		l++
+	}
+	return keys
+}
+
+func problemV2(s, p string) []int {
 	m := [256]int{}
 	count := 0
 	flas := []int{}
