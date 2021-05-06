@@ -34,43 +34,41 @@ var tests = []test{
 	{9},
 	{2},
 	{88},
+	{1},
+	{0},
+	{10000},
 }
 
 func Test_upToDayUp(t *testing.T) {
 	for k1 := range tests {
 		println("初始化", tests[k1].V)
-		// fmt.Println(tests[k1].L1)
-		// arr := threeSum(tests[k1].L1)
 		rs := mySqrt(tests[k1].V)
 		fmt.Println("结果：", rs)
 
 	}
 
 }
+
+// 思路 二分法来取值，用中间数来调和边界值,不要用 k*k来计算，可能导致整形溢出。
+
 func mySqrt(x int) int {
-
-	var a int
-	shift := 2
-	x, y := 1, 1
-	for {
-		println(a, 1<<shift, x, y, shift)
-
-		if x == 0 && y == 0 {
-			return shift
-		}
-		a = x >> shift
-		if a < 1<<shift {
-			shift--
-			x = 0
-			continue
-		}
-		if a > 1<<shift {
-			shift++
-			y = 0
-			continue
-		}
+	if x == 1 {
+		return 1
 	}
-	// println(a, 1<<shift)
-	// return x
+	m, n := 1, x>>1
+	for m <= n {
+		mid := m + (n-m)/2
+		// println(m, n, mid)
+		if mid == (x / mid) {
+			return mid
+		} else {
+			if mid < x/mid {
+				m = mid + 1
+			} else {
+				n = mid - 1
+			}
+		}
 
+	}
+	return n
 }
