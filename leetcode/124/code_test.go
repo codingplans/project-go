@@ -17,6 +17,8 @@ var NULL = -1 << 63
 
 var tests = []test{
 	{Lists: []int{-10, 9, 20, NULL, NULL, 15, 7}},
+	{Lists: []int{1, 2, 3}},
+	{Lists: []int{1, -2, 3}},
 }
 
 // 124. 二叉树中的最大路径和
@@ -56,20 +58,22 @@ func maxPathSum(root *structures.TreeNode) int {
 	if root == nil {
 		return 0
 	}
+	sums = root.Val
 	recursive(root)
 	return sums
 }
 
+// 深度遍历 dfs 找最大路径和
 // 递归方法 recursive
 func recursive(node *structures.TreeNode) int {
 	if node == nil {
 		return 0
 	}
-	l := recursive(node.Left)
-	r := recursive(node.Right)
+	l := max(recursive(node.Left), 0)
+	r := max(recursive(node.Right), 0)
 	p := node.Val + l + r
-	// fmt.Println(node.Val, p, sums)
 	sums = max(p, sums)
+	println(sums, p, node.Val)
 	return node.Val + max(l, r)
 }
 
@@ -82,7 +86,7 @@ func max(x, y int) int {
 
 func Test_upToDayUp(t *testing.T) {
 	for k1 := range tests {
-		fmt.Println("初始化")
+		fmt.Println("初始化", tests[k1].Lists)
 		// 快速生成二叉树
 		tree := structures.Ints2TreeNode(tests[k1].Lists)
 		pre := maxPathSum(tree)
