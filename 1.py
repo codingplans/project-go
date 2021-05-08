@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import cmath
 
 num = int(input("请输入一个数字: "))
@@ -21,7 +20,3 @@ def play():
 print(eat())
 print(work())
 print(play())
-=======
-333
-222
->>>>>>> t1
