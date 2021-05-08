@@ -45,11 +45,8 @@ func Test_upToDayUp(t *testing.T) {
 		}
 		pre = pre.Next
 
-		// traverList(pre)
 		reorderList(pre)
 		Traverse(pre)
-
-		// fmt.Println("结果：", pre)
 
 	}
 
@@ -66,7 +63,7 @@ func Traverse(head *ListNode) {
 	}
 	fmt.Println(point.Val)
 
-	fmt.Println("Traverse OK!")
+	// fmt.Println("Traverse OK!")
 }
 func NewNode(value int, next *ListNode) *ListNode {
 	var n ListNode
@@ -109,37 +106,104 @@ func reverseList(head *ListNode) *ListNode {
 	return prev
 }
 
-func mergeList(l1, l2 *ListNode) {
-	var l1Tmp, l2Tmp *ListNode
+func mergeList(l1, l2 *ListNode) *ListNode {
+	head := &ListNode{}
+	p := head
+	i := 0
 	for l1 != nil && l2 != nil {
-		l1Tmp = l1.Next
-		l2Tmp = l2.Next
+		if i%2 == 0 {
+			p.Next = l1
+			l1 = l1.Next
+		} else {
+			p.Next = l2
+			l2 = l2.Next
+		}
 
-		l1.Next = l2
-		l1 = l1Tmp
+		i++
+		p = p.Next
 
-		l2.Next = l1
-		l2 = l2Tmp
+		// l1Tmp = l1.Next
+		// l2Tmp = l2.Next
+		//
+		// fmt.Println("#########")
+		// Traverse(l1)
+		// fmt.Println("#########")
+		// Traverse(l2)
+		//
+		// l1.Next = l2
+		// // 下一步
+		// l1.Next = l1Tmp
+		// l2 = l2Tmp
 	}
+	if l1 != nil {
+		p.Next = l1
+	}
+	if l2 != nil {
+		p.Next = l2
+	}
+	return head.Next
 }
 
 func reorderList(head *ListNode) {
 	if head == nil {
 		return
 	}
+	// 寻找中间结点
+	p1 := head
+	p2 := head
+	// 先找到中部节点
+	p1 = middleNode(head)
+
+	// 反转链表后半部分  1->2->3->4->5->6 to 1->2->3->6->5->4
+	preMiddle := p1
+	preCurrent := p1.Next
+
+	fmt.Println("bbbbbbb")
+	Traverse(preCurrent)
+	for preCurrent.Next != nil {
+		current := preCurrent.Next
+		preCurrent.Next = current.Next
+		current.Next = preMiddle.Next
+		preMiddle.Next = current
+	}
+
+	// 重新拼接链表  1->2->3->6->5->4 to 1->6->2->5->3->4
+	p1 = head
+	p2 = preMiddle.Next
+	for p1 != preMiddle {
+		// 进一位
+		preMiddle.Next = p2.Next
+		p2.Next = p1.Next
+		p1.Next = p2
+		p1 = p2.Next
+		p2 = preMiddle.Next
+	}
+}
+func reorderListV2(head *ListNode) {
+	if head == nil {
+		return
+	}
+	// 先找到中部节点
 	mid := middleNode(head)
 	l1 := head
-	l3 := head
+	// l3 := head
+	fmt.Println("遍历 1 号")
 	Traverse(l1)
-	l2 := mid.Next
-	l2 = reverseList(l3)
-	// Traverse(l2)
+	p := &ListNode{}
+	l2 := p
+	l2.Next = mid.Next
+	l2 = reverseList(l2.Next)
+	fmt.Println("遍历 2 号")
+	Traverse(l2)
+	// panic(2)
 	// Traverse(l3)
+	fmt.Println("遍历 1 号")
 	Traverse(l1)
-	Traverse(head)
+	// Traverse(head)
 
 	// mid.Next = nil
-	Traverse(head)
 
-	mergeList(l1, l2)
+	l3 := mergeList(l1, l2)
+	fmt.Println("遍历 结果")
+	Traverse(l3)
 }

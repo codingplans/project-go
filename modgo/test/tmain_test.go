@@ -7,9 +7,84 @@ import (
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
+	"sync"
 	"testing"
 	"time"
 )
+
+func TestBlocking(t *testing.T) {
+	ch := make(chan struct{})
+
+	// var x interface{} = nil
+	// var y *int = nil
+	// interfaceIsNil(x)
+	// interfaceIsNil(y)
+
+	aa1 := "aaa" + "222你好"
+	var aa2 strings.Builder
+	aa2.WriteString(aa1)
+	aa2.WriteString("24444")
+	fmt.Println(aa2.String())
+	go func() {
+		time.Sleep(time.Hour)
+		ch <- struct{}{}
+	}()
+	<-ch
+
+}
+
+// 无缓冲 buf chan
+func TestChanNoBuf(t *testing.T) {
+
+	ch := make(chan int)
+	timeout := make(chan struct{})
+	go func() {
+		i := 0
+		for {
+			i++
+			select {
+			case <-timeout:
+				return
+			default:
+				ch <- i
+			}
+
+			time.Sleep(1 * time.Second)
+
+		}
+	}()
+	go func() {
+		i := 1
+		for {
+			aa, ok := <-ch
+			if !ok {
+				fmt.Println("close")
+				return
+			}
+			fmt.Println(aa, ok, i)
+			i++
+			if i == 3 {
+				timeout <- struct{}{}
+				close(ch)
+				return
+			}
+
+		}
+	}()
+
+	ww := sync.WaitGroup{}
+	ww.Add(10)
+	go func() {
+		for {
+			time.Sleep(10 * time.Second)
+			ww.Done()
+		}
+	}()
+
+	ww.Wait()
+
+}
 
 func TestBfs(t *testing.T) {
 	// 初始化树
