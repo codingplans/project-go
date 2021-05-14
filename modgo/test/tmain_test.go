@@ -13,6 +13,22 @@ import (
 	"time"
 )
 
+// 随便练一下 二叉树排序 =》堆排序
+func Test2TreeSoft(t *testing.T) {
+	// arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	arr := []int{4, 3, 5, 1, 2, 6, 7}
+
+	ts := arr[2 : len(arr)-1 : 7]
+	fmt.Println(len(ts), cap(ts), ts)
+
+	node := &structures.TreeNode{Val: 4}
+	for v := range arr[:6] {
+		node = CreateTree(node, arr[v+1])
+	}
+	fmt.Println("begin")
+	Travel(node)
+}
+
 func TestBlocking(t *testing.T) {
 	ch := make(chan struct{})
 
@@ -49,9 +65,7 @@ func TestChanNoBuf(t *testing.T) {
 			default:
 				ch <- i
 			}
-
 			time.Sleep(1 * time.Second)
-
 		}
 	}()
 	go func() {

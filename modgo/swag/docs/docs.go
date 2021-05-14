@@ -26,9 +26,9 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/award_countdown": {
+        "/mig/pig/benefit/daily_bag/collect": {
             "post": {
-                "description": "AwardCountdown",
+                "description": "DailyBagBenefitInfoCollect",
                 "consumes": [
                     "application/json"
                 ],
@@ -36,9 +36,9 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "天气面板"
+                    "商业化"
                 ],
-                "summary": "领取倒计时奖励",
+                "summary": "领取福利球任务",
                 "parameters": [
                     {
                         "description": "必填参数",
@@ -46,325 +46,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardCountdownReq"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardCountdownResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/award_offline": {
-            "post": {
-                "description": "AwardOffLine",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "离线收益",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/award_sunny": {
-            "post": {
-                "description": "AwardSunny",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "晴天奖励",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamUserGiftInfoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/award_video": {
-            "post": {
-                "description": "AwardVideo",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "看视频奖励",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardVideo"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/award_walk": {
-            "post": {
-                "description": "AwardWalk",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "出行奖励",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardWalk"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamUserGiftInfoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/award_watch": {
-            "post": {
-                "description": "AwardWatch",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "【商业化模块】看视频领金币",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/change_bean": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后门接口"
-                ],
-                "summary": "后门 修改数据 提现券",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamChangeBean"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/xconfig.IncentiveEntranceResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/change_cash": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后门接口"
-                ],
-                "summary": "后门 修改数据 现金",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamChangeCash"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/xconfig.IncentiveEntranceResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/change_coin": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后门接口"
-                ],
-                "summary": "后门 修改数据 改金币",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamChangeBean"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/xconfig.IncentiveEntranceResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/daily": {
-            "post": {
-                "description": "Daily",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "近 5 天天气信息",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamWeatherInfo"
+                            "$ref": "#/definitions/helper.ParamDailyBagCollect"
                         }
                     },
                     {
@@ -381,16 +63,16 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/helper.DailyStyle"
+                                "$ref": "#/definitions/helper.EnergyRewardRecord"
                             }
                         }
                     }
                 }
             }
         },
-        "/ez_config": {
+        "/mig/pig/benefit/daily_bag/info": {
             "post": {
-                "description": "UserGiftInfo",
+                "description": "DailyBagBenefitInfoGet",
                 "consumes": [
                     "application/json"
                 ],
@@ -398,73 +80,9 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "天气面板"
+                    "商业化"
                 ],
-                "summary": "获取 EZ 配置",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamEZConfigResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/get_countdown": {
-            "post": {
-                "description": "GetCountdown",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "获取倒计时奖励",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardCountdownResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/hourly": {
-            "post": {
-                "description": "Hourly",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "近 24 小时 天气信息",
+                "summary": "获取福利球任务信息",
                 "parameters": [
                     {
                         "description": "必填参数",
@@ -472,7 +90,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/helper.ParamWeatherInfo"
+                            "$ref": "#/definitions/helper.ParamGroup"
                         }
                     },
                     {
@@ -489,509 +107,14 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/helper.DailyStyle"
+                                "$ref": "#/definitions/helper.BallInfoResp"
                             }
                         }
                     }
                 }
             }
         },
-        "/incentive_100_redpack_entrance": {
-            "post": {
-                "description": "Incentive100Entrance",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "商业化"
-                ],
-                "summary": "百元红包入口",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/xconfig.IncentiveEntranceResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/incentive_100_redpack_info": {
-            "post": {
-                "description": "Incentive100Info",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "商业化"
-                ],
-                "summary": "百元红包",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/xconfig.IncentiveInfoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/incentive_100_update_progress": {
-            "post": {
-                "description": "Incentive100UpdateProgress",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "商业化"
-                ],
-                "summary": "百元红包 更新进度+1",
-                "responses": {
-                    "200": {}
-                }
-            }
-        },
-        "/info": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "旧版兼容 彩云api",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamWeatherInfo"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamWeatherInfoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/login": {
-            "post": {
-                "description": "Login",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "上传登录",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamLogin"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamLoginResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/lucky_draw_do_millstone": {
-            "post": {
-                "description": "CashWheelMillstone",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "现金大转盘"
-                ],
-                "summary": "大转盘领取累计奖励",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamMillstone"
-                        }
-                    }
-                ]
-            }
-        },
-        "/lucky_draw_do_redpack": {
-            "post": {
-                "description": "CashWheelOpenRedPacket",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "现金大转盘"
-                ],
-                "summary": "大转盘领取开到的红包",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamOpenRedPacket"
-                        }
-                    }
-                ]
-            }
-        },
-        "/lucky_draw_info": {
-            "post": {
-                "description": "CashWheelInfo",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "现金大转盘"
-                ],
-                "summary": "大转盘信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ]
-            }
-        },
-        "/lucky_draw_play": {
-            "post": {
-                "description": "CashWheelPlay",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "现金大转盘"
-                ],
-                "summary": "大转盘抽奖",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamStatisticIncentive"
-                        }
-                    }
-                ]
-            }
-        },
-        "/new_user_gift_info": {
-            "post": {
-                "description": "UserGiftInfo",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "新人礼信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamUserGiftInfoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/new_user_gift_reward": {
-            "post": {
-                "description": "UserGiftInfo",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "新人礼信息",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamUserGiftInfoReq"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamUserGiftInfoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/now_time": {
-            "post": {
-                "description": "NowTime",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "当天天气信息",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamWeatherInfo"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/weather_mgr.TodayResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/sign_info": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "SignInfo 签到信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/statistic_action": {
-            "post": {
-                "description": "StatisticAction",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "设备验证信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamStatisticAction"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamStatisticAction"
-                        }
-                    }
-                }
-            }
-        },
-        "/statistic_incentive_incr": {
-            "post": {
-                "description": "StatisticIncentiveIncr",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "商业化"
-                ],
-                "summary": "百元红包",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamStatisticIncentive"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/xconfig.IncentiveInfoResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/task_do": {
+        "/mig/pig/task/task_do": {
             "post": {
                 "description": "TaskDo",
                 "consumes": [
@@ -1011,7 +134,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/helper.FreeTask"
+                            "$ref": "#/definitions/helper.ParamWithdrawBeanTask"
                         }
                     },
                     {
@@ -1026,13 +149,13 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
+                            "$ref": "#/definitions/helper.ParamDoTaskResp"
                         }
                     }
                 }
             }
         },
-        "/task_list": {
+        "/mig/pig/task/task_list": {
             "post": {
                 "description": "TaskList",
                 "consumes": [
@@ -1044,7 +167,7 @@ var doc = `{
                 "tags": [
                     "商业化"
                 ],
-                "summary": "获取福利任务",
+                "summary": "获取任务中心",
                 "parameters": [
                     {
                         "description": "必填参数",
@@ -1072,502 +195,61 @@ var doc = `{
                     }
                 }
             }
-        },
-        "/walk_config": {
-            "post": {
-                "description": "WalkConfig",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "出行配置",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/helper.ParamWalkConfigResp"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/warm_remind": {
-            "post": {
-                "description": "WarmRemind",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "温度提醒",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamWarmRemindResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/warningly": {
-            "post": {
-                "description": "WarningList",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "天气面板"
-                ],
-                "summary": "预警信息",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/weather_mgr.WeatherReq"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/weather_mgr.WarningListResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/withdraw_deal": {
-            "post": {
-                "description": "发起提现，下单",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "web提现页面"
-                ],
-                "summary": "发起提现",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamWithdrawDeal"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.WithdrawInnerOrderDealResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/withdraw_info": {
-            "post": {
-                "description": "提现信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "web提现页面"
-                ],
-                "summary": "提现信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.WithdrawInnerOrderDealResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/withdraw_orders": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "web提现页面"
-                ],
-                "summary": "提现记录",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/helper.WithdrawInnerOrderResponse"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/wx/auth_code/decrypt": {
-            "post": {
-                "description": "authCode 换 openId",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "web提现页面"
-                ],
-                "summary": "authCode 换 openId",
-                "parameters": [
-                    {
-                        "description": "必填参数",
-                        "name": "请求体",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/helper.ParamCode2OpenId"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "校验 Auth-Token ",
-                        "name": "Auth-Token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.AuthCodeResp"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
-        "account.Account": {
+        "helper.BallInfo": {
             "type": "object",
             "properties": {
-                "account_name": {
-                    "type": "string"
-                },
-                "account_region": {
-                    "type": "string"
-                },
-                "account_type": {
-                    "type": "integer"
-                },
-                "activation_code": {
-                    "type": "string"
-                },
-                "activation_info": {
-                    "type": "object",
-                    "$ref": "#/definitions/account.ActivationInfo"
-                },
-                "auth_3p_name": {
-                    "type": "string"
-                },
-                "auth_info_3p": {
-                    "type": "string"
-                },
-                "exp_date": {
-                    "type": "integer"
-                },
-                "forbidden": {
-                    "type": "boolean"
-                },
-                "media_source": {
-                    "type": "integer"
-                },
-                "token": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "account.ActivationInfo": {
-            "type": "object",
-            "properties": {
-                "activate_timestamp": {
-                    "type": "integer"
-                },
-                "activate_type": {
-                    "type": "integer"
-                },
-                "android_id": {
-                    "type": "string"
-                },
-                "api_level": {
-                    "type": "string"
-                },
-                "app_name": {
-                    "type": "string"
-                },
-                "app_version": {
-                    "type": "string"
-                },
-                "apple_token": {
-                    "type": "string"
-                },
-                "channel_code": {
-                    "type": "string"
-                },
-                "device_info": {
-                    "type": "string"
-                },
-                "device_verified": {
-                    "type": "string"
-                },
-                "dpi": {
-                    "type": "string"
-                },
-                "gaid": {
-                    "type": "string"
-                },
-                "host_app_name": {
-                    "type": "string"
-                },
-                "host_app_version": {
-                    "type": "string"
-                },
-                "identifier": {
-                    "type": "string"
-                },
-                "idfa": {
-                    "type": "string"
-                },
-                "idfv": {
-                    "type": "string"
-                },
-                "imei": {
-                    "type": "string"
-                },
-                "last_activation_code": {
-                    "type": "string"
-                },
-                "locale": {
-                    "type": "string"
-                },
-                "mac_address": {
-                    "type": "string"
-                },
-                "manufacturer": {
-                    "type": "string"
-                },
-                "meta_data": {
-                    "type": "string"
-                },
-                "mnc": {
-                    "type": "string"
-                },
-                "os_name": {
-                    "type": "string"
-                },
-                "os_version": {
-                    "type": "string"
-                },
-                "package_name": {
-                    "type": "string"
-                },
-                "pysical_size": {
-                    "type": "string"
-                },
-                "recommend_channel": {
-                    "type": "string"
-                },
-                "release": {
-                    "type": "string"
-                },
-                "resolution": {
-                    "type": "string"
-                },
-                "simid": {
-                    "type": "string"
-                },
-                "sys_app": {
-                    "type": "boolean"
-                },
-                "timestamp": {
-                    "type": "integer"
-                },
-                "upgrade_timestamp": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer"
-                },
-                "uuid": {
-                    "type": "string"
-                }
-            }
-        },
-        "helper.Ads": {
-            "type": "object",
-            "additionalProperties": {
-                "type": "array",
-                "items": {
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.AuthCodeResp": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "expires_in": {
-                    "type": "integer"
-                },
-                "openid": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "scope": {
-                    "type": "string"
-                },
-                "unionid": {
-                    "type": "string"
-                }
-            }
-        },
-        "helper.Countdown": {
-            "type": "object",
-            "properties": {
-                "coins": {
-                    "description": "奖励金币数量",
+                "count_down": {
+                    "description": "CD时间",
                     "type": "integer"
                 },
                 "id": {
-                    "description": "领取奖励编号",
+                    "description": "福利球 id",
+                    "type": "string"
+                },
+                "incentive_reward": {
                     "type": "integer"
                 },
-                "next_time": {
-                    "description": "下次领取时间",
+                "max_times": {
+                    "description": "最大次数",
                     "type": "integer"
                 },
-                "step": {
-                    "description": "时间间隔",
+                "remaining_times": {
                     "type": "integer"
                 },
-                "times": {
-                    "description": "已经领取次数",
+                "reward": {
+                    "description": "奖励数额",
                     "type": "integer"
                 }
             }
         },
-        "helper.DailyStyle": {
+        "helper.BallInfoResp": {
             "type": "object",
             "properties": {
-                "aqi": {
-                    "type": "number"
-                },
-                "date": {
+                "rewards": {
+                    "description": "福利球信息 数组",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helper.BallInfo"
+                    }
+                }
+            }
+        },
+        "helper.EnergyRewardRecord": {
+            "type": "object",
+            "properties": {
+                "reward_amount": {
+                    "description": "奖励数量",
                     "type": "integer"
                 },
-                "skycon": {
+                "reward_id": {
+                    "description": "奖励 id",
                     "type": "string"
                 },
-                "sunrise": {
-                    "type": "string"
-                },
-                "sunset": {
-                    "type": "string"
-                },
-                "temperature_max": {
-                    "type": "string"
-                },
-                "temperature_min": {
+                "reward_type": {
+                    "description": "奖励类型",
                     "type": "string"
                 }
             }
@@ -1579,6 +261,7 @@ var doc = `{
                     "type": "string"
                 },
                 "award_num": {
+                    "description": "奖励数额",
                     "type": "integer"
                 },
                 "award_type": {
@@ -1586,6 +269,7 @@ var doc = `{
                     "type": "string"
                 },
                 "button": {
+                    "description": "按钮文案",
                     "type": "string"
                 },
                 "count_down": {
@@ -1593,18 +277,18 @@ var doc = `{
                     "type": "integer"
                 },
                 "current_num": {
+                    "description": "当前已做次数",
                     "type": "integer"
                 },
                 "desc": {
                     "type": "string"
                 },
-                "descv2": {
-                    "type": "string"
-                },
                 "enable": {
+                    "description": "是否开启任务",
                     "type": "boolean"
                 },
                 "max_num": {
+                    "description": "最大次数",
                     "type": "integer"
                 },
                 "max_time": {
@@ -1617,6 +301,7 @@ var doc = `{
                     "type": "boolean"
                 },
                 "progress": {
+                    "description": "进度",
                     "type": "integer"
                 },
                 "reward": {
@@ -1636,104 +321,48 @@ var doc = `{
                     "type": "integer"
                 },
                 "task_id": {
+                    "description": "任务唯一表示 ids",
                     "type": "string"
                 },
                 "task_type": {
                     "type": "string"
                 },
                 "title": {
+                    "description": "标题",
                     "type": "string"
                 },
                 "type": {
+                    "description": "任务类型",
                     "type": "string"
                 },
                 "weight": {
+                    "description": "排序权重 从大到小",
                     "type": "integer"
                 }
             }
         },
-        "helper.ParamAwardCountdownReq": {
+        "helper.ParamDailyBagCollect": {
             "type": "object",
             "properties": {
+                "group": {
+                    "description": "初版不用传",
+                    "type": "string"
+                },
                 "id": {
-                    "description": "领取奖励编号",
-                    "type": "integer"
+                    "description": "福利球 id",
+                    "type": "string"
+                },
+                "incentive": {
+                    "description": "初版不用传",
+                    "type": "boolean"
                 }
             }
         },
-        "helper.ParamAwardCountdownResp": {
+        "helper.ParamDoTaskResp": {
             "type": "object",
             "properties": {
                 "award_coins": {
-                    "type": "integer"
-                },
-                "can_award": {
-                    "description": "是否可以继续领取 0 可以 1 不可以",
-                    "type": "integer"
-                },
-                "had_cash": {
                     "description": "奖励数额",
-                    "type": "string"
-                },
-                "had_coin": {
-                    "type": "integer"
-                },
-                "list": {
-                    "description": "奖励列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/helper.Countdown"
-                    }
-                },
-                "today_coins": {
-                    "description": "当天获取总数量",
-                    "type": "integer"
-                },
-                "today_times": {
-                    "description": "当天获取总次数",
-                    "type": "integer"
-                },
-                "total_times": {
-                    "description": "当天总次数",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamAwardVideo": {
-            "type": "object",
-            "properties": {
-                "award_name": {
-                    "description": "奖励类型 (兼容老版本新字段)",
-                    "type": "string"
-                },
-                "award_type": {
-                    "description": "奖励类型 1 温差 2 倒计时 3 任务 4签到 5新人红包",
-                    "type": "integer"
-                },
-                "base_coin": {
-                    "description": "原来奖励金币数量",
-                    "type": "integer"
-                },
-                "multiple": {
-                    "description": "倍数",
-                    "type": "integer"
-                },
-                "uid": {
-                    "description": "用户 id",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamAwardVideoResp": {
-            "type": "object",
-            "properties": {
-                "award_coins": {
-                    "type": "integer"
-                },
-                "had_cash": {
-                    "type": "string"
-                },
-                "had_coin": {
                     "type": "integer"
                 },
                 "is_award_watch_times": {
@@ -1745,126 +374,10 @@ var doc = `{
                 }
             }
         },
-        "helper.ParamAwardWalk": {
+        "helper.ParamGroup": {
             "type": "object",
             "properties": {
-                "level": {
-                    "description": "领取等级",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamChangeBean": {
-            "type": "object",
-            "properties": {
-                "num": {
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamChangeCash": {
-            "type": "object",
-            "properties": {
-                "num": {
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamCode2OpenId": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "authcode 码",
-                    "type": "string"
-                },
-                "source": {
-                    "description": "可选参数",
-                    "type": "string"
-                }
-            }
-        },
-        "helper.ParamEZConfigResp": {
-            "type": "object",
-            "properties": {
-                "ads_map": {
-                    "description": "广告控制 map",
-                    "type": "object",
-                    "$ref": "#/definitions/helper.Ads"
-                },
-                "dialog_red_packet_count_down_close_count_down_enable": {
-                    "description": "倒计时关闭按钮",
-                    "type": "boolean"
-                }
-            }
-        },
-        "helper.ParamLogin": {
-            "type": "object",
-            "properties": {
-                "account": {
-                    "description": "账号名称",
-                    "type": "string"
-                },
-                "login_type": {
-                    "description": "1 手机 2 微信",
-                    "type": "integer"
-                },
-                "uid": {
-                    "description": "用户 id",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamLoginResp": {
-            "type": "object",
-            "properties": {
-                "is_withdrew_03": {
-                    "description": "是否提现过",
-                    "type": "boolean"
-                },
-                "open_id": {
-                    "description": "微信 openid",
-                    "type": "string"
-                },
-                "user_info": {
-                    "type": "object"
-                }
-            }
-        },
-        "helper.ParamMillstone": {
-            "type": "object",
-            "properties": {
-                "millstone_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamOpenRedPacket": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "helper.ParamStatisticAction": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "description": "登录状态 已登录：\"login\" 未登录 \"notlogin\"",
-                    "type": "string"
-                }
-            }
-        },
-        "helper.ParamStatisticIncentive": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "times": {
-                    "type": "integer"
-                },
-                "tu": {
+                "group": {
                     "type": "string"
                 }
             }
@@ -1894,722 +407,11 @@ var doc = `{
                 }
             }
         },
-        "helper.ParamUserGiftInfoReq": {
+        "helper.ParamWithdrawBeanTask": {
             "type": "object",
             "properties": {
-                "user_level": {
-                    "description": "新人等级，给 0：0.3； 1：0.2；  2：0.1；",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamUserGiftInfoResp": {
-            "type": "object",
-            "properties": {
-                "can_reward": {
-                    "description": "是否可以领取",
-                    "type": "boolean"
-                },
-                "cash": {
-                    "description": "奖励额度",
+                "task_id": {
                     "type": "string"
-                },
-                "had_cash": {
-                    "type": "string"
-                },
-                "had_coin": {
-                    "type": "integer"
-                },
-                "has_reward_time": {
-                    "description": "已领取的次数",
-                    "type": "integer"
-                },
-                "reward_cash": {
-                    "description": "奖励数额",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamWalkConfigResp": {
-            "type": "object",
-            "properties": {
-                "award_num": {
-                    "description": "领取规格",
-                    "type": "integer"
-                },
-                "can_award": {
-                    "description": "可否领取 2 可以 1 不可以",
-                    "type": "integer"
-                },
-                "can_double": {
-                    "description": "是否可以翻倍 2 可以 1 不可以",
-                    "type": "integer"
-                },
-                "level": {
-                    "description": "领取等级",
-                    "type": "integer"
-                },
-                "step": {
-                    "description": "步数",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.ParamWarmRemindResp": {
-            "type": "object",
-            "properties": {
-                "notice": {
-                    "description": "提醒",
-                    "type": "string"
-                }
-            }
-        },
-        "helper.ParamWeatherInfo": {
-            "type": "object",
-            "properties": {
-                "apiType": {
-                    "description": "华风 api 类型 用于拼path",
-                    "type": "string"
-                },
-                "city_code": {
-                    "type": "string"
-                },
-                "lat": {
-                    "type": "number"
-                },
-                "lng": {
-                    "type": "number"
-                },
-                "testGroup": {
-                    "description": "实验组",
-                    "type": "string"
-                },
-                "time": {
-                    "description": "客户端访问时间",
-                    "type": "string"
-                },
-                "uid": {
-                    "type": "integer"
-                },
-                "weatherType": {
-                    "description": "查看天气的类型",
-                    "type": "string"
-                }
-            }
-        },
-        "helper.ParamWeatherInfoResp": {
-            "type": "object",
-            "properties": {
-                "daily": {
-                    "description": "日数据",
-                    "type": "object",
-                    "$ref": "#/definitions/weather_mgr.DailyResp"
-                },
-                "hourly": {
-                    "description": "小时数据",
-                    "type": "object",
-                    "$ref": "#/definitions/weather_mgr.HourlyResp"
-                },
-                "realtime": {
-                    "description": "当前信息",
-                    "type": "object",
-                    "$ref": "#/definitions/weather_mgr.TodayResp"
-                },
-                "warning_list": {
-                    "description": "预警信息",
-                    "type": "object",
-                    "$ref": "#/definitions/weather_mgr.WarningListResp"
-                }
-            }
-        },
-        "helper.ParamWithdrawDeal": {
-            "type": "object",
-            "properties": {
-                "bank": {
-                    "description": "银行",
-                    "type": "string"
-                },
-                "bank_account": {
-                    "description": "账户",
-                    "type": "string"
-                },
-                "demotion_id": {
-                    "description": "风险 降级 id",
-                    "type": "integer"
-                },
-                "device": {
-                    "type": "object",
-                    "properties": {
-                        "is_emulator": {
-                            "description": "手机设备",
-                            "type": "boolean"
-                        },
-                        "is_root": {
-                            "description": "手机设备",
-                            "type": "boolean"
-                        },
-                        "is_xposed_exist": {
-                            "description": "手机设备",
-                            "type": "boolean"
-                        }
-                    }
-                },
-                "goods_id": {
-                    "description": "商品 id",
-                    "type": "integer"
-                },
-                "id_card": {
-                    "description": "银行卡",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "商品名称",
-                    "type": "string"
-                },
-                "phone": {
-                    "description": "下单手机号",
-                    "type": "string"
-                }
-            }
-        },
-        "helper.WithdrawGoods": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "价格",
-                    "type": "integer"
-                },
-                "bank": {
-                    "description": "支付方式",
-                    "type": "string"
-                },
-                "cash_type": {
-                    "description": "0 ：48 小时到账 ； 1 实时到账",
-                    "type": "integer"
-                },
-                "category": {
-                    "description": "商品性质 金币、提现券",
-                    "type": "string"
-                },
-                "current_day_withdraw_num": {
-                    "description": "当日提现次数",
-                    "type": "integer"
-                },
-                "current_withdraw_num": {
-                    "description": "当前提现次数",
-                    "type": "integer"
-                },
-                "day_max_withdraw_num": {
-                    "description": "单日提现次数",
-                    "type": "integer"
-                },
-                "goods_id": {
-                    "description": "商品 id",
-                    "type": "integer"
-                },
-                "goods_type": {
-                    "description": "商品性质 一次性 多次",
-                    "type": "string"
-                },
-                "group": {
-                    "type": "integer"
-                },
-                "max_withdraw_num": {
-                    "description": "最大提现次数",
-                    "type": "integer"
-                },
-                "show": {
-                    "description": "是否页面展示",
-                    "type": "boolean"
-                },
-                "sub_goods": {
-                    "description": "提现券商品",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/helper.WithdrawGoods"
-                    }
-                },
-                "ticket_num": {
-                    "description": "现金券数量",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.WithdrawInnerOrderDealData": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "数额",
-                    "type": "integer"
-                },
-                "goods": {
-                    "description": "商品",
-                    "type": "object",
-                    "$ref": "#/definitions/helper.WithdrawGoods"
-                },
-                "is_first": {
-                    "description": "是否第一次提现 1 否 2 是",
-                    "type": "integer"
-                },
-                "order": {
-                    "type": "object",
-                    "properties": {
-                        "order_id": {
-                            "description": "订单 id",
-                            "type": "integer"
-                        },
-                        "order_no": {
-                            "description": "订单号",
-                            "type": "string"
-                        }
-                    }
-                },
-                "ticket_num": {
-                    "description": "现金券",
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.WithdrawInnerOrderDealResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "object",
-                    "$ref": "#/definitions/helper.WithdrawInnerOrderDealData"
-                },
-                "error_code": {
-                    "type": "integer"
-                },
-                "msg": {
-                    "type": "string"
-                },
-                "time_unix": {
-                    "type": "integer"
-                }
-            }
-        },
-        "helper.WithdrawInnerOrderResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "amount": {
-                                "description": "金额",
-                                "type": "integer"
-                            },
-                            "app_name": {
-                                "description": "app 名称",
-                                "type": "string"
-                            },
-                            "bank": {
-                                "description": "提现方式",
-                                "type": "string"
-                            },
-                            "bank_account": {
-                                "description": "提现账户",
-                                "type": "string"
-                            },
-                            "comment": {
-                                "description": "内容",
-                                "type": "string"
-                            },
-                            "created_at": {
-                                "type": "string"
-                            },
-                            "goods_type": {
-                                "description": "类型",
-                                "type": "string"
-                            },
-                            "id": {
-                                "description": "订单 id",
-                                "type": "integer"
-                            },
-                            "id_card": {
-                                "description": "卡号",
-                                "type": "string"
-                            },
-                            "name": {
-                                "description": "账户名称",
-                                "type": "string"
-                            },
-                            "order_no": {
-                                "description": "订单号",
-                                "type": "string"
-                            },
-                            "phone": {
-                                "description": "手机号",
-                                "type": "string"
-                            },
-                            "status": {
-                                "description": "状态",
-                                "type": "integer"
-                            },
-                            "tickets": {
-                                "description": "券",
-                                "type": "string"
-                            },
-                            "uid": {
-                                "description": "用户id",
-                                "type": "integer"
-                            },
-                            "updated_at": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                },
-                "error_code": {
-                    "type": "integer"
-                },
-                "msg": {
-                    "type": "string"
-                },
-                "time_unix": {
-                    "type": "integer"
-                }
-            }
-        },
-        "weather_mgr.DailyResp": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/weather_mgr.DailyStyle"
-                    }
-                }
-            }
-        },
-        "weather_mgr.DailyStyle": {
-            "type": "object",
-            "properties": {
-                "aqi": {
-                    "type": "number"
-                },
-                "date": {
-                    "type": "integer"
-                },
-                "skycon": {
-                    "type": "string"
-                },
-                "sunrise": {
-                    "type": "string"
-                },
-                "sunset": {
-                    "type": "string"
-                },
-                "temperature_max": {
-                    "type": "string"
-                },
-                "temperature_min": {
-                    "type": "string"
-                }
-            }
-        },
-        "weather_mgr.HourlyResp": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/weather_mgr.HourlyStyle"
-                    }
-                }
-            }
-        },
-        "weather_mgr.HourlyStyle": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "integer"
-                },
-                "skycon": {
-                    "type": "string"
-                },
-                "temperature": {
-                    "type": "string"
-                }
-            }
-        },
-        "weather_mgr.LifeSuggestion": {
-            "type": "object",
-            "properties": {
-                "airing": {
-                    "description": "晾晒",
-                    "type": "string"
-                },
-                "dressing": {
-                    "description": "穿衣指数",
-                    "type": "string"
-                },
-                "fishing": {
-                    "description": "钓鱼指数",
-                    "type": "string"
-                },
-                "flu": {
-                    "description": "感冒指数",
-                    "type": "string"
-                },
-                "sport": {
-                    "description": "运动指数",
-                    "type": "string"
-                },
-                "travel": {
-                    "description": "旅游指数",
-                    "type": "string"
-                },
-                "uv": {
-                    "description": "紫外线指数",
-                    "type": "string"
-                }
-            }
-        },
-        "weather_mgr.TodayResp": {
-            "type": "object",
-            "properties": {
-                "alert_desc": {
-                    "description": "预警详细文字描述",
-                    "type": "string"
-                },
-                "comfort": {
-                    "description": "出行 tips",
-                    "type": "string"
-                },
-                "date": {
-                    "type": "integer"
-                },
-                "forecast_keypoint": {
-                    "description": "生活指数预报的详细描述，可能为空",
-                    "type": "string"
-                },
-                "humidity": {
-                    "description": "湿度",
-                    "type": "string"
-                },
-                "life_suggestion": {
-                    "type": "object",
-                    "$ref": "#/definitions/weather_mgr.LifeSuggestion"
-                },
-                "rain_desc": {
-                    "description": "降水描述，可能为空",
-                    "type": "string"
-                },
-                "walk_remind": {
-                    "description": "出行建议",
-                    "type": "string"
-                },
-                "warm_remind": {
-                    "description": "提示",
-                    "type": "string"
-                },
-                "wind_dir_day": {
-                    "description": "风文案",
-                    "type": "string"
-                },
-                "wind_scale_day": {
-                    "description": "风级别",
-                    "type": "string"
-                }
-            }
-        },
-        "weather_mgr.Warning": {
-            "type": "object",
-            "properties": {
-                "alert_desc": {
-                    "description": "预警详细文字描述",
-                    "type": "string"
-                },
-                "sender": {
-                    "description": "发布者",
-                    "type": "string"
-                },
-                "warning_id": {
-                    "description": "预警id",
-                    "type": "string"
-                },
-                "warning_level": {
-                    "description": "预警级别",
-                    "type": "string"
-                },
-                "warning_title": {
-                    "description": "预警抬头",
-                    "type": "string"
-                },
-                "warning_type": {
-                    "description": "预警类型",
-                    "type": "string"
-                },
-                "warning_type_en": {
-                    "description": "预警类型英文",
-                    "type": "string"
-                }
-            }
-        },
-        "weather_mgr.WarningListResp": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "description": "预警列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/weather_mgr.Warning"
-                    }
-                }
-            }
-        },
-        "weather_mgr.WeatherReq": {
-            "type": "object",
-            "properties": {
-                "api_type": {
-                    "description": "api类型",
-                    "type": "string"
-                },
-                "city_code": {
-                    "type": "string"
-                },
-                "lat": {
-                    "type": "number"
-                },
-                "lng": {
-                    "type": "number"
-                },
-                "sessionBase": {
-                    "type": "object",
-                    "$ref": "#/definitions/ysession.SessionParam"
-                },
-                "test_group": {
-                    "description": "实验组",
-                    "type": "string"
-                },
-                "uid": {
-                    "description": "ass",
-                    "type": "integer"
-                },
-                "weather_type": {
-                    "description": "查看天气的类型",
-                    "type": "string"
-                }
-            }
-        },
-        "xconfig.Incentive100Group": {
-            "type": "object",
-            "properties": {
-                "head_img": {
-                    "type": "string"
-                },
-                "me": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "progress": {
-                    "type": "integer"
-                }
-            }
-        },
-        "xconfig.Incentive100Notice": {
-            "type": "object",
-            "properties": {
-                "head_img": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "text": {
-                    "type": "string"
-                }
-            }
-        },
-        "xconfig.IncentiveEntranceResp": {
-            "type": "object",
-            "properties": {
-                "enable": {
-                    "type": "boolean"
-                },
-                "expire_time": {
-                    "type": "integer"
-                },
-                "notice": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/xconfig.Incentive100Notice"
-                    }
-                },
-                "period": {
-                    "type": "string"
-                }
-            }
-        },
-        "xconfig.IncentiveInfoResp": {
-            "type": "object",
-            "properties": {
-                "day_num": {
-                    "type": "integer"
-                },
-                "expire_time": {
-                    "type": "integer"
-                },
-                "group_rank": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/xconfig.Incentive100Group"
-                    }
-                },
-                "has_rewarded": {
-                    "type": "boolean"
-                },
-                "last_update_ts": {
-                    "type": "integer"
-                },
-                "max_progress": {
-                    "type": "integer"
-                },
-                "notice": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/xconfig.Incentive100Notice"
-                    }
-                },
-                "period": {
-                    "type": "string"
-                },
-                "progress": {
-                    "type": "integer"
-                },
-                "toast": {
-                    "type": "string"
-                },
-                "today_remain": {
-                    "type": "integer"
-                },
-                "today_time": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ysession.SessionParam": {
-            "type": "object",
-            "properties": {
-                "account": {
-                    "type": "object",
-                    "$ref": "#/definitions/account.Account"
-                },
-                "curSpanId": {
-                    "type": "integer"
-                },
-                "preSpanId": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                },
-                "sendTsMillisec": {
-                    "type": "integer"
                 }
             }
         }
@@ -2628,10 +430,10 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
-	Host:        "pgd-beta.cootekservice.com",
-	BasePath:    "/a/weather/",
+	Host:        "dev[pgd-beta.cootekservice.com]  prod[pig.chubaobaitiao.com]",
+	BasePath:    "/",
 	Schemes:     []string{},
-	Title:       "天气实况 API",
+	Title:       "财生小猪 API",
 	Description: "This is a base annotation server celler server.\n解放双手不再手写 api ，基于注释生成文档",
 }
 

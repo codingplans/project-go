@@ -41,6 +41,8 @@ type test struct {
 }
 
 var tests = []test{
+	{[]int{1, 2, 3, 1}},
+	{[]int{1, 2, 1, 3, 5, 6, 4}},
 	{[]int{0, 3, 1}},
 	{[]int{2, 1}},
 	{[]int{1, 2}},
