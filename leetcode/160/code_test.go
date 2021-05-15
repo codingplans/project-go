@@ -21,6 +21,11 @@ var tests = []test{
 		Lists: []int{9, 8, 6, 4, 3, 4, 5},
 		IntEs: []int{1, 2, 3, 4, 5},
 	},
+
+	{
+		Lists: []int{1, 9, 8, 6, 4, 3, 4, 5},
+		IntEs: []int{5},
+	},
 }
 
 //
@@ -32,7 +37,10 @@ func Test_upToDayUp(t *testing.T) {
 		node1 := structures.Ints2List(tests[k1].Lists)
 		node2 := structures.Ints2List(tests[k1].IntEs)
 		node3 := getIntersectionNode(node1, node2)
-		Travel(node3)
+		if node3 != nil {
+			fmt.Println(node3.Val)
+		}
+		// Travel(node3)
 
 	}
 }
@@ -49,6 +57,9 @@ func Travel(h *structures.ListNode) {
 	}
 }
 
+// 思路：题目没有很明确，这里姑且理解为链表中遇到相同值的节点为公共节点
+// 。 所以用了双指针 向后位移，做值比较
+
 func getIntersectionNode(headA, headB *structures.ListNode) *structures.ListNode {
 	// boundary check
 	if headA == nil || headB == nil {
@@ -58,10 +69,17 @@ func getIntersectionNode(headA, headB *structures.ListNode) *structures.ListNode
 	a := headA
 	b := headB
 
-	// if a & b have different len, then we will stop the loop after second iteration
 	for a != b {
-		// for the end of first iteration, we just reset the pointer to the head of another linkedlist
+		fmt.Printf("a = %v b = %v\n", a, b)
+		if a != nil && b != nil {
+			if a.Val == b.Val {
+				return a
+			}
+			// fmt.Println(a.Val, b.Val)
+
+		}
 		if a == nil {
+
 			a = headB
 		} else {
 			a = a.Next
@@ -72,11 +90,7 @@ func getIntersectionNode(headA, headB *structures.ListNode) *structures.ListNode
 		} else {
 			b = b.Next
 		}
-		fmt.Printf("a = %v b = %v\n", a, b)
-		if a != nil && b != nil {
-			fmt.Println(a.Val, b.Val)
 
-		}
 	}
 	return a
 }
