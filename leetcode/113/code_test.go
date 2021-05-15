@@ -69,9 +69,6 @@ func pathSum(root *structures.TreeNode, targetSum int) [][]int {
 	}
 	arrs = [][]int{}
 	FindPath(root, []int{}, targetSum)
-
-	// fmt.Println(arrs, 2222)
-
 	return arrs
 }
 
@@ -80,11 +77,15 @@ func FindPath(root *structures.TreeNode, arr []int, cur int) {
 		return
 		// return nil
 	}
-	cur -= root.Val
+	// fmt.Println(cur, root.Val)
 	arr = append(arr, root.Val)
+	cur -= root.Val
 	if cur == 0 && root.Left == nil && root.Right == nil {
-		arrs = append(arrs, arr)
-		arr = arr[:len(arr)-1]
+		// 深拷贝
+		arr2 := make([]int, len(arr))
+		copy(arr2, arr)
+		arrs = append(arrs, arr2)
+		// fmt.Println(arr2, arrs)
 
 	}
 	if root.Left != nil {

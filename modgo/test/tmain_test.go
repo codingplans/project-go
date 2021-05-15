@@ -18,8 +18,10 @@ func Test2TreeSoft(t *testing.T) {
 	// arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
 	arr := []int{4, 3, 5, 1, 2, 6, 7}
 
-	ts := arr[2 : len(arr)-1 : 7]
-	fmt.Println(len(ts), cap(ts), ts)
+	ts := []int{0, 0, 0, 1}
+	ss := copy(ts, arr)
+	fmt.Println(len(ts), cap(ts), arr, ts, ss)
+	fmt.Printf("%v,%p,%p,", ss, ts, arr)
 
 	node := &structures.TreeNode{Val: 4}
 	for v := range arr[:6] {
