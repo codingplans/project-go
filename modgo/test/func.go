@@ -42,3 +42,37 @@ func CreateTree(node *structures.TreeNode, v int) *structures.TreeNode {
 	}
 	return node
 }
+
+func BuildHeap(arr []int, lens int) {
+	for i := lens / 2; i >= 0; i-- {
+		Heapify(arr, i, lens)
+	}
+
+	lens--
+	for i := lens; i >= 0; i-- {
+		arr[0], arr[lens] = arr[lens], arr[0]
+		lens--
+		Heapify(arr, 0, lens)
+	}
+}
+
+func Heapify(arr []int, n, lens int) {
+	k := n
+	i := k*2 + 1
+	j := k*2 + 2
+
+	if i >= lens {
+		return
+	}
+	if i < lens && arr[i] > arr[k] {
+		k = i
+	}
+	if j < lens && arr[j] > arr[k] {
+		k = j
+	}
+	if n != k {
+		arr[n], arr[k] = arr[k], arr[n]
+		Heapify(arr, k, lens)
+	}
+
+}

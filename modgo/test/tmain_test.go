@@ -22,6 +22,16 @@ func TestChanV2(t *testing.T) {
 
 }
 
+// 堆排序小练
+func TestHeapSort(t *testing.T) {
+	arr := []int{4, 3, 5, 1, 2, 6, 7}
+	// arr := []int{3, 2, 1, 5, 6, 4}
+	fmt.Println(arr)
+
+	BuildHeap(arr, len(arr))
+	fmt.Println(arr)
+}
+
 // 随便练一下 二叉树排序 =》堆排序
 func Test2TreeSoft(t *testing.T) {
 	// arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
