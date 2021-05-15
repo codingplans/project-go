@@ -3,6 +3,7 @@ package _00_init_code
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 type test struct {
@@ -27,4 +28,19 @@ func Test_upToDayUp(t *testing.T) {
 		fmt.Println("结果：", pre)
 
 	}
+}
+
+func Test_Chan2(t *testing.T) {
+
+	ch := make(chan struct{}, 10)
+
+	fmt.Println(123)
+	go func() {
+		<-ch
+		fmt.Println(666)
+	}()
+
+	fmt.Println(456)
+	time.Sleep(10 * time.Second)
+
 }

@@ -13,6 +13,15 @@ import (
 	"time"
 )
 
+func TestChanV2(t *testing.T) {
+	ch := make(chan struct{}, 0)
+
+	fmt.Println(123)
+	<-ch
+	fmt.Println(456)
+
+}
+
 // 随便练一下 二叉树排序 =》堆排序
 func Test2TreeSoft(t *testing.T) {
 	// arr := []int{1, 2, 3, 4, 5, 6, 7, 8}

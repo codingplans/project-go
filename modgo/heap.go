@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"math"
 )
 
@@ -19,7 +18,7 @@ func main() {
 
 	ee, err := data.Min()
 	aa, err := data.DeleteMin()
-	log.Info(ee, err, data.Length(), aa, data.Length())
+	fmt.Println(ee, err, data.Length(), aa, data.Length())
 }
 
 // MinHeap构造方法
