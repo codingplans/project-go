@@ -76,3 +76,31 @@ func Heapify(arr []int, n, lens int) {
 	}
 
 }
+
+func QuickSoft(arr []int, start, end int) {
+
+	if start >= end {
+		return
+	}
+	l := start
+	r := end
+	// fmt.Println(start, end, 999)
+
+	for l < r {
+		for arr[r] >= arr[start] && l < r {
+			r--
+		}
+		for arr[l] <= arr[start] && l < r {
+			l++
+		}
+		if arr[l] != arr[r] {
+			arr[l], arr[r] = arr[r], arr[l]
+		}
+	}
+
+	arr[l], arr[start] = arr[start], arr[l]
+	// fmt.Println(l, start, r, end)
+
+	QuickSoft(arr, start, l)
+	QuickSoft(arr, l+1, end)
+}

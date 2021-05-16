@@ -22,6 +22,15 @@ func TestChanV2(t *testing.T) {
 
 }
 
+func TestQuickSoft(t *testing.T) {
+	arr := []int{4, 3, 5, 1, 2, 6, 33, 12, 1, 55, 3, 2, 111, 57, 7, 5}
+	// arr := []int{4, 3, 5, 1, 2, 6}
+
+	fmt.Println(arr)
+	QuickSoft(arr, 0, len(arr)-1)
+	fmt.Println(arr)
+}
+
 // 堆排序小练
 func TestHeapSort(t *testing.T) {
 	arr := []int{4, 3, 5, 1, 2, 6, 7}
