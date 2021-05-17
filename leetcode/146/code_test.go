@@ -3,7 +3,6 @@ package _00_init_code
 import (
 	"fmt"
 	"testing"
-	"time"
 )
 
 type test struct {
@@ -56,30 +55,140 @@ var tests = []test{}
 // 最多调用 3 * 104 次 get 和 put
 
 func Test_upToDayUp(t *testing.T) {
-	for k1 := range tests {
-		fmt.Println("初始化")
+	obj := Constructor(3)
+	obj.Put(1, 1)
+	obj.Put(2, 2)
+	obj.Put(3, 3)
+	MList2Ints(&obj)
 
-		for k := range tests[k1].IntEs {
-			fmt.Println(tests[k1].IntEs[k])
+	aa := obj.Get(4)
+	fmt.Println(aa)
+	obj.Put(4, 4)
+	aa = obj.Get(2)
+	fmt.Println(aa)
+	MList2Ints(&obj)
 
-		}
-		pre := 1
-		fmt.Println("结果：", pre)
+	// fmt.Printf("obj = %v\n", MList2Ints(&obj))
+	// obj.Put(1, 1)
+	// fmt.Printf("obj = %v\n", MList2Ints(&obj))
+	// obj.Put(2, 2)
+	// fmt.Printf("obj = %v\n", MList2Ints(&obj))
+	// param1 := obj.Get(1)
+	// fmt.Printf("param_1 = %v obj = %v\n", param1, MList2Ints(&obj))
+	// obj.Put(3, 3)
+	// fmt.Printf("obj = %v\n", MList2Ints(&obj))
+	// param1 = obj.Get(2)
+	// fmt.Printf("param_1 = %v obj = %v\n", param1, MList2Ints(&obj))
+	// obj.Put(4, 4)
+	// fmt.Printf("obj = %v\n", MList2Ints(&obj))
+	// param1 = obj.Get(1)
+	// fmt.Printf("param_1 = %v obj = %v\n", param1, MList2Ints(&obj))
+	// param1 = obj.Get(3)
+	// fmt.Printf("param_1 = %v obj = %v\n", param1, MList2Ints(&obj))
+	// param1 = obj.Get(4)
+	// fmt.Printf("param_1 = %v obj = %v\n", param1, MList2Ints(&obj))
+}
 
+type LRUCache struct {
+	buf        int
+	md         map[int]*ListNode
+	head, tail *ListNode
+}
+
+type ListNode struct {
+	prev, next *ListNode
+	val, key   int
+}
+
+func MList2Ints(node *LRUCache) int {
+	node.Travel()
+	return 0
+}
+
+func Constructor(capacity int) LRUCache {
+	md1 := make(map[int]*ListNode, capacity)
+	return LRUCache{buf: capacity, md: md1}
+}
+
+func (this *LRUCache) Get(key int) int {
+	if v, ok := this.md[key]; ok {
+		this.Remove(v)
+		this.Add(v)
+		return v.val
+	}
+
+	return -1
+}
+
+func (this *LRUCache) Put(key int, value int) {
+	if v, ok := this.md[key]; ok {
+		v.val = value
+		this.Remove(v)
+		this.Add(v)
+		return
+	} else {
+		n := &ListNode{val: value, key: key}
+		this.md[key] = n
+		this.Add(n)
+
+	}
+	if len(this.md) > this.buf {
+		delete(this.md, this.tail.key)
+		this.Remove(this.tail)
+	}
+
+}
+
+func (this *LRUCache) Travel() {
+	if this.head == nil {
+		return
+	}
+	a := this.head
+	if a != nil {
+		fmt.Println(a.val, 11)
+		a = a.next
+		// fmt.Println(a.val, 11)
+	}
+
+	for v := range this.md {
+		fmt.Println(this.md[v].val)
+	}
+
+}
+
+func (this *LRUCache) Add(node *ListNode) {
+	node.prev = nil
+	node.next = this.head
+	if this.head != nil {
+		this.head.prev = node
+	}
+	this.head = node
+	if this.tail == nil {
+		this.tail = node
+		this.tail.next = nil
 	}
 }
 
-func Test_Chan2(t *testing.T) {
+func (this *LRUCache) Remove(node *ListNode) {
+	if this.head == node {
+		this.head = node.next
+		node.next = nil
+		return
+	}
+	if this.tail == node {
+		this.tail = node.prev
+		node.prev.next = nil
+		node.prev = nil
+		return
+	}
 
-	ch := make(chan struct{}, 10)
-
-	fmt.Println(123)
-	go func() {
-		<-ch
-		fmt.Println(666)
-	}()
-
-	fmt.Println(456)
-	time.Sleep(10 * time.Second)
-
+	node.prev.next = node.next
+	node.next.prev = node.prev
 }
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * obj := Constructor(capacity);
+ * param_1 := obj.Get(key);
+ * obj.Put(key,value);
+ */
