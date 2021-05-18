@@ -17,6 +17,8 @@ var tests = []test{
 	{S: "([]}"},
 	{S: "([)]"},
 	{S: "({}{()})"},
+	{S: "([}}])"},
+	{S: "()[]{{}}[]()"},
 }
 
 // 20. 有效的括号
@@ -75,18 +77,20 @@ func isValid(s string) bool {
 	md['('] = 41
 
 	stack := []byte{}
-	// fmt.Println(s, 9999)
+	flag := 0
 	for v := range s {
 		l := len(stack)
 		if l > 0 {
-			if stack[l-1] == s[v] {
+			if stack[l-1] == s[v] && flag == 0 {
 				stack = stack[:l-1]
 				continue
 			}
 		}
 		if v1, ok := md[s[v]]; ok {
 			stack = append(stack, v1)
+			flag = 0
 		} else {
+			flag = 1
 			stack = append(stack, s[v])
 		}
 
