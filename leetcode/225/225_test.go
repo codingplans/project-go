@@ -22,57 +22,66 @@ import "testing"
 // 链接：https://leetcode-cn.com/problems/implement-stack-using-queues
 // 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 
-func Test_225(t *testing.T) {
+func Test_232(t *testing.T) {
 	obj := Constructor()
 	obj.Push(1)
 	obj.Push(2)
-	param_3 := obj.Top()
-	println(param_3)
+	obj.Push(3)
+	obj.Push(4)
+	obj.Push(5)
 	param_2 := obj.Pop()
 	println(param_2)
 
 	param_1 := obj.Pop()
 	println(param_1)
+	param_3 := obj.Peek()
+	println(param_3)
 
 	param_4 := obj.Empty()
 	println(param_4)
 
 }
 
-type MyStack struct {
-	queue1, queue2 []int
+// 待完成
+type MyQueue struct {
+	Q1, Q2 []int
 }
 
 /** Initialize your data structure here. */
-func Constructor() (s MyStack) {
-	return
+func Constructor() MyQueue {
+	return MyQueue{Q1: []int{}, Q2: []int{}}
 }
 
-/** Push element x onto stack. */
-func (s *MyStack) Push(x int) {
-	// 先添加到队列 2 里，遍历队1到队2里
-	s.queue2 = append(s.queue2, x)
-	for len(s.queue1) > 0 {
-		s.queue2 = append(s.queue2, s.queue1[0])
-		s.queue1 = s.queue1[1:]
+/** Push element x to the back of queue. */
+func (this *MyQueue) Push(x int) {
+	this.Q2 = append(this.Q2, x)
+	for len(this.Q1) > 0 {
+		this.Q2 = append(this.Q2, this.Q1[0])
+		this.Q1 = this.Q1[1:]
 	}
-	// 然后置换队1
-	s.queue1, s.queue2 = s.queue2, s.queue1
+	this.Q1, this.Q2 = this.Q2, this.Q1
 }
 
-/** Removes the element on top of the stack and returns that element. */
-func (s *MyStack) Pop() int {
-	v := s.queue1[0]
-	s.queue1 = s.queue1[1:]
-	return v
+/** Removes the element from in front of queue and returns that element. */
+func (this *MyQueue) Pop() int {
+	a := this.Q1[0]
+	this.Q1 = this.Q1[1:]
+	return a
 }
 
-/** Get the top element. */
-func (s *MyStack) Top() int {
-	return s.queue1[0]
+/** Get the front element. */
+func (this *MyQueue) Peek() int {
+	if len(this.Q1) == 0 {
+		return 0
+	}
+	return this.Q1[0]
 }
 
-/** Returns whether the stack is empty. */
-func (s *MyStack) Empty() bool {
-	return len(s.queue1) == 0
+/** Returns whether the queue is empty. */
+func (this *MyQueue) Empty() bool {
+	if len(this.Q1) == 0 {
+		return true
+
+	}
+	return false
 }

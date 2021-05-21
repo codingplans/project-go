@@ -25,8 +25,8 @@ type test struct {
 }
 
 var tests = []test{
-	{[]int{5, 4, 3, 2, 1}},
 	{[]int{1, 2, 3, 4, 5}},
+	{[]int{5, 4, 3, 2, 1}},
 	{[]int{-2, 0, 1, 1, 2}},
 	{[]int{0, 0, 0}},
 	{[]int{0, 0, 0, 0}},
@@ -45,7 +45,8 @@ func Test_upToDayUp(t *testing.T) {
 		}
 		pre = pre.Next
 
-		reorderList(pre)
+		// reorderList(pre)
+		reorderListV2(pre)
 		Traverse(pre)
 
 	}
@@ -158,8 +159,8 @@ func reorderList(head *ListNode) {
 	preMiddle := p1
 	preCurrent := p1.Next
 
-	fmt.Println("bbbbbbb")
 	Traverse(preCurrent)
+	fmt.Println("bbbbbbb")
 	for preCurrent.Next != nil {
 		current := preCurrent.Next
 		preCurrent.Next = current.Next
@@ -179,31 +180,41 @@ func reorderList(head *ListNode) {
 		p2 = preMiddle.Next
 	}
 }
+
 func reorderListV2(head *ListNode) {
+
 	if head == nil {
 		return
 	}
+	// 寻找中间结点
+	p1 := head
+	p2 := head
 	// 先找到中部节点
-	mid := middleNode(head)
-	l1 := head
-	// l3 := head
-	fmt.Println("遍历 1 号")
-	Traverse(l1)
-	p := &ListNode{}
-	l2 := p
-	l2.Next = mid.Next
-	l2 = reverseList(l2.Next)
-	fmt.Println("遍历 2 号")
-	Traverse(l2)
-	// panic(2)
-	// Traverse(l3)
-	fmt.Println("遍历 1 号")
-	Traverse(l1)
-	// Traverse(head)
+	p1 = middleNode(head)
 
-	// mid.Next = nil
+	// 头结点
+	preMiddle := p1
+	preCurrent := p1.Next
 
-	l3 := mergeList(l1, l2)
-	fmt.Println("遍历 结果")
-	Traverse(l3)
+	Traverse(preCurrent)
+	fmt.Println("bbbbbbb")
+	for preCurrent.Next != nil {
+		current := preCurrent.Next
+		preCurrent.Next = current.Next
+		current.Next = preMiddle.Next
+		preMiddle.Next = current
+	}
+
+	// 重新拼接链表  1->2->3->6->5->4 to 1->6->2->5->3->4
+	p1 = head
+	p2 = preMiddle.Next
+	for p1 != preMiddle {
+		// 进一位
+		preMiddle.Next = p2.Next
+		p2.Next = p1.Next
+		p1.Next = p2
+		p1 = p2.Next
+		p2 = preMiddle.Next
+	}
+
 }

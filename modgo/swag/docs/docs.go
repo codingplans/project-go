@@ -114,6 +114,47 @@ var doc = `{
                 }
             }
         },
+        "/mig/pig/task/award_video": {
+            "post": {
+                "description": "AwardVideo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商业化"
+                ],
+                "summary": "看视频奖励",
+                "parameters": [
+                    {
+                        "description": "必填参数",
+                        "name": "请求体",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardVideo"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "校验 Auth-Token ",
+                        "name": "Auth-Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.ParamAwardVideoResp"
+                        }
+                    }
+                }
+            }
+        },
         "/mig/pig/task/task_do": {
             "post": {
                 "description": "TaskDo",
@@ -221,6 +262,10 @@ var doc = `{
                 },
                 "reward": {
                     "description": "奖励数额",
+                    "type": "integer"
+                },
+                "reward_type": {
+                    "description": "奖励类型1: 奖励现金  2: 奖励提现券",
                     "type": "integer"
                 }
             }
@@ -337,6 +382,27 @@ var doc = `{
                 },
                 "weight": {
                     "description": "排序权重 从大到小",
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamAwardVideo": {
+            "type": "object",
+            "properties": {
+                "award_name": {
+                    "description": "奖励类型",
+                    "type": "string"
+                },
+                "is_rand": {
+                    "description": "是否随机 1 是 2 否",
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.ParamAwardVideoResp": {
+            "type": "object",
+            "properties": {
+                "award_coins": {
                     "type": "integer"
                 }
             }

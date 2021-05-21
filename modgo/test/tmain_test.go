@@ -13,12 +13,100 @@ import (
 	"time"
 )
 
-func TestChanV2(t *testing.T) {
-	ch := make(chan struct{}, 0)
+type S struct {
+	cl     chan struct{}
+	num    int
+	notity chan int
+	wg     sync.WaitGroup
+	sync.Mutex
+}
 
-	fmt.Println(123)
-	<-ch
-	fmt.Println(456)
+func TestRand(t *testing.T) {
+	a := 18000
+	// a := 8000
+
+	println(a | 10)
+	println(a & 10)
+
+}
+
+func TestChanV2(t *testing.T) {
+	// ch := make(chan struct{}, 0)
+
+	ob := &S{
+		cl:     make(chan struct{}),
+		notity: make(chan int, 1),
+	}
+	ob.wg.Add(1)
+
+	// 写线程
+	go func() {
+		i := 0
+		for {
+			select {
+			case <-ob.cl:
+				ob.wg.Done()
+				return
+			case ob.notity <- i:
+
+			}
+			ob.num++
+			i++
+			time.Sleep(time.Second)
+		}
+	}()
+
+	// 写线程
+	go func() {
+		i := 500
+
+		for {
+			select {
+			case <-ob.cl:
+				ob.wg.Done()
+				return
+			case ob.notity <- i:
+
+			}
+			ob.num--
+			i--
+			time.Sleep(time.Second)
+		}
+	}()
+
+	// 读线程
+	go func() {
+		for v := range ob.notity {
+			fmt.Println(v, ob.num)
+		}
+		// for {
+		// 	select {
+		// 	case v, ok := <-ob.notity:
+		// 		if ok {
+		// 			fmt.Println(v, ob.num)
+		// 		} else {
+		// 			fmt.Println(999)
+		// 			return
+		// 		}
+		// 	case <-ob.cl:
+		// 		return
+		// 		// break
+		// 	}
+		// }
+	}()
+
+	go func() {
+		time.Sleep(time.Second * 10)
+		ob.wg.Add(1)
+		close(ob.cl)
+	}()
+
+	println(1222)
+	ob.wg.Wait()
+	println(333)
+
+	return
+	// time.Sleep(time.Hour)
 
 }
 
