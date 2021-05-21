@@ -21,13 +21,35 @@ type S struct {
 	sync.Mutex
 }
 
-func TestRand(t *testing.T) {
-	a := 18000
-	// a := 8000
+func TestDddd(t *testing.T) {
+	awardCoin := int64(8000)
+	str := fmt.Sprintf("%d", awardCoin)
+	str = str[:1]
+	awardCoin, _ = strconv.ParseInt(str, 10, 64)
+	awardCoin = awardCoin * 100
+	println(awardCoin)
+}
 
-	println(a | 10)
-	println(a & 10)
+// 小练归并排序
+func TestMergeArr(t *testing.T) {
+	arr1 := []int{1, 3, 5, 7, 9}
+	arr2 := []int{2, 4, 6, 8, 10}
+	i, j := 0, 0
+	for j < len(arr2) && i < len(arr1) {
+		if arr1[i] <= arr2[j] {
+			i++
+		} else {
+			arr1 = append(arr1[:i], append([]int{arr2[j]}, arr1[i:]...)...)
+			i++
+			j++
+		}
+	}
+	if j < len(arr2) {
+		arr1 = append(arr1, arr2[j])
+		j++
+	}
 
+	fmt.Println(arr1)
 }
 
 func TestChanV2(t *testing.T) {
