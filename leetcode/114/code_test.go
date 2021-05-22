@@ -50,7 +50,7 @@ func Test_upToDayUp(t *testing.T) {
 		fmt.Println(tests[k1].IntEs)
 		t1 := structures.Ints2TreeNode(tests[k1].IntEs)
 		Traval(t1)
-
+		Bfs(t1)
 		flatten(t1)
 		Traval(t1)
 		// Bfs(t1)

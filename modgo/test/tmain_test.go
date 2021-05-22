@@ -23,25 +23,67 @@ type S struct {
 
 // 最小路径和
 func minPathSum(matrix [][]int) int {
-	// write code here
-	sum := matrix[0][0]
-
 	n := len(matrix)
 	m := len(matrix[0])
 
-	for i := 0; i < n; i++ {
-		for j := 0; j < m; j++ {
-			sum += min(matrix[i+1][j], matrix[i][j+1])
+	dp := make([][]int, n)
+	for k := range matrix {
+		if dp[k] == nil {
+			dp[k] = make([]int, m)
+			dp[0][0] = matrix[0][0]
+		}
+		if k < 1 {
+			continue
+		}
+		dp[k][0] = matrix[k][0] + dp[k-1][0]
+	}
+
+	for k := range matrix[0] {
+		if k > 0 {
+			dp[0][k] = matrix[0][k] + dp[0][k-1]
 		}
 	}
 
-	return sum
+	for i := 1; i < n; i++ {
+		for j := 1; j < m; j++ {
+			dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + matrix[i][j]
+		}
+	}
+	fmt.Println(matrix)
+	fmt.Println(dp)
+	return dp[n-1][m-1]
+}
+
+// 最小路径和 用原来数组不需要创建
+func minPathSumV2(matrix [][]int) int {
+	n := len(matrix)
+	m := len(matrix[0])
+	for i := 0; i < n; i++ {
+		for j := 0; j < m; j++ {
+			if j == 0 {
+				if i > 0 {
+					matrix[i][j] += matrix[i-1][j]
+				}
+				continue
+			}
+			if i == 0 {
+				matrix[i][j] += matrix[i][j-1]
+				continue
+			}
+			matrix[i][j] = min(matrix[i-1][j], matrix[i][j-1]) + matrix[i][j]
+		}
+	}
+	fmt.Println(matrix)
+	return matrix[n-1][m-1]
 }
 
 func TestLeetcode(t *testing.T) {
 
 	// k := getLongestPalindrome("ab1234321abcvbnmmnbvcba1", 24)
-	k := minPathSum([][]int{[]int{1, 3, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 8, 4, 0}})
+	// k := minPathSum([][]int{[]int{1, 3, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 8, 4, 0}})
+	k := minPathSumV2([][]int{[]int{1, 3, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 8, 4, 0}})
+	// k := minPathSum([][]int{[]int{1, 1, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 1, 1, 0}})
+	// k := minPathSumV2([][]int{[]int{1, 1, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 1, 1, 0}})
 
 	println(k)
 }
