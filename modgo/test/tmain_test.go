@@ -21,6 +21,37 @@ type S struct {
 	sync.Mutex
 }
 
+func TestCase(t *testing.T) {
+	arr := []int{1, 2, 3, 4, 5}
+	// merge([]int{1, 2, 4, 6, 8}, 5, []int{1, 3, 5, 7, 9}, 5)
+	ccc := make([]int, 100)
+	merge(ccc, 0, []int{1, 3, 5, 7, 9}, 5)
+	fmt.Println(arr[:5])
+}
+
+// 归并排序 不用额外空间，改变原来数组
+func merge(A []int, m int, B []int, n int) {
+	var a = m - 1
+	var b = n - 1
+	var i int
+	for i = m + n - 1; a >= 0 && b >= 0; i-- {
+		if A[a] >= B[b] {
+			A[i] = A[a]
+			a--
+		} else {
+			A[i] = B[b]
+			b--
+		}
+	}
+	if a < 0 {
+		for ; i >= 0; i-- {
+			A[i] = B[b]
+			b--
+		}
+	}
+	fmt.Println(A)
+}
+
 // 最小路径和
 func minPathSum(matrix [][]int) int {
 	n := len(matrix)
@@ -91,6 +122,7 @@ func getLongestPalindrome(A string, n int) int {
 
 	k := 0
 	for i := 0; i < n; i++ {
+		// 两种情况： 一种是 aba  一种是：aa 所以用 2 个 for 循环
 		for j := 0; i-j >= 0 && j+i < n; j++ {
 			if A[i-j] != A[i+j] {
 				break
