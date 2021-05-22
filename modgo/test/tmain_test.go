@@ -22,11 +22,257 @@ type S struct {
 }
 
 func TestCase(t *testing.T) {
-	arr := []int{1, 2, 3, 4, 5}
-	// merge([]int{1, 2, 4, 6, 8}, 5, []int{1, 3, 5, 7, 9}, 5)
-	ccc := make([]int, 100)
-	merge(ccc, 0, []int{1, 3, 5, 7, 9}, 5)
-	fmt.Println(arr[:5])
+
+	x := 24
+	a := 14
+	b := 10
+
+	println(a|b, x^a^b)
+	fmt.Printf("%b \n", x)
+	fmt.Printf("%b \n", a)
+	fmt.Printf("%b \n", b)
+	fmt.Printf("%b \n", a&b)
+
+}
+
+func TestTwoSum(t *testing.T) {
+	res := twoSum([]int{20, 70, 20, 150}, 220)
+	t.Log(res)
+}
+
+func TestMaxLeng(t *testing.T) {
+	// t.Log(maxLength([]int{2, 3, 4, 1, 5}))
+	// t.Log(maxLength([]int{2, 2, 3, 4, 1, 5}))
+	t.Log(maxLength([]int{1, 1, 1, 2, 2, 3, 4, 5, 6, 7, 7, 8, 9}))
+}
+
+func TestIsValid(t *testing.T) {
+	// t.Log(isValid("[](){}"))
+	// t.Log(isValid("[]({}[]{{{}}}){}"))
+	// t.Log(isValid("{[}]"))
+	// t.Log(isValid("]"))
+	// t.Log(Fibonacci(4))
+	// t.Log(FibonacciV2(4))
+	// t.Log(Fibonacci(10))
+	// t.Log(FibonacciV2(30))
+	// t.Log(search([]int{1, 2, 2, 3, 3, 6, 8, 8, 8, 9, 9, 9}, 6))
+	// t.Log(search([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 6))
+	// t.Log(search([]int{1, 1, 1, 1, 6, 6, 6, 6, 6, 7, 8, 9, 10, 10, 101}, 101))
+	// t.Log(search([]int{-2, 1, 2}, -2))
+	t.Log(LRU([][]int{{1, 1, 1}, {1, 2, 2}, {1, 3, 2}, {2, 1}, {1, 4, 4}, {2, 2}}, 3))
+}
+
+type Lru struct {
+	md   map[int]*node
+	buf  int
+	max  int
+	head *node
+	tail *node
+}
+
+type node struct {
+	pre, next *node
+	val, key  int
+}
+
+func LRU(operators [][]int, k int) []int {
+	// write code here
+	lru := initLru(k)
+	res := []int{}
+	for i := range operators {
+		if operators[i][0] == 1 {
+			lru.set(operators[i][1], operators[i][2])
+
+		} else {
+			res = append(res, lru.get(operators[i][1]))
+		}
+	}
+	return res
+}
+func initLru(k int) Lru {
+	return Lru{
+		md:  make(map[int]*node),
+		max: k,
+	}
+}
+
+func (this *Lru) get(k int) int {
+	if v, ok := this.md[k]; ok {
+		this.remove(v)
+		this.add(v)
+		return v.val
+	}
+	return -1
+}
+func (this *Lru) set(k, x int) {
+	if v, ok := this.md[k]; ok {
+		this.remove(v)
+		this.add(v)
+		return
+	} else {
+		n := &node{val: x, key: k}
+		this.md[k] = n
+		this.add(n)
+
+	}
+
+	if len(this.md) > this.max {
+		delete(this.md, this.tail.key)
+		this.remove(this.tail)
+	}
+
+}
+
+func (this *Lru) remove(n *node) {
+	if this.head == n {
+		this.head = n.next
+		this.head.pre = nil
+		return
+	}
+
+	if this.tail == n {
+		this.tail = n.pre
+		n.pre.next = nil
+		n.pre = nil
+		return
+
+	}
+
+	n.pre.next = n.next
+	n.next.pre = n.pre
+
+	return
+
+}
+
+func (this *Lru) add(n *node) {
+	n.next = this.head
+	if this.head != nil {
+		this.head.pre = n
+	}
+	this.head = n
+	if this.tail == nil {
+		this.tail = n
+		this.tail.next = nil
+	}
+
+	return
+}
+
+func search(nums []int, target int) int {
+	// write code here
+	l := len(nums) - 1
+	i := 0
+	mid := 0
+	for i <= l {
+		mid = (i + l) / 2
+		// fmt.Println(mid, i, l)
+		if nums[mid] == target {
+			for mid > 1 && nums[mid-1] == target {
+				mid--
+			}
+			return mid
+		}
+
+		if nums[mid] < target {
+			i = mid + 1
+		} else {
+			l = mid - 1
+
+		}
+	}
+
+	return -1
+}
+
+func FibonacciV2(n int) int {
+
+	if n > 40 || n < 0 {
+		return n
+	}
+
+	arr := [40]int{}
+	arr[0] = 0
+	arr[1] = 1
+
+	for i := 2; i <= n; i++ {
+		arr[i] = arr[i-1] + arr[i-2]
+	}
+	return arr[n]
+
+}
+func Fibonacci(n int) int {
+	if n >= 2 {
+		return Fibonacci(n-1) + Fibonacci(n-2)
+	}
+	if n == 1 {
+		return 1
+	}
+	if n == 0 {
+		return 0
+	}
+	return 0
+	// write code here
+}
+
+func isValid(s string) bool {
+	mp := make(map[uint8]uint8, 3)
+	mp['['] = ']'
+	mp['{'] = '}'
+	mp['('] = ')'
+	stack := make([]uint8, 0)
+
+	for i := range s {
+		if v, ok := mp[s[i]]; ok {
+			stack = append(stack, v)
+		} else {
+			if len(stack) > 0 && stack[len(stack)-1] == s[i] {
+				stack = stack[:len(stack)-1]
+			} else {
+				return false
+			}
+		}
+		fmt.Println(stack)
+	}
+
+	return len(stack) == 0
+}
+
+func maxLength(arr []int) int {
+	long, i, r := 0, 0, 0
+	l := len(arr)
+	as := [256]byte{}
+	for i < l {
+		if r == l {
+			return long
+		}
+		if as[arr[r]] == 0 {
+			as[arr[r]]++
+			r++
+		} else {
+			as[arr[i]]--
+			i++
+		}
+		long = max(long, r-i)
+		fmt.Println(i, r, long)
+	}
+
+	return long
+}
+func twoSum(numbers []int, target int) []int {
+
+	l := len(numbers)
+	for k := range numbers {
+		for j := 1; j < l; j++ {
+			if k != j && target == numbers[k]+numbers[j] {
+				return []int{k + 1, j + 1}
+			}
+		}
+
+	}
+	return []int{}
+
+	// write code here
 }
 
 // 归并排序 不用额外空间，改变原来数组
