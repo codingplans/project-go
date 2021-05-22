@@ -21,6 +21,46 @@ func Travel(node *structures.TreeNode) {
 
 }
 
+func TravelList(node *structures.ListNode) {
+	l := node
+	if node == nil {
+		return
+	}
+	for l != nil {
+		fmt.Println(l.Val)
+		l = l.Next
+	}
+
+}
+
+// 翻转链表
+func Reverse(pHead *structures.ListNode) *structures.ListNode {
+	m := pHead
+	// 方法一 ：最好理解
+	var newList *structures.ListNode
+	for m != nil {
+		nt := m.Next
+		m.Next = newList
+		newList = m
+		m = nt
+		TravelList(newList)
+	}
+
+	// 方法二：
+	// var pnh *structures.ListNode
+	// for m != nil {
+	// 	newList = m
+	// 	m = m.Next
+	// 	TravelList(newList)
+	//
+	// 	newList.Next = pnh
+	// 	pnh = newList
+	//
+	// 	TravelList(pnh)
+	// }
+	return newList
+}
+
 // 中序二叉树
 func CreateTree(node *structures.TreeNode, v int) *structures.TreeNode {
 	if node == nil {
