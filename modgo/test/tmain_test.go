@@ -21,13 +21,62 @@ type S struct {
 	sync.Mutex
 }
 
-func TestDddd(t *testing.T) {
-	awardCoin := int64(8000)
-	str := fmt.Sprintf("%d", awardCoin)
-	str = str[:1]
-	awardCoin, _ = strconv.ParseInt(str, 10, 64)
-	awardCoin = awardCoin * 100
-	println(awardCoin)
+// 最小路径和
+func minPathSum(matrix [][]int) int {
+	// write code here
+	sum := matrix[0][0]
+
+	n := len(matrix)
+	m := len(matrix[0])
+
+	for i := 0; i < n; i++ {
+		for j := 0; j < m; j++ {
+			sum += min(matrix[i+1][j], matrix[i][j+1])
+		}
+	}
+
+	return sum
+}
+
+func TestLeetcode(t *testing.T) {
+
+	// k := getLongestPalindrome("ab1234321abcvbnmmnbvcba1", 24)
+	k := minPathSum([][]int{[]int{1, 3, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 8, 4, 0}})
+
+	println(k)
+}
+func getLongestPalindrome(A string, n int) int {
+
+	k := 0
+	for i := 0; i < n; i++ {
+		for j := 0; i-j >= 0 && j+i < n; j++ {
+			if A[i-j] != A[i+j] {
+				break
+			}
+			k = max(k, 2*j+1)
+
+		}
+		for j := 0; i-j >= 0 && j+i+1 < n; j++ {
+			if A[i-j] != A[i+j+1] {
+				break
+			}
+			k = max(k, 2*(j+1))
+		}
+	}
+	return max(k, 0)
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // 小练归并排序
