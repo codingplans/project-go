@@ -21,13 +21,58 @@ type S struct {
 	sync.Mutex
 }
 
+func TestPractice(t *testing.T) {
+	t.Log(smallestDistancePair([]int{1, 2, 3, 4, 5, 67, 0}, 2))
+	t.Log(smallestDistancePair([]int{2, 2, 0, 1, 0, 1, 2, 0, 2, 1, 1, 1, 1, 0, 1, 2, 1, 1, 1, 2, 1, 2, 1, 0, 1, 0, 1, 1, 0, 2, 1, 0, 0, 2, 2, 1, 1, 1, 2, 2, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 1, 2, 2, 2, 2, 2, 2, 1, 1, 0, 1, 0, 1, 1, 1, 1, 2, 1, 1, 2, 2, 2, 0, 1, 2, 2, 2, 0, 0, 2, 0, 1, 2, 2, 1, 2, 0, 2, 1, 0, 0, 2, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 2, 0, 0, 1, 2, 2, 2, 2, 2, 2, 0, 2, 1, 1, 1, 1, 1, 2, 0, 2, 2, 2, 0, 2, 0, 1, 0, 1, 2, 1, 0, 1, 2, 1, 2, 1, 2, 0, 2, 0, 1, 0, 1, 2, 2, 1, 2, 2, 1, 0, 0, 1, 2, 1, 1, 0, 0, 2, 1, 0, 2, 1, 2, 0, 0, 1, 0, 2, 0, 1, 2, 2, 2, 1, 2, 0, 2, 2, 2, 2, 2, 0, 0, 0, 1, 0, 2, 0, 0, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 2, 0, 1, 1, 1, 2, 1, 1, 2, 1, 1, 0, 1, 0, 1, 1, 1, 2, 0, 0, 2, 2, 2, 1, 1, 1, 2, 2, 2, 0, 1, 0, 0, 0, 0, 1, 0, 2, 2, 0, 2, 2, 1, 1, 1, 2, 1, 1, 1, 0, 2, 0, 2, 1, 1, 2, 2, 1, 1, 2, 0, 0, 2, 1, 2, 0, 1, 1, 1, 2, 2, 0, 1, 2, 2, 2, 1, 1, 0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 2, 2, 2, 0, 1, 1, 0, 1, 0, 1, 2, 2, 2, 1, 1, 0, 1, 0, 0, 2, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 1, 2, 2, 1, 2, 2, 0, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 2, 2, 2, 2, 0, 0, 1, 0, 0, 2, 2, 0, 1, 0, 0, 0, 2, 1, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 0, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 2, 0, 1, 1, 2, 1, 0, 0, 0, 2, 2, 1, 2, 2, 0, 0, 1, 0, 1, 0, 0, 1, 2, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 1, 2, 1, 1, 1, 2, 2, 0, 2, 1, 0, 2, 1, 0, 2, 1, 1, 0, 2, 0, 2, 1, 0, 0, 0, 1, 1, 0, 1, 0, 2, 2, 2, 1, 2, 0, 1, 2, 0, 0, 0, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 0, 1, 0, 0, 1}, 62500))
+	// t.Log(mergeappend([]int{1, 2, 3, 4, 5, 67}, 22))
+}
+
+func smallestDistancePair(nums []int, k int) int {
+	keys := make(map[int]int, 0)
+	arr := make([]int, 0)
+	l := len(nums)
+	for i := range nums {
+		for j := i + 1; j < l; j++ {
+			diff := nums[j] - nums[i]
+			if diff < 0 {
+				diff = (^diff + 1)
+			}
+			keys[diff]++
+			// arr = mergeappend(arr, diff)
+
+		}
+	}
+	fmt.Println(arr, k, keys)
+	for m := range keys {
+		arr = mergeappend(arr, m)
+	}
+
+	if len(arr) > 0 {
+
+	}
+
+	return 0
+}
+
+func mergeappend(arr []int, r int) []int {
+	for i := 0; i < len(arr); i++ {
+		if arr[i] >= r {
+			arr = append(arr[:i], append([]int{r}, arr[i:]...)...)
+			return arr
+		}
+	}
+	arr = append(arr, r)
+
+	return arr
+}
+
 func TestCase(t *testing.T) {
 
 	x := 24
 	a := 14
-	b := 10
-
-	println(a|b, x^a^b)
+	b := -10
+	// s:=b^b
+	println(a|b, x^a^b, (^b + 1))
 	fmt.Printf("%b \n", x)
 	fmt.Printf("%b \n", a)
 	fmt.Printf("%b \n", b)
@@ -422,7 +467,6 @@ func TestMergeArr(t *testing.T) {
 }
 
 func TestChanV2(t *testing.T) {
-	// ch := make(chan struct{}, 0)
 
 	ob := &S{
 		cl:     make(chan struct{}),
@@ -432,6 +476,8 @@ func TestChanV2(t *testing.T) {
 
 	// 写线程
 	go func() {
+		ob.wg.Add(1)
+
 		i := 0
 		for {
 			select {
@@ -449,6 +495,8 @@ func TestChanV2(t *testing.T) {
 
 	// 写线程
 	go func() {
+		ob.wg.Add(1)
+
 		i := 500
 
 		for {
@@ -465,10 +513,31 @@ func TestChanV2(t *testing.T) {
 		}
 	}()
 
+	// 写线程
+	go func() {
+		ob.wg.Add(1)
+
+		i := 200
+
+		for {
+			select {
+			case <-ob.cl:
+				ob.wg.Done()
+				fmt.Println("推出 chan")
+				return
+			case ob.notity <- i:
+
+			}
+			ob.num--
+			i--
+			time.Sleep(time.Second)
+		}
+	}()
+
 	// 读线程
 	go func() {
 		for v := range ob.notity {
-			fmt.Println(v, ob.num)
+			fmt.Println("读取", v, ob.num)
 		}
 		// for {
 		// 	select {
@@ -481,14 +550,13 @@ func TestChanV2(t *testing.T) {
 		// 		}
 		// 	case <-ob.cl:
 		// 		return
-		// 		// break
 		// 	}
 		// }
 	}()
 
 	go func() {
 		time.Sleep(time.Second * 10)
-		ob.wg.Add(1)
+		ob.wg.Done()
 		close(ob.cl)
 	}()
 
@@ -496,8 +564,8 @@ func TestChanV2(t *testing.T) {
 	ob.wg.Wait()
 	println(333)
 
+	time.Sleep(time.Hour)
 	return
-	// time.Sleep(time.Hour)
 
 }
 
@@ -597,7 +665,7 @@ func TestChanNoBuf(t *testing.T) {
 	}()
 
 	ww := sync.WaitGroup{}
-	ww.Add(10)
+	// ww.Add(10)
 	go func() {
 		for {
 			time.Sleep(10 * time.Second)
