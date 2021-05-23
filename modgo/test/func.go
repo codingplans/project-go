@@ -84,12 +84,12 @@ func CreateTree(node *structures.TreeNode, v int) *structures.TreeNode {
 }
 
 func BuildHeap(arr []int, lens int) {
-	for i := lens / 2; i >= 0; i-- {
+	for i := (lens - 1) / 2; i >= 0; i-- {
 		Heapify(arr, i, lens)
 	}
 
 	lens--
-	for i := lens; i >= 0; i-- {
+	for i := lens; i >= 1; i-- {
 		arr[0], arr[lens] = arr[lens], arr[0]
 		lens--
 		Heapify(arr, 0, lens)
@@ -97,24 +97,39 @@ func BuildHeap(arr []int, lens int) {
 }
 
 func Heapify(arr []int, n, lens int) {
-	k := n
-	i := k*2 + 1
-	j := k*2 + 2
+	// k := n
+	// i := k*2 + 1
+	// j := k*2 + 2
+	//
+	// if i >= lens {
+	// 	return
+	// }
+	// if i < lens && arr[i] > arr[k] {
+	// 	k = i
+	// }
+	// if j < lens && arr[j] > arr[k] {
+	// 	k = j
+	// }
+	// if n != k {
+	// 	arr[n], arr[k] = arr[k], arr[n]
+	// 	Heapify(arr, k, lens)
+	// }
 
-	if i >= lens {
-		return
-	}
-	if i < lens && arr[i] > arr[k] {
-		k = i
-	}
-	if j < lens && arr[j] > arr[k] {
-		k = j
-	}
-	if n != k {
-		arr[n], arr[k] = arr[k], arr[n]
-		Heapify(arr, k, lens)
-	}
+	for {
+		i := 2 * n
+		if i > lens { // 保证该节点是非叶子节点
+			break
+		}
+		if i < lens && arr[i+1] > arr[i] { // 选择较大的子节点
+			i++
+		}
+		if arr[n] >= arr[i] { // 没下沉到底就构造好堆了
+			break
+		}
+		arr[n], arr[i] = arr[i], arr[n]
 
+		n = i
+	}
 }
 
 func QuickSoft(arr []int, start, end int) {
