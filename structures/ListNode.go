@@ -83,7 +83,7 @@ func Ints2ListWithCycle(nums []int, pos int) *ListNode {
 
 func Travel(head *ListNode) {
 	L := head
-	if L != nil {
+	for L != nil {
 		fmt.Println(L.Val)
 		L = L.Next
 	}
