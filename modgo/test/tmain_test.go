@@ -30,6 +30,9 @@ func TestPractice(t *testing.T) {
 	// xRuntime()
 	// HeapSoft([]int{1, 11, 2, 44, 3, 4, 55, 5, 67})
 	// HeapSoft([]int{1, 3, 2, 5, 4, 7, 6, 9, 8, 0})
+
+	time.Sleep(time.Hour)
+
 }
 
 func HeapSoft(arr []int) {
