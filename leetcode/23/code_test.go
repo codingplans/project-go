@@ -71,11 +71,63 @@ func mergeKLists(lists []*structures.ListNode) *structures.ListNode {
 	arr2 := []int{2, 3, 5, 7, 9, 98}
 	l1 := structures.Ints2List(arr1)
 	l2 := structures.Ints2List(arr2)
-
-	merge2(l1, l2)
+	l3 := mergeV2(l1, l2)
+	// l3 := merge(l1, l2)
 	Travel(l1)
+	Travel(l3)
+	return l3
+}
+
+func mergeV2(node1, node2 *structures.ListNode) *structures.ListNode {
+	head := &structures.ListNode{}
+	p := head.Next
+
+	for node1 != nil && node2 != nil {
+		if node1.Val <= node2.Val {
+			p = node1
+			node1 = node1.Next
+		} else {
+			p = node2
+			node2 = node2.Next
+		}
+		p = p.Next
+	}
+	Travel(head)
+
+	for node1 != nil {
+		p = node1
+		p = p.Next
+		node1 = node1.Next
+	}
+
+	for node2 != nil {
+		p = node2
+		p = p.Next
+		node2 = node2.Next
+	}
+
+	Travel(head)
 
 	return nil
+
+}
+
+func merge(node1, node2 *structures.ListNode) *structures.ListNode {
+	if node1 == nil {
+		return node2
+	}
+
+	if node2 == nil {
+		return node1
+	}
+
+	if node1.Val <= node2.Val {
+		node1.Next = merge(node1.Next, node2)
+		return node1
+	}
+	node2.Next = merge(node2.Next, node1)
+	return node2
+
 }
 
 func Travel(head *structures.ListNode) {
@@ -84,25 +136,5 @@ func Travel(head *structures.ListNode) {
 		fmt.Println(L.Val, 22)
 		L = L.Next
 	}
-
-}
-
-func merge2(l1, l2 *structures.ListNode) *structures.ListNode {
-
-	if l1 == nil {
-		return l2
-
-	}
-	if l2 == nil {
-		return l1
-	}
-
-	if l1.Val < l2.Val {
-		l1.Next = merge2(l1.Next, l2)
-		return l1
-	}
-
-	l2.Next = merge2(l1, l2.Next)
-	return l2
 
 }
