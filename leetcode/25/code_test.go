@@ -131,9 +131,6 @@ func reverseKGroupV2(head *ListNode, k int) *ListNode {
 			temp = reverse(temp)
 		}
 		news = merge(news, temp)
-		// if Bhead == nil {
-		// 	break
-		// }
 	}
 	return news
 }

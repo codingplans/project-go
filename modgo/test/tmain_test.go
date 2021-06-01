@@ -14,61 +14,56 @@ import (
 	"time"
 )
 
-type S struct {
-	cl     chan struct{}
-	num    int
-	notity chan int
-	wg     sync.WaitGroup
-	sync.Mutex
-}
-
 func TestPractice(t *testing.T) {
-	// t.Log(smallestDistancePair([]int{1, 2, 3, 4, 5, 67, 0}, 2))
-	// t.Log(smallestDistancePair([]int{2, 2, 0, 1, 0, 1, 2, 0, 2, 1, 1, 1, 1, 0, 1, 2, 1, 1, 1, 2, 1, 2, 1, 0, 1, 0, 1, 1, 0, 2, 1, 0, 0, 2, 2, 1, 1, 1, 2, 2, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 1, 2, 2, 2, 2, 2, 2, 1, 1, 0, 1, 0, 1, 1, 1, 1, 2, 1, 1, 2, 2, 2, 0, 1, 2, 2, 2, 0, 0, 2, 0, 1, 2, 2, 1, 2, 0, 2, 1, 0, 0, 2, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 2, 0, 0, 1, 2, 2, 2, 2, 2, 2, 0, 2, 1, 1, 1, 1, 1, 2, 0, 2, 2, 2, 0, 2, 0, 1, 0, 1, 2, 1, 0, 1, 2, 1, 2, 1, 2, 0, 2, 0, 1, 0, 1, 2, 2, 1, 2, 2, 1, 0, 0, 1, 2, 1, 1, 0, 0, 2, 1, 0, 2, 1, 2, 0, 0, 1, 0, 2, 0, 1, 2, 2, 2, 1, 2, 0, 2, 2, 2, 2, 2, 0, 0, 0, 1, 0, 2, 0, 0, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 2, 0, 1, 1, 1, 2, 1, 1, 2, 1, 1, 0, 1, 0, 1, 1, 1, 2, 0, 0, 2, 2, 2, 1, 1, 1, 2, 2, 2, 0, 1, 0, 0, 0, 0, 1, 0, 2, 2, 0, 2, 2, 1, 1, 1, 2, 1, 1, 1, 0, 2, 0, 2, 1, 1, 2, 2, 1, 1, 2, 0, 0, 2, 1, 2, 0, 1, 1, 1, 2, 2, 0, 1, 2, 2, 2, 1, 1, 0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 2, 2, 2, 0, 1, 1, 0, 1, 0, 1, 2, 2, 2, 1, 1, 0, 1, 0, 0, 2, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 1, 2, 2, 1, 2, 2, 0, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 2, 2, 2, 2, 0, 0, 1, 0, 0, 2, 2, 0, 1, 0, 0, 0, 2, 1, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 0, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 2, 0, 1, 1, 2, 1, 0, 0, 0, 2, 2, 1, 2, 2, 0, 0, 1, 0, 1, 0, 0, 1, 2, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 1, 2, 1, 1, 1, 2, 2, 0, 2, 1, 0, 2, 1, 0, 2, 1, 1, 0, 2, 0, 2, 1, 0, 0, 0, 1, 1, 0, 1, 0, 2, 2, 2, 1, 2, 0, 1, 2, 0, 0, 0, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 0, 1, 0, 0, 1}, 62500))
-	// t.Log(mergeappend([]int{1, 2, 3, 4, 5, 67}, 22))
-
-	// xRuntime()
-	// HeapSoft([]int{1, 11, 2, 44, 3, 4, 55, 5, 67})
-	// HeapSoft([]int{1, 3, 2, 5, 4, 7, 6, 9, 8, 0})
+	// HeapSoft([]int{1, 888, 11, 2, 44, 3, 777, 4, 55, 5, 67})
+	singleNumber([]int{1, 2, 3, 4, 3, 2, 4, 1})
+}
+func singleNumber(nums []int) int {
+	// bit:=
+	a := 0
+	for v := range nums {
+		a ^= nums[v]
+	}
+	println(a)
+	return a
 }
 
 func HeapSoft(arr []int) {
 	l := len(arr)
-	// 建立大顶堆
-	for i := l / 2; i >= 0; i-- {
-		ppp(arr, i, l)
-
-	}
 	fmt.Println(arr)
-	for i := l - 1; i > 0; i-- {
+
+	for i := l / 2; i >= 0; i-- {
+		BuildHeapV2(arr, i, l)
+	}
+
+	l--
+	for i := l; i >= 0; i-- {
 		arr[0], arr[i] = arr[i], arr[0]
+		BuildHeapV2(arr, 0, l)
 		l--
-		ppp(arr, 0, l)
 	}
 	fmt.Println(arr)
 }
 
-// 堆排序2021 、 5、23再次练习
-func ppp(arr []int, k, lens int) {
-	mk := k
-	for mk < lens {
-		mk = k
-		i, j := mk<<1+1, mk<<1+2
-		if i >= lens {
-			return
+func BuildHeapV2(arr []int, n, lens int) {
+	k := n
+	for n < lens {
+		i := n*2 + 1
+		j := i + 1
+		if i < lens && arr[k] < arr[i] {
+			k = i
 		}
-		if i < lens && arr[mk] < arr[i] {
-			mk = i
+		if j < lens && arr[k] < arr[j] {
+			k = j
 		}
-		if j < lens && arr[mk] < arr[j] {
-			mk = j
-		}
-		if mk != k {
-			arr[k], arr[mk] = arr[mk], arr[k]
-			k = mk
+		if k != n {
+			arr[k], arr[n] = arr[n], arr[k]
+			n = k
 		} else {
-			return
+			// n = n * 2
+			break
 		}
+		// println(n, j, i)
 	}
 
 }
@@ -912,4 +907,12 @@ type PayWay struct {
 	Ids int64 `protobuf:"varint,2,opt,name=id,proto3" json:"ids,omitempty"`
 	// 支付名称
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+}
+
+type S struct {
+	cl     chan struct{}
+	num    int
+	notity chan int
+	wg     sync.WaitGroup
+	sync.Mutex
 }

@@ -81,7 +81,8 @@ func isPalindrome(head *ListNode) bool {
 		return true
 	}
 	temp := head
-	slow := head.Next
+	slow := head
+	// slow := head.Next
 	for temp.Next != nil && temp.Next.Next != nil {
 		temp = temp.Next.Next
 		// 慢指针：
