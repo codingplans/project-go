@@ -9,7 +9,9 @@ type test struct {
 	IntEs []int
 	Lists []int
 	K     int
+	K2    int
 	Str   string
+	Str2  string
 }
 
 var tests = []test{}
@@ -17,12 +19,12 @@ var tests = []test{}
 //
 
 func Test_upToDayUp(t *testing.T) {
-	for k1 := range tests {
+	for _, v := range tests {
 		fmt.Println("初始化")
 
-		fmt.Println(tests[k1].IntEs)
+		fmt.Println(v.IntEs)
+		pre := 1
+		fmt.Println("结果：", pre)
 	}
-	pre := 1
-	fmt.Println("结果：", pre)
 
 }
