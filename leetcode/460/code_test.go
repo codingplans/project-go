@@ -60,24 +60,32 @@ var tests = []test{}
 // 最多调用 3 * 104 次 get 和 put
 
 func Test_upToDayUp(t *testing.T) {
-	obj := Constructor(3)
+	// obj := Constructor(1)
+	// obj.Put(1, 1)
+	// obj.Put(2, 2)
+	// obj.Put(3, 3)
+	// obj.Put(2, 2)
+	// obj.Put(4, 4)
+
+	obj := Constructor(2)
 	obj.Put(1, 1)
 	obj.Put(2, 2)
-	obj.Put(3, 3)
-	obj.Put(2, 2)
-	obj.Put(4, 4)
-	// obj.Put(5, 5)
-	// obj.Put(6, 6)
-	// obj.Put(7, 7)
-	// obj.Put(8, 8)
-	// obj.Put(9, 9)
-	// MList2Ints(&obj)
-
-	aa := obj.Get(4)
+	aa := obj.Get(1)
 	fmt.Println(aa)
-	obj.Put(4, 2)
+	obj.Put(3, 3)
 	aa = obj.Get(2)
 	fmt.Println(aa)
+	aa = obj.Get(3)
+	fmt.Println(aa)
+
+	obj.Put(4, 4)
+	aa = obj.Get(1)
+	fmt.Println(aa)
+	aa = obj.Get(3)
+	fmt.Println(aa)
+	aa = obj.Get(4)
+	fmt.Println(aa)
+
 	MList2Ints(&obj)
 
 }
@@ -87,11 +95,6 @@ type LFUCache struct {
 	md, kf   map[int]int   // 存储 kv 结构， 存储 k 频率结构
 	fks      map[int][]int // 记录每个频率的 key
 
-}
-
-func MList2Ints(node *LFUCache) int {
-	node.Travel()
-	return 0
 }
 
 func Constructor(capacity int) LFUCache {
@@ -115,14 +118,19 @@ func (this *LFUCache) Put(key int, value int) {
 	if _, ok := this.md[key]; !ok {
 		if len(this.md) == this.buf {
 			delKey := this.delFks()
-			fmt.Println(3333, delKey)
-			delete(this.md, delKey)
-			delete(this.kf, delKey)
+			println(delKey, 444, key)
+			if delKey > 0 {
+				delete(this.md, delKey)
+				delete(this.kf, delKey)
+			}
+			// fmt.Println(3333, delKey)
 		}
 		this.md[key] = value
 	}
 	fa := this.increaseKf(key)
 	this.putFks(fa, key)
+	fmt.Println(this.fks, 666)
+
 }
 
 // 增加 kf
@@ -153,6 +161,9 @@ func (this *LFUCache) putFks(fa, key int) {
 
 // 删除最小的最后一个 key
 func (this *LFUCache) delFks() int {
+	if len(this.fks[this.min]) == 0 {
+		return -1
+	}
 	key := this.fks[this.min][0]
 	this.fks[this.min] = this.fks[this.min][1:]
 	return key
@@ -174,6 +185,11 @@ func (this *LFUCache) delFksByfa(fa, key int) int {
 		}
 	}
 	return key
+}
+
+func MList2Ints(node *LFUCache) int {
+	node.Travel()
+	return 0
 }
 
 func (this *LFUCache) Travel() {
