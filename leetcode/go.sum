@@ -1,5 +1,7 @@
 github.com/Darrenzzy/testgo v1.0.2 h1:0EFXherCidzjDhR0zU5P0tjO8Ph0bFu1NnzpfqktGaw=
 github.com/Darrenzzy/testgo v1.0.2/go.mod h1:V52us+WrHJy1JM8U+sXiW7lXMhF/ApG65KoTDnvXg70=
+github.com/Darrenzzy/testgo v1.0.3 h1:fuNeySoKXOKmpfXmmsMXzzzn3DLoFcAd18YGYWtSPdE=
+github.com/Darrenzzy/testgo v1.0.3/go.mod h1:V52us+WrHJy1JM8U+sXiW7lXMhF/ApG65KoTDnvXg70=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
