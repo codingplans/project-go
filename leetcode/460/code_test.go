@@ -67,25 +67,66 @@ func Test_upToDayUp(t *testing.T) {
 	// obj.Put(2, 2)
 	// obj.Put(4, 4)
 
-	obj := Constructor(2)
-	obj.Put(1, 1)
+	// obj := Constructor(2)
+	// obj.Put(1, 1)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	//
+	// obj.Put(2, 2)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	//
+	// aa := obj.Get(1)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	// fmt.Println(aa)
+	// obj.Put(3, 3)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	//
+	// aa = obj.Get(2)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	//
+	// fmt.Println(aa)
+	// aa = obj.Get(3)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	//
+	// fmt.Println(aa)
+	//
+	// obj.Put(4, 4)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	//
+	// aa = obj.Get(1)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	//
+	// fmt.Println(aa)
+	// aa = obj.Get(3)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	//
+	// fmt.Println(aa)
+	// aa = obj.Get(4)
+	// fmt.Println(obj.fks, obj.kf, 999)
+	// fmt.Println(aa)
+
+	obj := Constructor(3)
 	obj.Put(2, 2)
-	aa := obj.Get(1)
-	fmt.Println(aa)
+	fmt.Println(obj.fks, obj.kf, 999)
+	obj.Put(1, 1)
+	fmt.Println(obj.fks, obj.kf, 999)
+	obj.Get(2)
+	fmt.Println(obj.fks, obj.kf, 999)
+	obj.Get(1)
+	fmt.Println(obj.fks, obj.kf, 999)
+	obj.Get(2)
+	fmt.Println(obj.fks, obj.kf, 999)
 	obj.Put(3, 3)
-	aa = obj.Get(2)
-	fmt.Println(aa)
-	aa = obj.Get(3)
-	fmt.Println(aa)
-
+	fmt.Println(obj.fks, obj.kf, 999)
 	obj.Put(4, 4)
-	aa = obj.Get(1)
-	fmt.Println(aa)
-	aa = obj.Get(3)
-	fmt.Println(aa)
-	aa = obj.Get(4)
-	fmt.Println(aa)
-
+	fmt.Println(obj.fks, obj.kf, 999)
+	obj.Get(3)
+	fmt.Println(obj.fks, obj.kf, 999)
+	obj.Get(2)
+	fmt.Println(obj.fks, obj.kf, 999)
+	obj.Get(1)
+	fmt.Println(obj.fks, obj.kf, 999)
+	obj.Get(4)
+	fmt.Println(obj.fks, obj.kf, 999)
 	MList2Ints(&obj)
 
 }
@@ -115,6 +156,9 @@ func (this *LFUCache) Get(key int) int {
 }
 
 func (this *LFUCache) Put(key int, value int) {
+	if this.buf == 0 {
+		return
+	}
 	if _, ok := this.md[key]; !ok {
 		if len(this.md) == this.buf {
 			delKey := this.delFks()
@@ -125,24 +169,27 @@ func (this *LFUCache) Put(key int, value int) {
 			}
 			// fmt.Println(3333, delKey)
 		}
-		this.md[key] = value
+		this.min = 1
 	}
-	fa := this.increaseKf(key)
-	this.putFks(fa, key)
-	fmt.Println(this.fks, 666)
-
+	this.md[key] = value
+	this.increaseKf(key)
 }
 
 // 增加 kf
-func (this *LFUCache) increaseKf(key int) int {
+func (this *LFUCache) increaseKf(key int) {
 	num, _ := this.kf[key]
+	if len(this.kf) == 0 {
+		this.min = 1
+	}
 	this.kf[key]++
 
 	this.delFksByfa(num, key)
 	if num == this.min {
+		// 重置最小值
 		this.findMin(key)
 	}
-	return this.kf[key]
+	this.putFks(this.kf[key], key)
+	return
 }
 
 func (this *LFUCache) findMin(key int) {
@@ -157,6 +204,7 @@ func (this *LFUCache) findMin(key int) {
 
 func (this *LFUCache) putFks(fa, key int) {
 	this.fks[fa] = append(this.fks[fa], key)
+	// fmt.Println(this.fks[fa], fa, key)
 }
 
 // 删除最小的最后一个 key
@@ -193,9 +241,7 @@ func MList2Ints(node *LFUCache) int {
 }
 
 func (this *LFUCache) Travel() {
-	fmt.Println(this.md, 222)
-	fmt.Println(this.fks, 2221)
-	fmt.Println(this.kf, 2221)
+	fmt.Println(this.md, this.fks, this.kf)
 }
 
 /**
