@@ -83,14 +83,20 @@ func (this *MyQueue) Push(x int) {
 
 /** Removes the element from in front of queue and returns that element. */
 func (this *MyQueue) Pop() int {
-	for len(this.Q1) > 0 {
-		q := this.Q1[len(this.Q1)-1]
-		this.Q2 = append(this.Q2, q)
-		this.Q1 = this.Q1[:len(this.Q1)-1]
+
+	// 当出栈全都空了再 轮训入栈
+	if len(this.Q2) == 0 {
+		for len(this.Q1) > 0 {
+			q := this.Q1[len(this.Q1)-1]
+			this.Q2 = append(this.Q2, q)
+			this.Q1 = this.Q1[:len(this.Q1)-1]
+		}
 	}
+
 	if len(this.Q2) == 0 {
 		return 0
 	}
+
 	a := this.Q2[len(this.Q2)-1]
 	this.Q2 = this.Q2[:len(this.Q2)-1]
 	return a
