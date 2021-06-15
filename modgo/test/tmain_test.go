@@ -259,7 +259,7 @@ func search(nums []int, target int) int {
 	i := 0
 	mid := 0
 	for i <= l {
-		mid = (i + l) / 2
+		mid = int(uint((i + l)) >> 1)
 		// fmt.Println(mid, i, l)
 		if nums[mid] == target {
 			for mid > 1 && nums[mid-1] == target {
@@ -267,7 +267,6 @@ func search(nums []int, target int) int {
 			}
 			return mid
 		}
-
 		if nums[mid] < target {
 			i = mid + 1
 		} else {
@@ -309,6 +308,27 @@ func Fibonacci(n int) int {
 	// write code here
 }
 
+// 二分查找
+func TestSearch(t *testing.T) {
+	arr := []int{1, 2, 3, 3, 3, 3, 5, 6, 7, 8, 9, 9, 9, 9, 99}
+	target := 9
+	low, fast := 0, len(arr)-1
+	for low <= fast {
+		mid := len(arr) - (fast-low)>>1
+		if target > arr[mid] {
+			low = mid
+		} else if target < arr[mid] {
+			fast = mid
+		} else {
+			for mid < len(arr)-2 && arr[mid+1] == target {
+				mid++
+			}
+			println(arr[mid], mid)
+			break
+		}
+	}
+}
+
 func isValid(s string) bool {
 	mp := make(map[uint8]uint8, 3)
 	mp['['] = ']'
@@ -331,7 +351,6 @@ func isValid(s string) bool {
 
 	return len(stack) == 0
 }
-
 func maxLength(arr []int) int {
 	long, i, r := 0, 0, 0
 	l := len(arr)
