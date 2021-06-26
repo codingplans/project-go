@@ -5,7 +5,7 @@ go 1.14
 replace github.com/go-kratos/kratos => /Users/darren/go/src/git.digittraders.com/kratos
 
 require (
-	github.com/Darrenzzy/testgo v1.0.2
+	github.com/Darrenzzy/testgo v1.0.4
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/Shopify/sarama v1.28.0
 	github.com/coreos/etcd v3.3.25+incompatible

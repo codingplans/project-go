@@ -14,6 +14,43 @@ import (
 	"time"
 )
 
+func TestArraySum(t *testing.T) {
+	A := []int{1, 2, 3, 4, 5, 0, 7}
+	B := []int{6, 7, 0}
+
+	la := len(A) - 1
+	lb := len(B) - 1
+	if la > lb {
+
+	}
+	x := 0
+	for k := range A {
+		if lb-k >= 0 {
+			A[la-k] += B[lb-k]
+		}
+		A[la-k] = A[lb-k] + x
+		x = 0
+		if A[la-k] >= 10 {
+			A[la-k] %= 10
+			x = 1
+		}
+	}
+	if x > 0 {
+		for i := la; i <= lb; i++ {
+			B[lb-i] += x
+			x = 0
+			if B[lb-i] >= 10 {
+				B[lb-i] %= 10
+				x = 1
+			}
+		}
+	}
+
+	if x > 0 {
+
+	}
+}
+
 func TestPractice(t *testing.T) {
 	// HeapSoft([]int{1, 888, 11, 2, 44, 3, 777, 4, 55, 5, 67})
 	singleNumber([]int{1, 2, 3, 4, 3, 2, 4, 1})
