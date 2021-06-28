@@ -101,6 +101,36 @@ func Traval(root *structures.TreeNode) {
 
 }
 
+// 先序遍历 v2
+func PreTreeV2(root *structures.TreeNode) {
+	if root == nil {
+		return
+	}
+	// 用栈存储 树节点
+	stack := []*structures.TreeNode{}
+
+	// 保证节点不空 或者 栈不空
+	for root != nil || len(stack) > 0 {
+		// 深度遍历节点 到最低端 存入栈空间
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+
+		// 最后一个节点时在取右边节点再次深度遍历
+		if len(stack) > 0 {
+			pop := stack[len(stack)-1]
+			// 打印先序第一个节点
+			println(pop.Val)
+			// 最后一个节点的右节点赋值 ，用于下次深度遍历
+			root = pop.Right
+			// pop 出去该节点，
+			stack = stack[:len(stack)-1]
+		}
+	}
+
+}
+
 // 保持手感
 func Bfs(root *structures.TreeNode) {
 
