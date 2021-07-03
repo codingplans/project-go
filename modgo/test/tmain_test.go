@@ -14,6 +14,47 @@ import (
 	"time"
 )
 
+func TestTmp(t *testing.T) {
+	var cstZone = time.FixedZone("GMT", 8*3600) // 东八
+	fmt.Println(time.Now().In(cstZone).Format("01-02-2006 15:04:05"))
+	// get the location
+	// Tue, 15 May 2018 10:16:36 GMT
+	location, _ := time.LoadLocation("Europe/Rome")
+
+	// this should give you time in location
+	tww := time.Now().In(location)
+
+	fmt.Println(tww)
+	// 5,3
+	// 10,17
+	l := 5
+	p := 3
+	// l := 10
+	// p := 17
+	// arr := make([5]int, 0)
+	arr := make([]int, l)
+	for i := 1; i < l; i++ {
+		arr[i] = i
+	}
+	// arr = arr[:1]
+	// return
+	x := 0
+	for len(arr) > 1 {
+		x = (p) % len(arr)
+		fmt.Println(arr, len(arr), x, arr[x])
+		if x > 0 {
+			// x -= 1
+			arr = append(arr[:x-1], arr[x:]...)
+			// x++
+		} else {
+			arr = arr[1:]
+		}
+
+	}
+	println(arr[0], 34)
+	return
+}
+
 func TestArraySum(t *testing.T) {
 	A := []int{1, 2, 3, 4, 5, 0, 7}
 	B := []int{6, 7, 0}
