@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Darrenzzy/testgo/structures"
 	"testing"
+	"unsafe"
 )
 
 type test struct {
@@ -52,7 +53,8 @@ func Test_upToDayUp(t *testing.T) {
 	for k1 := range tests {
 		fmt.Println("初始化")
 		root := structures.Ints2TreeNode(tests[k1].IntEs)
-		pre := pathSum(root, tests[k1].K)
+		pre := pathSumV2(root, tests[k1].K)
+		// pre := pathSum(root, tests[k1].K)
 		fmt.Println("结果：", pre)
 
 	}
@@ -95,6 +97,43 @@ func FindPath(root *structures.TreeNode, arr []int, cur int) {
 		FindPath(root.Right, arr, cur)
 	}
 
+}
+
+// 2021 7月回顾一次  思考递归是否是最优方案？ 如果树很大呢，还有其他方案嘛？
+
+func pathSumV2(root *structures.TreeNode, targetSum int) [][]int {
+
+	arr := []int{}
+	arrs = [][]int{}
+	FindPathV2(root, targetSum, arr)
+
+	return arrs
+}
+
+func FindPathV2(root *structures.TreeNode, cur int, arr []int) {
+	if root == nil {
+		return
+	}
+
+	ss := "asd"
+	// str2bytes
+	// bytes2s
+
+	xx := (*[2]uintptr)(unsafe.Pointer(&ss))
+	h := [3]uintptr{xx[0], xx[1], xx[1]}
+	ww := *(*[]string)(unsafe.Pointer(&h))
+	fmt.Println(ww)
+
+	s := *(*string)(unsafe.Pointer(&ww))
+	fmt.Println(s)
+
+	cur -= root.Val
+	arr = append(arr, root.Val)
+	if cur == 0 && root.Left == nil && root.Right == nil {
+		tmp := make([]int, len(arr))
+		copy(tmp, arr)
+		arrs = append(arrs, tmp)
+	}
 }
 
 //

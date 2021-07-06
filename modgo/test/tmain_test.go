@@ -14,6 +14,10 @@ import (
 	"time"
 )
 
+func TestReversListV2(t *testing.T) {
+
+}
+
 func TestArraySum(t *testing.T) {
 	A := []int{1, 2, 3, 4, 5, 0, 7}
 	B := []int{6, 7, 0}

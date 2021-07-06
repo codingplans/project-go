@@ -8,3 +8,4 @@ mysqldata/*
 node_modules
 *.exe
 *.jar
+vendor
