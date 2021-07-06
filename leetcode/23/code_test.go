@@ -54,16 +54,85 @@ var tests = []test{}
 // lists[i].length 的总和不超过 10^4
 
 func Test_upToDayUp(t *testing.T) {
-	for k1 := range tests {
-		fmt.Println("初始化", k1)
 
-		mergeKLists(nil)
+	arr1 := []int{1, 3, 5, 7, 9, 999}
+	arr2 := []int{2, 4, 6, 8, 9, 10, 99}
+	arr3 := []int{2, 4, 6, 8, 9, 10, 99, 8888}
+	arr4 := []int{2, 4, 6, 8, 9, 10, 99}
+	l1 := structures.Ints2List(arr1)
+	l2 := structures.Ints2List(arr2)
+	l3 := structures.Ints2List(arr3)
+	l4 := structures.Ints2List(arr4)
+	// arr1:=[]int{2,4,6,8,9}
+	// l := mergeKListsV2([]*structures.ListNode{l1, l2, l3, l4})
+	l := mergeKListsV3([]*structures.ListNode{l1, l2, l3, l4})
+
+	Travel(l)
+
+}
+func mergeV3(l1, l2 *structures.ListNode) *structures.ListNode {
+	ll1 := l1
+	ll2 := l2
+	head := &structures.ListNode{}
+	l3 := head
+	for ll1 != nil && ll2 != nil {
+		if ll1.Val < ll2.Val {
+			tmp := &structures.ListNode{Val: ll1.Val}
+			l3.Next = tmp
+			l3 = l3.Next
+			ll1 = ll1.Next
+		} else {
+			tmp := &structures.ListNode{Val: ll2.Val}
+			l3.Next = tmp
+			l3 = l3.Next
+			ll2 = ll2.Next
+		}
+
 	}
-	mergeKLists(nil)
+	for ll1 != nil {
+		l3.Next = ll1
+		l3 = l3.Next
+		ll1 = ll1.Next
 
-	pre := 1
-	fmt.Println("结果：", pre)
+	}
+	for ll2 != nil {
+		l3.Next = ll2
+		l3 = l3.Next
+		ll2 = ll2.Next
+	}
+	return head.Next
+}
 
+// o(n) 的时间复杂度 比较普通
+func mergeKListsV2(lists []*structures.ListNode) *structures.ListNode {
+	// l := new(structures.ListNode)
+	for i := 1; i < len(lists); i++ {
+		lists[0] = merge(lists[0], lists[i])
+		// lists[0] = mergeV3(lists[0], lists[i])
+	}
+	return lists[0]
+}
+
+func mergeKListsV3(lists []*structures.ListNode) *structures.ListNode {
+	l := len(lists)
+	if l == 0 {
+		return nil
+	}
+	if l == 1 {
+		return lists[0]
+	}
+	return QuickSort(lists, 0, l-1)
+}
+
+func QuickSort(lists []*structures.ListNode, i, j int) *structures.ListNode {
+	if i == j {
+		return lists[i]
+	}
+	if i > j {
+		return nil
+	}
+	mid := (i + j) >> 1
+	return mergeV3(QuickSort(lists, i, mid), QuickSort(lists, mid+1, j))
 }
 
 func mergeKLists(lists []*structures.ListNode) *structures.ListNode {
@@ -133,7 +202,7 @@ func merge(node1, node2 *structures.ListNode) *structures.ListNode {
 func Travel(head *structures.ListNode) {
 	L := head
 	for L != nil {
-		fmt.Println(L.Val, 22)
+		fmt.Println(L.Val)
 		L = L.Next
 	}
 
