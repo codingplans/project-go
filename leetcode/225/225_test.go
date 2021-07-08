@@ -39,6 +39,11 @@ func Test_232(t *testing.T) {
 
 	param_4 := obj.Empty()
 	println(param_4)
+	println(obj.Pop())
+	println(obj.Pop())
+	println(obj.Pop())
+	println(obj.Pop())
+	println(obj.Pop())
 
 }
 
@@ -54,27 +59,44 @@ func Constructor() MyQueue {
 
 /** Push element x to the back of queue. */
 func (this *MyQueue) Push(x int) {
-	this.Q2 = append(this.Q2, x)
-	for len(this.Q1) > 0 {
-		this.Q2 = append(this.Q2, this.Q1[0])
-		this.Q1 = this.Q1[1:]
-	}
-	this.Q1, this.Q2 = this.Q2, this.Q1
+	this.Q1 = append(this.Q1, x)
 }
 
-/** Removes the element from in front of queue and returns that element. */
+// 出栈 利用互搏，遍历给 q2， 直到 q1 最后一个元素，即是栈顶元素，然后在赋值回去
 func (this *MyQueue) Pop() int {
+	if len(this.Q1) == 0 {
+		return -1
+	}
+	if len(this.Q1) > 1 {
+		for len(this.Q1) != 1 {
+			this.Q2 = append(this.Q2, this.Q1[0])
+			this.Q1 = this.Q1[1:]
+		}
+	}
 	a := this.Q1[0]
-	this.Q1 = this.Q1[1:]
+	this.Q1 = this.Q2
+	this.Q2 = nil
 	return a
 }
 
-/** Get the front element. */
+// 同出栈原理， 当前要全部赋值回去
 func (this *MyQueue) Peek() int {
 	if len(this.Q1) == 0 {
 		return 0
 	}
-	return this.Q1[0]
+
+	if len(this.Q1) > 1 {
+		for len(this.Q1) != 1 {
+			this.Q2 = append(this.Q2, this.Q1[0])
+			this.Q1 = this.Q1[1:]
+		}
+	}
+	a := this.Q1[0]
+	this.Q2 = append(this.Q2, this.Q1[0])
+	this.Q1 = this.Q2
+	this.Q2 = nil
+
+	return a
 }
 
 /** Returns whether the queue is empty. */
