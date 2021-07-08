@@ -16,6 +16,8 @@ import (
 
 func TestReversListV2(t *testing.T) {
 
+	arr := []int{1, 2, 3, 4}
+	fmt.Println(arr[1:2])
 }
 
 func TestArraySum(t *testing.T) {
