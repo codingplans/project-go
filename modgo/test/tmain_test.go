@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/Darrenzzy/testgo/structures"
+	"github.com/Darrenzzy/person-go/structures"
 	"reflect"
 	"regexp"
 	"runtime"

@@ -10,6 +10,8 @@ github.com/Darrenzzy/person-go v1.0.2 h1:0EFXherCidzjDhR0zU5P0tjO8Ph0bFu1Nnzpfqk
 github.com/Darrenzzy/person-go v1.0.2/go.mod h1:V52us+WrHJy1JM8U+sXiW7lXMhF/ApG65KoTDnvXg70=
 github.com/Darrenzzy/person-go v1.0.4 h1:5Flf39gUaK7Sq+/GzFEV77cucHh76h4x4jpgV9PHLgo=
 github.com/Darrenzzy/person-go v1.0.4/go.mod h1:qXzi5GgmUlnRWJR7jEdPwAL2OZJNMx75I0UuwMZJGGw=
+github.com/Darrenzzy/person-go v1.0.6 h1:Zv3jdkjaDHi5EE26GSXHoLTapoc/Fy7g3IGRO75W1+k=
+github.com/Darrenzzy/person-go v1.0.6/go.mod h1:FS388wKNH3/0+ruqrX3u9/CKxdW47zqxwWe822Jqua8=
 github.com/Darrenzzy/testgo v1.0.4 h1:5Flf39gUaK7Sq+/GzFEV77cucHh76h4x4jpgV9PHLgo=
 github.com/Darrenzzy/testgo v1.0.4/go.mod h1:qXzi5GgmUlnRWJR7jEdPwAL2OZJNMx75I0UuwMZJGGw=
 github.com/DataDog/zstd v1.3.6-0.20190409195224-796139022798/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
