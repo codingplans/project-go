@@ -2,7 +2,7 @@ package _00_init_code
 
 import (
 	"fmt"
-	"github.com/Darrenzzy/testgo/structures"
+	"github.com/Darrenzzy/person-go/structures"
 	"math"
 	"testing"
 )

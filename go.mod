@@ -1,4 +1,4 @@
-module github.com/Darrenzzy/testgo
+module github.com/Darrenzzy/person-go
 
 go 1.16
 

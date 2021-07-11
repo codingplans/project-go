@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Darrenzzy/testgo/structures"
+	"github.com/Darrenzzy/person-go/structures"
 	"testing"
 )
 

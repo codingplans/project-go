@@ -16,8 +16,13 @@ import (
 
 func TestReversListV2(t *testing.T) {
 
-	arr := []int{1, 2, 3, 4}
-	fmt.Println(arr[1:2])
+	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	tree := structures.Ints2TreeNode(arr)
+
+	stack := []*structures.TreeNode{tree}
+	// sss(stack, 1)
+	fmt.Println(arr[1:2], stack)
 }
 
 func TestArraySum(t *testing.T) {
