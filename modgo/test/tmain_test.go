@@ -14,15 +14,47 @@ import (
 	"time"
 )
 
-func TestReversListV2(t *testing.T) {
-
+func TestZigzagLevelOrderV2(t *testing.T) {
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-
 	tree := structures.Ints2TreeNode(arr)
 
 	stack := []*structures.TreeNode{tree}
-	// sss(stack, 1)
-	fmt.Println(arr[1:2], stack)
+
+	aas := make([][]int, 0)
+	isSS := false
+	level := 0
+	for len(stack) != 0 {
+		i := 0
+
+		if len(aas) <= level {
+			aas = append(aas, []int{})
+		}
+		l := len(stack)
+		for l > i {
+			tt := stack[0]
+			if !isSS {
+				aas[level] = append(aas[level], tt.Val)
+			} else {
+				aas[level] = append([]int{tt.Val}, aas[level]...)
+			}
+
+			stack = stack[1:]
+			if tt.Left != nil {
+				stack = append(stack, tt.Left)
+			}
+			if tt.Right != nil {
+				stack = append(stack, tt.Right)
+			}
+			i++
+		}
+		if isSS {
+			isSS = false
+		} else {
+			isSS = true
+		}
+		level++
+	}
+	fmt.Println(aas)
 }
 
 func TestArraySum(t *testing.T) {
