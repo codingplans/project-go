@@ -2,6 +2,8 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Darrenzzy/person-go v1.0.4 h1:5Flf39gUaK7Sq+/GzFEV77cucHh76h4x4jpgV9PHLgo=
 github.com/Darrenzzy/person-go v1.0.4/go.mod h1:qXzi5GgmUlnRWJR7jEdPwAL2OZJNMx75I0UuwMZJGGw=
+github.com/Darrenzzy/person-go v1.0.7 h1:i3LPTVICblo1l66d28nG+BvSVyePEj8PwGui3Rh2DGY=
+github.com/Darrenzzy/person-go v1.0.7/go.mod h1:FS388wKNH3/0+ruqrX3u9/CKxdW47zqxwWe822Jqua8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

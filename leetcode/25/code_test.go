@@ -104,10 +104,10 @@ func TestListReversK(t *testing.T) {
 		}
 		// 不满足k 个 做下翻转
 		if m != 0 {
-			temp = Reverse(temp)
+			temp = structures.Reverse(temp)
 		}
 		// 合并链表
-		newNode = MergeList(newNode, temp)
+		newNode = structures.MergeList(newNode, temp)
 	}
 	// 遍历结果
 	// TravelList(newNode)
