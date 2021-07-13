@@ -113,6 +113,40 @@ func TestListReversK(t *testing.T) {
 	// TravelList(newNode)
 }
 
+// 注意当前翻转输出结果有变化：
+func TestListRecseV2(t *testing.T) {
+	arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	k := 3
+	list := structures.Ints2List(arr)
+	// 	期望： 1,2,5,4,3,8,7,6
+
+	// 	先翻转，再入栈
+	l1 := structures.Reverse(list)
+	var result *structures.ListNode
+	for l1 != nil {
+		m := k
+		newNode := &structures.ListNode{}
+		point := newNode
+		for l1 != nil && m != 0 {
+			if point == nil {
+				point = &structures.ListNode{Val: l1.Val}
+			} else {
+				point.Next = &structures.ListNode{Val: l1.Val}
+				point = point.Next
+			}
+			l1 = l1.Next
+			m--
+		}
+		newNode = newNode.Next
+		if m != 0 {
+			newNode = structures.Reverse(newNode)
+		}
+		structures.Travel(newNode)
+		result = structures.MergeList(newNode, result)
+	}
+	structures.Travel(result)
+}
+
 /**
  * Definition for singly-linked list.
  * type ListNode struct {

@@ -14,6 +14,37 @@ import (
 	"time"
 )
 
+// 当前用例
+// 	期望： 1,8，2，7，3，6,4，5
+func TestReverseV3(t *testing.T) {
+	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	list := structures.Ints2List(arr)
+	f := list
+	s := list
+	// 快慢指针取到中点
+	for f != nil && f.Next != nil {
+		s = s.Next
+		f = f.Next.Next
+	}
+	// 翻转慢 list
+	mm := structures.Reverse(s)
+	aaa := &structures.ListNode{}
+	res := aaa
+	i := 0
+	// 交替 append 到新链表中，直到完成
+	for list != nil && mm != nil {
+		if i&1 == 0 {
+			res.Next = &structures.ListNode{Val: list.Val}
+			list = list.Next
+		} else {
+			res.Next = &structures.ListNode{Val: mm.Val}
+			mm = mm.Next
+		}
+		res = res.Next
+		i++
+	}
+	structures.Travel(aaa.Next)
+}
 func TestZigzagLevelOrderV2(t *testing.T) {
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	tree := structures.Ints2TreeNode(arr)
