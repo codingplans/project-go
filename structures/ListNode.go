@@ -89,3 +89,43 @@ func Travel(head *ListNode) {
 	}
 
 }
+
+func MergeList(l1, l2 *ListNode) *ListNode {
+	if l1 == nil {
+		return l2
+	}
+	l := l1
+	for l.Next != nil {
+		l = l.Next
+	}
+	l.Next = l2
+	return l1
+}
+
+// 翻转链表
+func Reverse(pHead *ListNode) *ListNode {
+	m := pHead
+	// 方法一 ：最好理解
+	var newList *ListNode
+	for m != nil {
+		nt := m.Next
+		m.Next = newList
+		newList = m
+		m = nt
+		// TravelList(newList)
+	}
+
+	// 方法二：
+	// var pnh *ListNode
+	// for m != nil {
+	// 	newList = m
+	// 	m = m.Next
+	// 	TravelList(newList)
+	//
+	// 	newList.Next = pnh
+	// 	pnh = newList
+	//
+	// 	TravelList(pnh)
+	// }
+	return newList
+}

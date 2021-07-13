@@ -2,6 +2,7 @@ package _32
 
 import (
 	"fmt"
+	"github.com/Darrenzzy/person-go/structures"
 	"testing"
 )
 
@@ -79,6 +80,37 @@ func Test_upToDayUp(t *testing.T) {
 
 	}
 
+}
+
+// 二次小练：
+// 链表k个翻转
+func TestListReversK(t *testing.T) {
+	arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	k := 3
+	// 	期望： 3,2,1,6,5,4,7,8
+	list := structures.Ints2List(arr)
+	l1 := list
+	var newNode *structures.ListNode
+	for l1 != nil {
+		m := k
+		var temp *structures.ListNode
+		for l1 != nil && m != 0 {
+			te := &structures.ListNode{Val: l1.Val}
+			te.Next = temp
+			temp = te
+
+			l1 = l1.Next
+			m--
+		}
+		// 不满足k 个 做下翻转
+		if m != 0 {
+			temp = Reverse(temp)
+		}
+		// 合并链表
+		newNode = MergeList(newNode, temp)
+	}
+	// 遍历结果
+	// TravelList(newNode)
 }
 
 /**

@@ -170,3 +170,15 @@ func QuickSoft(arr []int, start, end int) {
 	QuickSoft(arr, start, l)
 	QuickSoft(arr, l+1, end)
 }
+
+func MergeList(l1, l2 *structures.ListNode) *structures.ListNode {
+	if l1 == nil {
+		return l2
+	}
+	l := l1
+	for l.Next != nil {
+		l = l.Next
+	}
+	l.Next = l2
+	return l1
+}
