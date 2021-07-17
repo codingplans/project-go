@@ -1,4 +1,5 @@
 user
+*.out
 *.json
 *.yaml
 *.yml

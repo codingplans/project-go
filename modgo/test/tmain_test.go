@@ -14,6 +14,32 @@ import (
 	"time"
 )
 
+func TestArrayGroup(t *testing.T) {
+	// 	原来 arr[ "qwe","weq","wqe","abc","cba"]
+	// 	期望 arr[["qwe","weq","wqe"],["abc","cba"]]
+
+	arr := []string{"qwe", "weq", "wqe", "abc", "cba"}
+	p := make(map[byte][]map[byte]bool, 0)
+
+	for _, v := range arr {
+		m := make(map[byte]bool, 0)
+		var s byte
+		for k := range v {
+			m[v[k]] = true
+			s += v[k]
+		}
+		if vv, ok := p[s]; ok {
+			vv = append(vv, m)
+			p[s] = vv
+		} else {
+			p[s] = []map[byte]bool{m}
+			println(s)
+		}
+	}
+	fmt.Println(p)
+
+}
+
 // 当前用例
 // 	期望： 1,8，2，7，3，6,4，5
 func TestReverseV3(t *testing.T) {
