@@ -14,29 +14,49 @@ import (
 	"time"
 )
 
+func TestAaa(t *testing.T) {
+
+}
+
 func TestArrayGroup(t *testing.T) {
 	// 	原来 arr[ "qwe","weq","wqe","abc","cba"]
 	// 	期望 arr[["qwe","weq","wqe"],["abc","cba"]]
 
 	arr := []string{"qwe", "weq", "wqe", "abc", "cba"}
-	p := make(map[byte][]map[byte]bool, 0)
+
+	// pp := make(map[int32][][26]int, 10)
+
+	println(arr, 'a'-97)
 
 	for _, v := range arr {
-		m := make(map[byte]bool, 0)
-		var s byte
-		for k := range v {
-			m[v[k]] = true
-			s += v[k]
+		sum := int32(0)
+		m := [26]int{}
+		for _, vv := range v {
+			sum += vv
+			m[vv-97]++
 		}
-		if vv, ok := p[s]; ok {
-			vv = append(vv, m)
-			p[s] = vv
-		} else {
-			p[s] = []map[byte]bool{m}
-			println(s)
-		}
+
 	}
-	fmt.Println(p)
+
+	// fmt.Println(m, pp)
+	// p := make(map[byte][]map[byte]bool, 0)
+	//
+	// for _, v := range arr {
+	// 	m := make(map[byte]bool, 0)
+	// 	var s byte
+	// 	for k := range v {
+	// 		m[v[k]] = true
+	// 		s += v[k]
+	// 	}
+	// 	if vv, ok := p[s]; ok {
+	// 		vv = append(vv, m)
+	// 		p[s] = vv
+	// 	} else {
+	// 		p[s] = []map[byte]bool{m}
+	// 		println(s)
+	// 	}
+	// }
+	// fmt.Println(p)
 
 }
 

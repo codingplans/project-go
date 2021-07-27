@@ -11,3 +11,4 @@ node_modules
 *.jar
 vendor
 member/*
+docker/etcd/default.etcd/*
