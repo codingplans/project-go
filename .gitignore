@@ -10,3 +10,5 @@ node_modules
 *.exe
 *.jar
 vendor
+member/*
+docker/etcd/default.etcd/*

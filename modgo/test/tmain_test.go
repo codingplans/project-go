@@ -16,25 +16,6 @@ import (
 
 func TestAaa(t *testing.T) {
 
-	switch {
-	case W1() == 1:
-		println(123)
-	case W2() == 1:
-		println(222)
-	case W3() == 3:
-		println(3433)
-	}
-}
-
-func W1() int {
-	return 11
-}
-
-func W2() int {
-	return 2
-}
-func W3() int {
-	return 31
 }
 
 func TestArrayGroup(t *testing.T) {

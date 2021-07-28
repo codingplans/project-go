@@ -339,7 +339,7 @@ func init() {
 	var err error
 
 	// 用户表
-	engine, err = xorm.NewEngine("mysql", "ztoconnect_rw:ztoconnect_rw123$Z@tcp(10.9.15.250:3306)/ztoconnect?charset=utf8")
+	engine, err = xorm.NewEngine("mysql", "******?charset=utf8")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -348,7 +348,7 @@ func init() {
 	fmt.Println(engine.DB().Ping(), "mysql 连接成功")
 
 	// 人事表
-	pgsource := "postgres://postgres:Postgres_secv5@10.9.15.164:5432/ztometa?sslmode=disable"
+	pgsource := "******?sslmode=disable"
 	rsEngine, err = xorm.NewEngine("postgres", pgsource)
 	if err != nil {
 		fmt.Println(err.Error())
