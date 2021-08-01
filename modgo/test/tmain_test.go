@@ -15,6 +15,13 @@ import (
 )
 
 func TestAaa(t *testing.T) {
+	// // target := 8
+	// target := 6
+	// // target := 1
+	// // arr := []int{1, 2, 3, 3, 3, 3, 3, 3, 9, 10}
+	// arr := []int{5, 7, 7, 8, 8, 10}
+	// // arr := []int{1}
+	// fmt.Println(searchRange(arr, target))
 
 }
 
