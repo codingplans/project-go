@@ -20,6 +20,9 @@ else
 	@echo 不存在
 endif
 
+# 关于更多文档 查询 gnu 官网 https://www.gnu.org/software/make/manual/html_node/Conditional-Syntax.html
+more:
+	@echo 感谢使用
 
 all:
 	make test1
