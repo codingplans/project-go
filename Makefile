@@ -3,6 +3,7 @@ XARGS = xargs
 ARCH ?= $(shell go env GOARCH)
 INTERNAL_PROTO_FILES=$(shell find . -name *.proto)
 
+# 这是一个测试 case 的实现
 test:
 	@echo $(INTERNAL_PROTO_FILES)
 	mkdir www
