@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/Darrenzzy/person-go/structures"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -12,16 +11,24 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/Darrenzzy/person-go/structures"
 )
 
-func TestAaa(t *testing.T) {
-	// // target := 8
-	// target := 6
-	// // target := 1
-	// // arr := []int{1, 2, 3, 3, 3, 3, 3, 3, 9, 10}
-	// arr := []int{5, 7, 7, 8, 8, 10}
-	// // arr := []int{1}
-	// fmt.Println(searchRange(arr, target))
+func regexMatch(regex string, operation string) bool {
+	r, err := regexp.Compile(regex)
+	if err != nil {
+		return false
+	}
+	return r.FindString(operation) == operation
+}
+
+func TestRegex(t *testing.T) {
+
+	println(regexMatch(`^.*login.*$`, "asdkalogin/hsj"))
+	println(regexMatch(`^.*login.*$`, "1qweqwi"))
+	println(regexMatch(`.*2014.*$`, "1qwe[2014]qwi"))
+	println(regexMatch(`^.*TenantSso/Login/.*$`, "/helloworld/aaa?asdasdjk"))
 
 }
 

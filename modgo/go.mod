@@ -16,15 +16,15 @@ require (
 	github.com/elazarl/goproxy v0.0.0-20210110162100-a92cc753f88e // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-kratos/kratos v1.0.0
-	github.com/go-redis/redis/v8 v8.11.0 // indirect
 	//github.com/go-kratos/kratos v0.0.0-00010101000000-000000000000
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-xorm/xorm v0.7.9
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/json-iterator/go v1.1.11 // indirect
-	github.com/lib/pq v1.10.2 // indirect
+	github.com/lib/pq v1.10.2
 	github.com/looplab/fsm v0.2.0
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/parnurzeal/gorequest v0.2.16
