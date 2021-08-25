@@ -3,11 +3,12 @@ package xzap
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"os"
 	"strings"
 	"time"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type zLog struct {
@@ -21,6 +22,7 @@ type zLog struct {
 
 var zl *zLog
 
+// 用官方实现
 func InitZLog(outputPaths []string, level zapcore.Level) (err error) {
 	if zl != nil {
 		return
