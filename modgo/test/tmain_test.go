@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/Darrenzzy/person-go/structures"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -12,6 +11,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/Darrenzzy/person-go/structures"
 )
 
 func TestAaa(t *testing.T) {
@@ -22,6 +23,9 @@ func TestAaa(t *testing.T) {
 	// arr := []int{5, 7, 7, 8, 8, 10}
 	// // arr := []int{1}
 	// fmt.Println(searchRange(arr, target))
+	// beginningOfTime := time.Unix(time.Now().Unix(), 0)
+	beginningOfTime := time.Unix(99999123123, 0)
+	fmt.Println(beginningOfTime.Unix())
 
 }
 
