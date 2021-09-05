@@ -26,7 +26,22 @@ func TestAaa(t *testing.T) {
 	// beginningOfTime := time.Unix(time.Now().Unix(), 0)
 	beginningOfTime := time.Unix(99999123123, 0)
 	fmt.Println(beginningOfTime.Unix())
+}
 
+func regexMatch(regex string, operation string) bool {
+	r, err := regexp.Compile(regex)
+	if err != nil {
+		return false
+	}
+	return r.FindString(operation) == operation
+}
+
+func TestRegex(t *testing.T) {
+
+	println(regexMatch(`^.*login.*$`, "asdkalogin/hsj"))
+	println(regexMatch(`^.*login.*$`, "1qweqwi"))
+	println(regexMatch(`.*2014.*$`, "1qwe[2014]qwi"))
+	println(regexMatch(`^.*TenantSso/Login/.*$`, "/helloworld/aaa?asdasdjk"))
 }
 
 func TestArrayGroup(t *testing.T) {
