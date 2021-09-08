@@ -160,7 +160,6 @@ func TestRegex(t *testing.T) {
 	println(regexMatch(`^.*login.*$`, "1qweqwi"))
 	println(regexMatch(`.*2014.*$`, "1qwe[2014]qwi"))
 	println(regexMatch(`^.*TenantSso/Login/.*$`, "/helloworld/aaa?asdasdjk"))
-
 }
 
 func TestArrayGroup(t *testing.T) {
