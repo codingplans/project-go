@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
+	"math/rand"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -14,6 +16,135 @@ import (
 
 	"github.com/Darrenzzy/person-go/structures"
 )
+
+func TestNilFun(t *testing.T) {
+
+	a := NewA()
+	c:=context.TODO()
+	fmt.Println(a.GetName(&c, "222"))
+
+}
+
+type A struct {
+	name string
+}
+
+func NewA() *A {
+	return &A{
+		name: "111",
+	}
+}
+
+func (a *A) GetName(ctx *context.Context, name string) string {
+	a.name = name
+	return a.name
+}
+
+func WhichIsBest() int {
+	a, b, c, d := rand.Intn(10), rand.Intn(10), rand.Intn(10), 0
+	switch {
+	case a == 1:
+		d = 1
+	case b == 1:
+		d = 2
+	case c == 1:
+		d = 3
+	default:
+		d = 4
+	}
+	return d
+}
+
+func WhichIsBestV2() int {
+	a, b, c, d := rand.Intn(10), rand.Intn(10), rand.Intn(10), 0
+	switch {
+	case a == 1:
+		d = 1
+		return d
+	case b == 1:
+		d = 2
+		return d
+	case c == 1:
+		d = 3
+		return d
+	}
+	return d
+}
+
+type SR string
+
+func TestPoint(t *testing.T) {
+	var vv SR = SR("初始值")
+	d := vv
+	d.myVal()
+
+	d.Get1()
+	d.myVal()
+
+	vv = "2次"
+	d = vv
+	d.Get2()
+	d.myVal()
+
+	d.Get4()
+	d.myVal()
+
+	d.Get3()
+	d.myVal()
+}
+
+func (s *SR) Get1() {
+	// s = nil
+	// s.myVal()
+}
+
+func (s SR) Get2() {
+	s = SR("期望的值2")
+	s.myVal()
+
+}
+func (s *SR) Get3() {
+	v := SR("期望的值3")
+	s = &v
+	s.myVal()
+}
+func (s *SR) Get4() {
+	v := SR("期望的值4")
+	*s = v
+	s.myVal()
+}
+
+func (s *SR) myVal() {
+	fmt.Printf("the val : %p %s \n", s, *s)
+}
+
+func TestAffirmation(t *testing.T) {
+	var a = uint8(90)
+	println(int64(a))
+	println(int8(a))
+	var m interface{}
+	m = a
+
+	if s, ok := m.(int64); !ok {
+		println(s)
+	}
+
+}
+
+func TestSwitchs(t *testing.T) {
+	aa := structures.Interval{Start: 123, End: 333}
+	switch {
+	case aa.End == 333:
+		println(2)
+	case aa.Start == 23:
+		println(3)
+	case aa.End == 123:
+		println(4)
+	default:
+		println(5)
+
+	}
+}
 
 func regexMatch(regex string, operation string) bool {
 	r, err := regexp.Compile(regex)
