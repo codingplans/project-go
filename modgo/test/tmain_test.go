@@ -17,10 +17,59 @@ import (
 	"github.com/Darrenzzy/person-go/structures"
 )
 
+func TestMapv2(t *testing.T) {
+	m := make(map[string][]int)
+	s := []int{1, 2}
+	s = append(s, 3)
+	fmt.Printf("%p---%v\n", m, m)
+	m["test"] = s
+	fmt.Printf("%p---%v\n", s, s)
+	fmt.Printf("%p---%v\n", m["test"], m["test"])
+	fmt.Printf("%p---%v\n", m, m)
+
+}
+
+func TestSliceV2(t *testing.T) {
+	s := make([]int, 1)
+	s[0], s, s[0] = 333, []int{1, 2, 3}, 222
+	t.Log(s)
+}
+
+type Fn struct {
+	A string
+	B string
+	C string
+	D string
+}
+
+func TestFnLoop(t *testing.T) {
+
+	aa := new(Fn)
+	aa.Geta()
+	aa.Getb()
+	aa.Getc()
+	aa.Getd()
+	aa.Geta()
+
+}
+func (f *Fn) Geta() string {
+	return f.A
+}
+
+func (f *Fn) Getb() string {
+	return f.B
+}
+func (f *Fn) Getc() string {
+	return f.C
+}
+func (f *Fn) Getd() string {
+	return f.D
+}
+
 func TestNilFun(t *testing.T) {
 
 	a := NewA()
-	c:=context.TODO()
+	c := context.TODO()
 	fmt.Println(a.GetName(&c, "222"))
 
 }
