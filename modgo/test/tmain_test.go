@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"math/rand"
 	"reflect"
@@ -16,6 +17,59 @@ import (
 
 	"github.com/Darrenzzy/person-go/structures"
 )
+
+const url = "https://github.com/EDDYCJY"
+
+func TestAdd(t *testing.T) {
+	s := Add(url)
+	if s == "" {
+		t.Errorf("Test.Add error!")
+	}
+}
+
+func BenchmarkAdd(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Add(url)
+	}
+}
+
+func TestSpilt(t *testing.T) {
+	msg := "aaskjdhakshdlkhsada审"
+	t.Log(len(strings.Split(msg, "审批于")))
+
+}
+
+func TestPanicV4(t *testing.T) {
+
+	type R struct {
+		S *int64
+		K string
+	}
+
+	w := int64(2)
+	aa := R{
+		S: &w,
+		K: "123",
+	}
+	if aa.S == nil || *aa.S == 0 {
+		println(123)
+	}
+	aa.S = nil
+	bb, err := aa, errors.New("123")
+	if err == nil || bb.K == "123" {
+		println("ppppp")
+	}
+
+}
+
+func TestRangeNil(t *testing.T) {
+	obj := make([]string, 0)
+	obj = nil
+	// obj = append(obj, "123")
+	for v := range obj {
+		println(v)
+	}
+}
 
 func TestMapv2(t *testing.T) {
 	m := make(map[string][]int)
