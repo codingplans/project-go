@@ -20,6 +20,38 @@ import (
 
 const url = "https://github.com/EDDYCJY"
 
+func TestForRange(t *testing.T) {
+
+	i := 0
+	for {
+		t.Log(time.Now())
+		timer := time.NewTimer(time.Second)
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Error("Recovered in f", r)
+				}
+			}()
+			select {
+			case <-timer.C:
+				t.Log(time.Now(), "###", i)
+				i++
+			}
+
+			if i > 500 {
+				panic("444")
+			}
+		}()
+
+	}
+
+}
+
+func TestTimeMicr(t *testing.T) {
+	t.Log(strconv.FormatInt(time.Now().Unix(), 10))
+	t.Log(time.Now().Unix() * 1000)
+}
+
 func TestAdd(t *testing.T) {
 	s := Add(url)
 	if s == "" {
@@ -36,6 +68,7 @@ func BenchmarkAdd(b *testing.B) {
 func TestSpilt(t *testing.T) {
 	msg := "aaskjdhakshdlkhsada审"
 	t.Log(len(strings.Split(msg, "审批于")))
+	t.Log(strings.Contains("15618802115 18658852500", "18658852500"))
 
 }
 

@@ -12,3 +12,9 @@ create table user
 );
 insert into user values(1, "zhangsan","test12345@qq.com","passwd","avaterpath");
 insert into user values(2, "lisi","12345test@qq.com","passwd","avaterpath");
+
+-- create a new user
+-- grant all permission to all databases
+GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
+-- flush
+flush privileges;
