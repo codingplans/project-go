@@ -2,7 +2,10 @@ package main
 
 import (
 	"bytes"
+	"context"
+	"errors"
 	"fmt"
+	"math/rand"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -40,6 +43,270 @@ func TestAaa(t *testing.T) {
 	// beginningOfTime := time.Unix(time.Now().Unix(), 0)
 	beginningOfTime := time.Unix(99999123123, 0)
 	fmt.Println(beginningOfTime.Unix())
+}
+
+const url = "https://github.com/EDDYCJY"
+
+func TestForRange(t *testing.T) {
+
+	i := 0
+	for {
+		t.Log(time.Now())
+		timer := time.NewTimer(time.Second)
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Error("Recovered in f", r)
+				}
+			}()
+			select {
+			case <-timer.C:
+				t.Log(time.Now(), "###", i)
+				i++
+			}
+
+			if i > 500 {
+				panic("444")
+			}
+		}()
+
+	}
+
+}
+
+func TestTimeMicr(t *testing.T) {
+	t.Log(strconv.FormatInt(time.Now().Unix(), 10))
+	t.Log(time.Now().Unix() * 1000)
+}
+
+func TestAdd(t *testing.T) {
+	s := Add(url)
+	if s == "" {
+		t.Errorf("Test.Add error!")
+	}
+}
+
+func BenchmarkAdd(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Add(url)
+	}
+}
+
+func TestSpilt(t *testing.T) {
+	msg := "aaskjdhakshdlkhsada审"
+	t.Log(len(strings.Split(msg, "审批于")))
+	t.Log(strings.Contains("15618802115 18658852500", "18658852500"))
+
+}
+
+func TestPanicV4(t *testing.T) {
+
+	type R struct {
+		S *int64
+		K string
+	}
+
+	w := int64(2)
+	aa := R{
+		S: &w,
+		K: "123",
+	}
+	if aa.S == nil || *aa.S == 0 {
+		println(123)
+	}
+	aa.S = nil
+	bb, err := aa, errors.New("123")
+	if err == nil || bb.K == "123" {
+		println("ppppp")
+	}
+
+}
+
+func TestRangeNil(t *testing.T) {
+	obj := make([]string, 0)
+	obj = nil
+	// obj = append(obj, "123")
+	for v := range obj {
+		println(v)
+	}
+}
+
+func TestMapv2(t *testing.T) {
+	m := make(map[string][]int)
+	s := []int{1, 2}
+	s = append(s, 3)
+	fmt.Printf("%p---%v\n", m, m)
+	m["test"] = s
+	fmt.Printf("%p---%v\n", s, s)
+	fmt.Printf("%p---%v\n", m["test"], m["test"])
+	fmt.Printf("%p---%v\n", m, m)
+
+}
+
+func TestSliceV2(t *testing.T) {
+	s := make([]int, 1)
+	s[0], s, s[0] = 333, []int{1, 2, 3}, 222
+	t.Log(s)
+}
+
+type Fn struct {
+	A string
+	B string
+	C string
+	D string
+}
+
+func TestFnLoop(t *testing.T) {
+
+	aa := new(Fn)
+	aa.Geta()
+	aa.Getb()
+	aa.Getc()
+	aa.Getd()
+	aa.Geta()
+
+}
+func (f *Fn) Geta() string {
+	return f.A
+}
+
+func (f *Fn) Getb() string {
+	return f.B
+}
+func (f *Fn) Getc() string {
+	return f.C
+}
+func (f *Fn) Getd() string {
+	return f.D
+}
+
+func TestNilFun(t *testing.T) {
+
+	a := NewA()
+	c := context.TODO()
+	fmt.Println(a.GetName(&c, "222"))
+
+}
+
+type A struct {
+	name string
+}
+
+func NewA() *A {
+	return &A{
+		name: "111",
+	}
+}
+
+func (a *A) GetName(ctx *context.Context, name string) string {
+	a.name = name
+	return a.name
+}
+
+func WhichIsBest() int {
+	a, b, c, d := rand.Intn(10), rand.Intn(10), rand.Intn(10), 0
+	switch {
+	case a == 1:
+		d = 1
+	case b == 1:
+		d = 2
+	case c == 1:
+		d = 3
+	default:
+		d = 4
+	}
+	return d
+}
+
+func WhichIsBestV2() int {
+	a, b, c, d := rand.Intn(10), rand.Intn(10), rand.Intn(10), 0
+	switch {
+	case a == 1:
+		d = 1
+		return d
+	case b == 1:
+		d = 2
+		return d
+	case c == 1:
+		d = 3
+		return d
+	}
+	return d
+}
+
+type SR string
+
+func TestPoint(t *testing.T) {
+	var vv SR = SR("初始值")
+	d := vv
+	d.myVal()
+
+	d.Get1()
+	d.myVal()
+
+	vv = "2次"
+	d = vv
+	d.Get2()
+	d.myVal()
+
+	d.Get4()
+	d.myVal()
+
+	d.Get3()
+	d.myVal()
+}
+
+func (s *SR) Get1() {
+	// s = nil
+	// s.myVal()
+}
+
+func (s SR) Get2() {
+	s = SR("期望的值2")
+	s.myVal()
+
+}
+func (s *SR) Get3() {
+	v := SR("期望的值3")
+	s = &v
+	s.myVal()
+}
+func (s *SR) Get4() {
+	v := SR("期望的值4")
+	*s = v
+	s.myVal()
+}
+
+func (s *SR) myVal() {
+	fmt.Printf("the val : %p %s \n", s, *s)
+}
+
+func TestAffirmation(t *testing.T) {
+	var a = uint8(90)
+	println(int64(a))
+	println(int8(a))
+	var m interface{}
+	m = a
+
+	if s, ok := m.(int64); !ok {
+		println(s)
+	}
+
+}
+
+func TestSwitchs(t *testing.T) {
+	aa := structures.Interval{Start: 123, End: 333}
+	switch {
+	case aa.End == 333:
+		println(2)
+	case aa.Start == 23:
+		println(3)
+	case aa.End == 123:
+		println(4)
+	default:
+		println(5)
+
+	}
 }
 
 func regexMatch(regex string, operation string) bool {
