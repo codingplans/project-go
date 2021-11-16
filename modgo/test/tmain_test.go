@@ -15,6 +15,20 @@ import (
 	"github.com/Darrenzzy/person-go/structures"
 )
 
+func TestSliceSplit(t *testing.T) {
+
+	aa := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	// ss := aa[2:3000]
+	ss := aa[2:2]
+
+	var name string
+	name = "asd"
+	aaaa := strings.Count(name, "")
+	t.Log(aaaa)
+	t.Log(ss, 2222)
+}
+
 func TestAaa(t *testing.T) {
 	// // target := 8
 	// target := 6

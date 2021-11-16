@@ -4,8 +4,8 @@ user
 *.yaml
 *.yml
 *.toml
-mysqldata
-mysqldata/*
+docker/mysql/mysqldata
+docker/mysql/mysqldata/*
 node_modules
 *.exe
 *.jar
