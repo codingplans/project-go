@@ -61,4 +61,15 @@ BenchmarkSliceRange-8   	     412	   7389596 ns/op
 BenchmarkSliceOnce-8    	    2719	   1333876 ns/op
 PASS
 ok  	command-line-arguments	11.030s
+
+下面这个是把 slice 类型换成字符串 结果一样 BenchmarkSliceOnce 推荐
+go test  for_slice_test.go -bench=. -run=none -benchtime=3s
+goos: darwin
+goarch: arm64
+Benchmark_sliceRange-8              1081           3084000 ns/op
+Benchmark_sliceOnce-8               5752            606444 ns/op
+PASS
+ok      command-line-arguments  7.612s
+
 */
+
