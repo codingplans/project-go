@@ -12,3 +12,5 @@ node_modules
 vendor
 member/*
 docker/etcd/default.etcd/*
+testgo
+mysqldata

@@ -4,13 +4,21 @@ import (
 	"fmt"
 	"net/http"
 	_ "net/http/pprof"
+	"time"
 )
 
 func main() {
-	println(123)
 	go func() {
 		for {
-			fmt.Println(Add("https://github.com/EDDYCJY"))
+			Add("hs")
+			// fmt.Println()
+		}
+	}()
+
+	go func() {
+		for {
+			time.Sleep(time.Second * 2)
+			fmt.Printf("%p %d,%d \n", datas, len(datas), cap(datas))
 		}
 	}()
 
