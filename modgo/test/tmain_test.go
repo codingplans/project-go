@@ -18,6 +18,13 @@ import (
 	"github.com/Darrenzzy/person-go/structures"
 )
 
+func TestFloatTostring(t *testing.T) {
+	f := float64(23.434532)
+	t.Logf("%v", f)
+	t.Logf("%f", f)
+	t.Logf("%.2f", f)
+}
+
 func TestSliceSplit(t *testing.T) {
 
 	aa := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
