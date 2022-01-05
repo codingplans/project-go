@@ -12,11 +12,216 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
 	"github.com/Darrenzzy/person-go/structures"
 )
+
+type Fn struct {
+	A string
+	B string
+	C string
+	D string
+}
+
+func TestAppends(t *testing.T) {
+
+	arr := []int{}
+	ch := make(chan struct{}, 0)
+	isClose = false
+	i := int32(0)
+	maxCount := int32(5000)
+	println(runtime.NumCPU())
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	go func(i int32) {
+		for {
+			if i > maxCount {
+				ch <- struct{}{}
+				return
+			}
+			atomic.AddInt32(&i, 1)
+			arr = append(arr, int(i))
+			if len(arr)%100 == 0 {
+				fmt.Println(i)
+			}
+		}
+	}(i)
+	go func(i int32) {
+		for {
+			if i > maxCount {
+				ch <- struct{}{}
+				return
+			}
+			atomic.AddInt32(&i, 1)
+			arr = append(arr, int(i))
+			if len(arr)%100 == 0 {
+				fmt.Println(i)
+			}
+		}
+	}(i)
+	go func(i int32) {
+		for {
+			if i > maxCount {
+				ch <- struct{}{}
+				return
+			}
+			atomic.AddInt32(&i, 1)
+			arr = append(arr, int(i))
+			if len(arr)%100 == 0 {
+				fmt.Println(i)
+			}
+		}
+	}(i)
+	for {
+		select {
+		case <-ch:
+			isClose = true
+		default:
+			if len(arr) > 20 {
+				_ = arr[:20]
+				// fmt.Println(ss)
+				arr = arr[20:]
+			}
+
+		}
+
+		if isClose && len(arr) == 0 {
+			return
+		} else if isClose && len(arr) < 20 {
+			ss := arr[:len(arr)]
+			fmt.Println("***", ss)
+			arr = arr[len(arr):]
+		}
+
+	}
+
+}
+
+func TestWgAdd(t *testing.T) {
+	var wgs sync.WaitGroup
+
+	k := uint64(1)
+	md := make([]int, 1000)
+
+	for i := int(1); i < 1000; i++ {
+		md[i] = i
+		wgs.Add(1)
+		go func(i int) {
+			md[int(k)] = int(i)
+			atomic.AddUint64(&k, 1)
+			wgs.Done()
+
+		}(i)
+	}
+
+	wgs.Wait()
+	t.Log(md, len(md))
+	md = md[:k]
+	t.Log(md, len(md))
+}
+
+func TestMapRead(t *testing.T) {
+	m := map[string]int{}
+	m1 := map[string]int{}
+	go func() {
+		for {
+			m1["key1"] = 1
+			m = m1
+		}
+	}()
+	for {
+		_ = m["key2"]
+	}
+}
+
+func TestParams(t *testing.T) {
+
+	B := Fn{}
+	B.A = "qqqq"
+	P(B)
+	B.B = "qqqq"
+	t.Log(B.A, B)
+
+}
+func P(f Fn) {
+	f.A = "aaa"
+	f.B = "aaa"
+
+}
+
+func TestDeferSort(t *testing.T) {
+	x := 1
+	y := AddD(&x)
+	println(*y, x)
+
+	x1 := 1
+	y1 := AddE(&x1)
+	println(x1, y1)
+
+}
+func AddD(a *int) *int {
+
+	println(a, *a, 111)
+	defer func() {
+		*a = *a + 1
+	}()
+	println(a, *a, 333)
+
+	return a
+}
+
+func AddE(a *int) *int {
+
+	println(a, *a, 111)
+	defer func() {
+		*a = *a + 1
+	}()
+	println(a, *a, 333)
+
+	return nil
+}
+
+func TestSliceEqual(t *testing.T) {
+	a := []int{1, 2, 3, 4}
+	b := []int{1, 3, 2, 4}
+	c := []int{1, 2, 3, 4}
+	d := []byte{1, 2, 3, 4}
+	fmt.Println(reflect.DeepEqual(a, b))
+	fmt.Println(reflect.DeepEqual(a, c))
+	fmt.Println(reflect.DeepEqual(a, d))
+
+}
+
+func TestStructNil(t *testing.T) {
+	D := new(PayWay)
+	t.Log(D.Test)
+	t.Log(D.Test2)
+	t.Log(D.Test.S)
+	t.Log(D.Test.S.Alias)
+	// 指针 就是nil  会panic！
+	if D.Test2 != nil {
+		t.Log(D.Test2.Alias)
+	}
+
+}
+
+func TestFloat32To64(t *testing.T) {
+
+	f := float64(44.532424234234)
+	t.Log(float32(f))
+
+	f = float64(445324242342.34)
+	t.Log(float32(f))
+
+	f = float64(117.11166743741192)
+	t.Log(float32(f))
+
+	f = float64(99999.532424234234)
+	t.Log(float32(f))
+
+}
 
 func TestSliceSplit(t *testing.T) {
 
@@ -149,13 +354,6 @@ func TestSliceV2(t *testing.T) {
 	t.Log(s)
 }
 
-type Fn struct {
-	A string
-	B string
-	C string
-	D string
-}
-
 func TestFnLoop(t *testing.T) {
 
 	aa := new(Fn)
@@ -189,7 +387,8 @@ func TestNilFun(t *testing.T) {
 }
 
 type A struct {
-	name string
+	name  string
+	Alias string
 }
 
 func NewA() *A {
@@ -1337,11 +1536,17 @@ func TestSliceRange(t *testing.T) {
 }
 
 func TestPanicdefer(t *testing.T) {
+	t.Log(DeferTest())
+}
+
+func DeferTest() int {
 	a := 1
 	b := 2
-	defer calc(a, calc(a, b, "0"), "1")
-	a = 0
-	defer calc(a, calc(a, b, "3"), "2")
+	defer calc(a, b, "1")
+	// defer calc(a, calc(a, b, "0"), "1")
+	// a = 0
+	// defer calc(a, calc(a, b, "3"), "2")
+	return a + 1
 }
 
 func calc(x, y int, s string) int {
@@ -1389,7 +1594,13 @@ type PayWay struct {
 	Id  int64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	Ids int64 `protobuf:"varint,2,opt,name=id,proto3" json:"ids,omitempty"`
 	// 支付名称
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Name  string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Test  B
+	Test2 *A
+}
+
+type B struct {
+	S A
 }
 
 type S struct {
