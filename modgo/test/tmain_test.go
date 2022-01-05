@@ -220,7 +220,6 @@ func TestFloat32To64(t *testing.T) {
 
 	f = float64(99999.532424234234)
 	t.Log(float32(f))
-
 }
 
 func TestSliceSplit(t *testing.T) {
