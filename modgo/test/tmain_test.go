@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -24,6 +25,40 @@ type Fn struct {
 	B string
 	C string
 	D string
+}
+
+func TestSortInt(t *testing.T) {
+
+	arr := []int{1, 44, 2, 77, 3, 4, 5}
+
+	s := sort.SearchInts(arr, 22)
+	t.Log(s, arr)
+
+}
+
+func TestSliss(t *testing.T) {
+	arr := []int{1}
+
+	go func() {
+		for i := 100; i > 0; i-- {
+			println(len(arr))
+			arr = append(arr, 2)
+		}
+	}()
+	time.Sleep(time.Second)
+	for len(arr) > 0 {
+		l := 10
+		if l > len(arr) {
+			l = len(arr)
+		}
+		_ = arr[:l]
+		t.Log(len(arr), l)
+		arr = arr[l:]
+
+	}
+
+	t.Log(arr)
+
 }
 
 func TestAppends(t *testing.T) {
