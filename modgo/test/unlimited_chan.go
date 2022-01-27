@@ -44,10 +44,8 @@ func (u *unlimited) In() {
 	i := 0
 	for {
 		m := msg{id: i}
-		// println("in 开始！")
 
 		u.in <- m
-		// println("in 成功！")
 
 		i++
 		if i == 50 {
@@ -83,21 +81,17 @@ func (u *unlimited) Handle() {
 	defer close(u.out)
 loop:
 	for {
-		// println("**** 开始读in")
 
 		val, ok := <-u.in
 		if !ok {
 			println("已关闭")
 			break loop
 		}
-		// println("读取到in ", val.id)
 
 		select {
 		case u.out <- val:
-			// println("写入成功，下一轮")
 			continue
 		default:
-			// println("当out 阻塞了，就走下面塞给切片")
 
 			// 	当out 阻塞了，就走下面塞给切片
 		}
@@ -106,11 +100,6 @@ loop:
 
 		for u.BufferLen() != 0 {
 			select {
-			// case val, ok := <-u.in:
-			// 	if !ok {
-			// 		break loop
-			// 	}
-			// 	u.buffer = append(u.buffer, val)
 			case u.out <- u.buffer[0]:
 				u.buffer = u.buffer[1:]
 				if u.BufferLen() == 0 {
@@ -119,8 +108,6 @@ loop:
 				println("下一轮")
 				continue
 			default:
-				// println("当out 阻塞了，")
-
 				// 	当out 阻塞了，就走下面
 				goto loop
 			}

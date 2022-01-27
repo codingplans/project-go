@@ -27,6 +27,23 @@ type Fn struct {
 	D string
 }
 
+func TestCompareInterface(t *testing.T) {
+	var x interface{} = []int{1, 2}
+	var y interface{} = map[string]int{"aa": 1, "bb": 1}
+	var z interface{} = func() {}
+
+	// The lines all print false.
+	println(x == y)
+	println(x == z)
+	println(x == nil)
+	t.Log(x, y, z)
+
+	// Each of these line could produce a panic.
+	// println(x == x)
+	// println(y == y)
+	// println(z == z)
+}
+
 func TestSortInt(t *testing.T) {
 
 	arr := []int{1, 44, 2, 77, 3, 4, 5}
