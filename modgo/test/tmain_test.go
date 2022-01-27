@@ -20,6 +20,69 @@ import (
 	"github.com/Darrenzzy/person-go/structures"
 )
 
+func BenchmarkDirConcat(b *testing.B) {
+	var s37 = []byte{36: 'x'} // len(s37) == 37
+	var str string
+
+	for i := 0; i < b.N; i++ {
+		str = string(s37) + string(s37)
+	}
+	_ = str
+}
+
+func BenchmarkSplitedConcat(b *testing.B) {
+	var s37 = []byte{36: 'x'} // len(s37) == 37
+	var str string
+
+	for i := 0; i < b.N; i++ {
+		str = string(s37[:32]) +
+			string(s37[32:]) +
+			string(s37[:32]) +
+			string(s37[32:])
+	}
+	_ = str
+}
+
+func verbose(x, y, z []byte) {
+	switch {
+	case string(x) == string(y):
+		// do something
+	case string(x) == string(z):
+		// do something
+	}
+}
+
+func clean(x, y, z []byte) {
+	switch string(x) {
+	case string(y):
+		// do something
+	case string(z):
+		// do something
+	}
+}
+
+// func TestMuchString(t *testing.T) {
+// 	x := []byte{1023: 'x'}
+// 	y := []byte{1023: 'y'}
+// 	z := []byte{1023: 'z'}
+// 	stat := func(f func(x, y, z []byte)) int {
+// 		t.Parallel()
+// 		allocs := t.AllocsPerRun(1, func() {
+// 			f(x, y, z)
+// 		})
+// 		return int(allocs)
+// 	}
+// 	println(stat(verbose)) // 0
+// 	println(stat(clean))   // 3
+// }
+
+func TestFloatTostring(t *testing.T) {
+	f := float64(23.434532)
+	t.Logf("%v", f)
+	t.Logf("%f", f)
+	t.Logf("%.2f", f)
+}
+
 type Fn struct {
 	A string
 	B string
@@ -142,7 +205,7 @@ func TestAppends(t *testing.T) {
 		if isClose && len(arr) == 0 {
 			return
 		} else if isClose && len(arr) < 20 {
-			ss := arr[:len(arr)]
+			ss := arr[:]
 			fmt.Println("***", ss)
 			arr = arr[len(arr):]
 		}
@@ -487,7 +550,7 @@ func WhichIsBestV2() int {
 type SR string
 
 func TestPoint(t *testing.T) {
-	var vv SR = SR("初始值")
+	var vv = SR("初始值")
 	d := vv
 	d.myVal()
 
@@ -798,7 +861,7 @@ func smallestDistancePair(nums []int, k int) int {
 		for j := i + 1; j < l; j++ {
 			diff := nums[j] - nums[i]
 			if diff < 0 {
-				diff = (^diff + 1)
+				diff = ^diff + 1
 			}
 			keys[diff]++
 			// arr = mergeappend(arr, diff)
@@ -835,7 +898,7 @@ func TestCase(t *testing.T) {
 	a := 14
 	b := -10
 	// s:=b^b
-	println(a|b, x^a^b, (^b + 1))
+	println(a|b, x^a^b, ^b+1)
 	fmt.Printf("%b \n", x)
 	fmt.Printf("%b \n", a)
 	fmt.Printf("%b \n", b)
@@ -973,7 +1036,7 @@ func search(nums []int, target int) int {
 	i := 0
 	mid := 0
 	for i <= l {
-		mid = int(uint((i + l)) >> 1)
+		mid = int(uint(i+l) >> 1)
 		// fmt.Println(mid, i, l)
 		if nums[mid] == target {
 			for mid > 1 && nums[mid-1] == target {
@@ -1185,7 +1248,7 @@ func TestLeetcode(t *testing.T) {
 
 	// k := getLongestPalindrome("ab1234321abcvbnmmnbvcba1", 24)
 	// k := minPathSum([][]int{[]int{1, 3, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 8, 4, 0}})
-	k := minPathSumV2([][]int{[]int{1, 3, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 8, 4, 0}})
+	k := minPathSumV2([][]int{{1, 3, 5, 9}, {8, 1, 3, 4}, {5, 0, 6, 1}, {8, 8, 4, 0}})
 	// k := minPathSum([][]int{[]int{1, 1, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 1, 1, 0}})
 	// k := minPathSumV2([][]int{[]int{1, 1, 5, 9}, []int{8, 1, 3, 4}, []int{5, 0, 6, 1}, []int{8, 1, 1, 0}})
 
