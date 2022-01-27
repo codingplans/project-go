@@ -18,6 +18,62 @@ import (
 	"github.com/Darrenzzy/person-go/structures"
 )
 
+func BenchmarkDirConcat(b *testing.B) {
+	var s37 = []byte{36: 'x'} // len(s37) == 37
+	var str string
+
+	for i := 0; i < b.N; i++ {
+		str = string(s37) + string(s37)
+	}
+	_ = str
+}
+
+func BenchmarkSplitedConcat(b *testing.B) {
+	var s37 = []byte{36: 'x'} // len(s37) == 37
+	var str string
+
+	for i := 0; i < b.N; i++ {
+		str = string(s37[:32]) +
+			string(s37[32:]) +
+			string(s37[:32]) +
+			string(s37[32:])
+	}
+	_ = str
+}
+
+func verbose(x, y, z []byte) {
+	switch {
+	case string(x) == string(y):
+		// do something
+	case string(x) == string(z):
+		// do something
+	}
+}
+
+func clean(x, y, z []byte) {
+	switch string(x) {
+	case string(y):
+		// do something
+	case string(z):
+		// do something
+	}
+}
+
+// func TestMuchString(t *testing.T) {
+// 	x := []byte{1023: 'x'}
+// 	y := []byte{1023: 'y'}
+// 	z := []byte{1023: 'z'}
+// 	stat := func(f func(x, y, z []byte)) int {
+// 		t.Parallel()
+// 		allocs := t.AllocsPerRun(1, func() {
+// 			f(x, y, z)
+// 		})
+// 		return int(allocs)
+// 	}
+// 	println(stat(verbose)) // 0
+// 	println(stat(clean))   // 3
+// }
+
 func TestFloatTostring(t *testing.T) {
 	f := float64(23.434532)
 	t.Logf("%v", f)
