@@ -23,7 +23,6 @@ import (
 func BenchmarkDirConcat(b *testing.B) {
 	var s37 = []byte{36: 'x'} // len(s37) == 37
 	var str string
-
 	for i := 0; i < b.N; i++ {
 		str = string(s37) + string(s37)
 	}
@@ -60,21 +59,6 @@ func clean(x, y, z []byte) {
 		// do something
 	}
 }
-
-// func TestMuchString(t *testing.T) {
-// 	x := []byte{1023: 'x'}
-// 	y := []byte{1023: 'y'}
-// 	z := []byte{1023: 'z'}
-// 	stat := func(f func(x, y, z []byte)) int {
-// 		t.Parallel()
-// 		allocs := t.AllocsPerRun(1, func() {
-// 			f(x, y, z)
-// 		})
-// 		return int(allocs)
-// 	}
-// 	println(stat(verbose)) // 0
-// 	println(stat(clean))   // 3
-// }
 
 func TestFloatTostring(t *testing.T) {
 	f := float64(23.434532)

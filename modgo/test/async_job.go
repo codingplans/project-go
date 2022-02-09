@@ -15,7 +15,7 @@ type AsyncJob struct {
 
 func NewAsyncJob() *AsyncJob {
 	return &AsyncJob{
-		ch: make(chan interface{}, 10000),
+		ch: make(chan interface{}),
 	}
 }
 
