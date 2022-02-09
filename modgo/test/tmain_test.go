@@ -16,9 +16,22 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+	"unsafe"
 
 	"github.com/Darrenzzy/person-go/structures"
 )
+
+func Test_structChan(t *testing.T) {
+
+	var v BigBar
+	m := make(chan struct{})
+	t.Log(unsafe.Sizeof(v))
+	go func(a *BigBar) {
+		_ = a
+		m <- struct{}{}
+	}(&v)
+	<-m
+}
 
 func BenchmarkDirConcat(b *testing.B) {
 	var s37 = []byte{36: 'x'} // len(s37) == 37
@@ -43,42 +56,8 @@ func BenchmarkSplitedConcat(b *testing.B) {
 	_ = str
 }
 
-func verbose(x, y, z []byte) {
-	switch {
-	case string(x) == string(y):
-		// do something
-	case string(x) == string(z):
-		// do something
-	}
-}
-
-func clean(x, y, z []byte) {
-	switch string(x) {
-	case string(y):
-		// do something
-	case string(z):
-		// do something
-	}
-}
-
-// func TestMuchString(t *testing.T) {
-// 	x := []byte{1023: 'x'}
-// 	y := []byte{1023: 'y'}
-// 	z := []byte{1023: 'z'}
-// 	stat := func(f func(x, y, z []byte)) int {
-// 		t.Parallel()
-// 		allocs := t.AllocsPerRun(1, func() {
-// 			f(x, y, z)
-// 		})
-// 		return int(allocs)
-// 	}
-// 	println(stat(verbose)) // 0
-// 	println(stat(clean))   // 3
-// }
-
 func TestFloatTostring(t *testing.T) {
 	f := float64(23.434532)
-	t.Logf("%v", f)
 	t.Logf("%f", f)
 	t.Logf("%.2f", f)
 }
