@@ -16,9 +16,22 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+	"unsafe"
 
 	"github.com/Darrenzzy/person-go/structures"
 )
+
+func Test_structChan(t *testing.T) {
+
+	var v BigBar
+	m := make(chan struct{})
+	t.Log(unsafe.Sizeof(v))
+	go func(a *BigBar) {
+		_ = a
+		m <- struct{}{}
+	}(&v)
+	<-m
+}
 
 func BenchmarkDirConcat(b *testing.B) {
 	var s37 = []byte{36: 'x'} // len(s37) == 37
@@ -42,27 +55,8 @@ func BenchmarkSplitedConcat(b *testing.B) {
 	_ = str
 }
 
-func verbose(x, y, z []byte) {
-	switch {
-	case string(x) == string(y):
-		// do something
-	case string(x) == string(z):
-		// do something
-	}
-}
-
-func clean(x, y, z []byte) {
-	switch string(x) {
-	case string(y):
-		// do something
-	case string(z):
-		// do something
-	}
-}
-
 func TestFloatTostring(t *testing.T) {
 	f := float64(23.434532)
-	t.Logf("%v", f)
 	t.Logf("%f", f)
 	t.Logf("%.2f", f)
 }
@@ -72,6 +66,23 @@ type Fn struct {
 	B string
 	C string
 	D string
+}
+
+func TestCompareInterface(t *testing.T) {
+	var x interface{} = []int{1, 2}
+	var y interface{} = map[string]int{"aa": 1, "bb": 1}
+	var z interface{} = func() {}
+
+	// The lines all print false.
+	println(x == y)
+	println(x == z)
+	println(x == nil)
+	t.Log(x, y, z)
+
+	// Each of these line could produce a panic.
+	// println(x == x)
+	// println(y == y)
+	// println(z == z)
 }
 
 func TestSortInt(t *testing.T) {
