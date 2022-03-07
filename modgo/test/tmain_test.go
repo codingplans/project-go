@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -20,6 +21,75 @@ import (
 
 	"github.com/Darrenzzy/person-go/structures"
 )
+
+type Fn struct {
+	A string
+	B string
+	C string
+	D string
+}
+
+func TestChanCtx(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Second)
+	ctx = context.WithValue(ctx, "key", "value")
+	defer cancel()
+
+	go handle(ctx, 500*time.Millisecond)
+	select {
+	case <-ctx.Done():
+		fmt.Println("main", ctx.Err())
+
+	}
+	t.Log(ctx.Value("key"))
+}
+
+func handle(ctx context.Context, duration time.Duration) {
+	select {
+	case <-ctx.Done():
+		fmt.Println("handle", ctx.Err())
+	case <-time.After(duration):
+		fmt.Println("process request with", duration)
+	}
+}
+
+func TestBoolSize(t *testing.T) {
+	aa := make([]bool, 0, 10)
+	aa = append(aa, true)
+	aa = append(aa, true)
+	println(len(aa), cap(aa), unsafe.Sizeof(aa), &aa)
+	aa = aa[0:1]
+	println(len(aa), cap(aa), unsafe.Sizeof(aa), &aa)
+	aa = aa[0:2]
+	println(len(aa), cap(aa), unsafe.Sizeof(aa), &aa)
+
+	var b = make(map[int64]bool, 0)
+	if unsafe.Sizeof(b) != 1 {
+		t.Errorf("bool size is %d, want 1", unsafe.Sizeof(b))
+	}
+}
+
+type CommBody interface {
+	GetA() string
+	keys() []string
+}
+
+func (fn Fn) GetA() string {
+	return fn.A
+}
+func (fn Fn) keys() []string {
+	return []string{"A", "B", "C", "D"}
+}
+
+func DefClass(param CommBody) {
+	ms, _ := json.Marshal(param)
+	fmt.Println(string(ms))
+
+}
+
+func TestClassDef(t *testing.T) {
+	var fn = Fn{A: "a", B: "b", C: "c", D: "d"}
+	DefClass(fn)
+}
 
 func Test_structChan(t *testing.T) {
 
@@ -59,13 +129,6 @@ func TestFloatTostring(t *testing.T) {
 	f := float64(23.434532)
 	t.Logf("%f", f)
 	t.Logf("%.2f", f)
-}
-
-type Fn struct {
-	A string
-	B string
-	C string
-	D string
 }
 
 func TestCompareInterface(t *testing.T) {
