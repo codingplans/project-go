@@ -29,6 +29,43 @@ type Fn struct {
 	D string
 }
 
+func TestWriteSlice(t *testing.T) {
+	app := make([]int64, 0, 1000)
+	var lock sync.RWMutex
+	// wgs := sync.WaitGroup{}
+	wg.Add(10)
+	go func() {
+		i := 0
+		for {
+			lock.Lock()
+			app = append(app, rand.Int63())
+			lock.Unlock()
+			if i%10000000 == 0 {
+				t.Log(len(app))
+			}
+			i++
+		}
+	}()
+
+	go func() {
+		tic := time.NewTicker(100 * time.Microsecond)
+		for {
+			select {
+			case <-tic.C:
+				println(len(app), 99999999)
+				lock.Lock()
+				app = make([]int64, 0, 1000)
+				lock.Unlock()
+
+				println(len(app), 9888888888)
+
+			}
+		}
+	}()
+	wg.Wait()
+
+}
+
 func TestChanCtx(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Second)
 	ctx = context.WithValue(ctx, "key", "value")
