@@ -28,6 +28,65 @@ type Fn struct {
 	C string
 	D string
 }
+type baz struct {
+	bar int
+	foo int
+}
+
+type arr []baz
+
+func TestTimeDaysAdd(t *testing.T) {
+	now := time.Now().Unix()
+	t.Log(now, now+3600*24)
+	tt := time.Unix(1697839585, 0)
+	t.Log(tt)
+}
+
+func TestSleepSpeed(t *testing.T) {
+	t.Log("sleep speed test")
+	start := time.Now()
+	for i := 0; i < 10; i++ {
+		time.Sleep(time.Millisecond * 300)
+		// time.Sleep(time.Millisecond * 2)
+	}
+	t.Log(time.Now().Sub(start))
+}
+
+func TestContains(t *testing.T) {
+	t.Log(strings.Contains(strings.ToLower("shenZhou"), "shenzhou"))
+}
+
+func (b arr) Len() int {
+	return len(b)
+}
+
+func (b arr) Less(i, j int) bool {
+	if b[i].bar < b[j].bar {
+		return true
+	}
+
+	if b[i].bar == b[j].bar {
+		return b[i].foo > b[j].foo
+	}
+
+	return false
+}
+
+func (b arr) Swap(i, j int) {
+	b[i], b[j] = b[j], b[i]
+}
+
+func TestSortSlice(t *testing.T) {
+	s := []baz{
+		{5, 4},
+		{6, 7},
+		{2, 3},
+		{6, 4},
+	}
+	sort.Sort(arr(s))
+	fmt.Printf("%+v\n", s)
+	fmt.Printf("%+v\n", s)
+}
 
 func TestWriteSlice(t *testing.T) {
 	app := make([]int64, 0, 1000)
@@ -1505,6 +1564,8 @@ func TestQuickSoft(t *testing.T) {
 func TestHeapSort(t *testing.T) {
 	// arr := []int{4, 3, 5, 1, 2, 6, 7}
 	arr := []int{1, 4, 3, 2, 6, 5, 8, 7, 9, 0}
+	arr = []int{4, 3, 5, 1, 2, 6}
+
 	fmt.Println(arr)
 
 	BuildHeap(arr, len(arr))
@@ -1770,6 +1831,12 @@ func TestZhengzebiaoda(t *testing.T) {
 		// 执行替换
 		text = re1.ReplaceAllString(text, targetDate)
 	}
+	t.Log("替换后：", text, "\n")
+	ts := time.Now()
+	tm1 := time.Date(ts.Year(), ts.Month(), ts.Day()+1, 0, 0, 0, 0, ts.Location())
+	tm2 := tm1.AddDate(0, 0, 1)
+	t.Log(tm1, tm2)
+
 }
 
 // param: days 为多少天以后
@@ -1777,7 +1844,9 @@ func TestZhengzebiaoda(t *testing.T) {
 func LastDateOfMonth(days int, ct time.Time) string {
 	d := ct.AddDate(0, 0, days)              // time.Now()可以换成支持测试环境调时间的方法
 	firstDate := d.AddDate(0, 0, -d.Day()+1) // 当月的第一天
-	lastDate := firstDate.AddDate(0, 1, -1)  // 当月的最后一天
+	lastDate := firstDate.AddDate(0, 2, -1)
+	// lastDate.Unix()
+	// 当月的最后一天
 	return lastDate.Format("2006年01月02日")
 }
 
