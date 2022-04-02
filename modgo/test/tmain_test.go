@@ -33,7 +33,7 @@ type baz struct {
 	foo int
 }
 
-type arr []baz
+type arrStruct []baz
 
 func TestTimeDaysAdd(t *testing.T) {
 	now := time.Now().Unix()
@@ -56,11 +56,11 @@ func TestContains(t *testing.T) {
 	t.Log(strings.Contains(strings.ToLower("shenZhou"), "shenzhou"))
 }
 
-func (b arr) Len() int {
+func (b arrStruct) Len() int {
 	return len(b)
 }
 
-func (b arr) Less(i, j int) bool {
+func (b arrStruct) Less(i, j int) bool {
 	if b[i].bar < b[j].bar {
 		return true
 	}
@@ -72,7 +72,7 @@ func (b arr) Less(i, j int) bool {
 	return false
 }
 
-func (b arr) Swap(i, j int) {
+func (b arrStruct) Swap(i, j int) {
 	b[i], b[j] = b[j], b[i]
 }
 
@@ -83,7 +83,7 @@ func TestSortSlice(t *testing.T) {
 		{2, 3},
 		{6, 4},
 	}
-	sort.Sort(arr(s))
+	sort.Sort(arrStruct(s))
 	fmt.Printf("%+v\n", s)
 	fmt.Printf("%+v\n", s)
 }
@@ -492,10 +492,10 @@ func TestAaa(t *testing.T) {
 	// // target := 8
 	// target := 6
 	// // target := 1
-	// // arr := []int{1, 2, 3, 3, 3, 3, 3, 3, 9, 10}
-	// arr := []int{5, 7, 7, 8, 8, 10}
-	// // arr := []int{1}
-	// fmt.Println(searchRange(arr, target))
+	// // arrStruct := []int{1, 2, 3, 3, 3, 3, 3, 3, 9, 10}
+	// arrStruct := []int{5, 7, 7, 8, 8, 10}
+	// // arrStruct := []int{1}
+	// fmt.Println(searchRange(arrStruct, target))
 	// beginningOfTime := time.Unix(time.Now().Unix(), 0)
 	beginningOfTime := time.Unix(99999123123, 0)
 	fmt.Println(beginningOfTime.Unix())
@@ -776,8 +776,8 @@ func TestRegex(t *testing.T) {
 }
 
 func TestArrayGroup(t *testing.T) {
-	// 	原来 arr[ "qwe","weq","wqe","abc","cba"]
-	// 	期望 arr[["qwe","weq","wqe"],["abc","cba"]]
+	// 	原来 arrStruct[ "qwe","weq","wqe","abc","cba"]
+	// 	期望 arrStruct[["qwe","weq","wqe"],["abc","cba"]]
 
 	arr := []string{"qwe", "weq", "wqe", "abc", "cba"}
 
@@ -798,7 +798,7 @@ func TestArrayGroup(t *testing.T) {
 	// fmt.Println(m, pp)
 	// p := make(map[byte][]map[byte]bool, 0)
 	//
-	// for _, v := range arr {
+	// for _, v := range arrStruct {
 	// 	m := make(map[byte]bool, 0)
 	// 	var s byte
 	// 	for k := range v {
@@ -1001,7 +1001,7 @@ func smallestDistancePair(nums []int, k int) int {
 				diff = ^diff + 1
 			}
 			keys[diff]++
-			// arr = mergeappend(arr, diff)
+			// arrStruct = mergeappend(arrStruct, diff)
 
 		}
 	}
@@ -1553,7 +1553,7 @@ func TestChanV2(t *testing.T) {
 
 func TestQuickSoft(t *testing.T) {
 	arr := []int{4, 3, 5, 1, 2, 6, 33, 12, 1, 55, 3, 2, 111, 57, 7, 5}
-	// arr := []int{4, 3, 5, 1, 2, 6}
+	// arrStruct := []int{4, 3, 5, 1, 2, 6}
 
 	fmt.Println(arr)
 	QuickSoft(arr, 0, len(arr)-1)
@@ -1562,7 +1562,7 @@ func TestQuickSoft(t *testing.T) {
 
 // 堆排序小练
 func TestHeapSort(t *testing.T) {
-	// arr := []int{4, 3, 5, 1, 2, 6, 7}
+	// arrStruct := []int{4, 3, 5, 1, 2, 6, 7}
 	arr := []int{1, 4, 3, 2, 6, 5, 8, 7, 9, 0}
 	arr = []int{4, 3, 5, 1, 2, 6}
 
@@ -1574,7 +1574,7 @@ func TestHeapSort(t *testing.T) {
 
 // 随便练一下 二叉树排序 =》堆排序
 func Test2TreeSoft(t *testing.T) {
-	// arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	// arrStruct := []int{1, 2, 3, 4, 5, 6, 7, 8}
 	arr := []int{4, 3, 5, 1, 2, 6, 7}
 
 	ts := []int{0, 0, 0, 1}

@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/Darrenzzy/person-go/structures"
 	"math/rand"
 	"time"
+
+	"github.com/Darrenzzy/person-go/structures"
 )
 
 // 放一些 test 用到的 func  解耦开 test 文件
@@ -115,15 +116,15 @@ func Heapify(arr []int, n, lens int) {
 	// if i >= lens {
 	// 	return
 	// }
-	// if i < lens && arr[i] > arr[k] {
+	// if i < lens && arrStruct[i] > arrStruct[k] {
 	// 	k = i
 	// }
-	// if j < lens && arr[j] > arr[k] {
+	// if j < lens && arrStruct[j] > arrStruct[k] {
 	// 	k = j
 	// }
 	// if n != k {
-	// 	arr[n], arr[k] = arr[k], arr[n]
-	// 	Heapify(arr, k, lens)
+	// 	arrStruct[n], arrStruct[k] = arrStruct[k], arrStruct[n]
+	// 	Heapify(arrStruct, k, lens)
 	// }
 
 	for {

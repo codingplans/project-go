@@ -39,7 +39,7 @@ func sliceOnce(a, b []string) {
 }
 
 /*
-从跑分结果来看： 推荐直接 arr... 来扩容 slice
+从跑分结果来看： 推荐直接 arrStruct... 来扩容 slice
 
 // 结果一样 BenchmarkSliceOnce 推荐
 go test  for_slice_test.go -bench=. -run=none -benchtime=10s
@@ -72,4 +72,3 @@ PASS
 ok      command-line-arguments  7.612s
 
 */
-
