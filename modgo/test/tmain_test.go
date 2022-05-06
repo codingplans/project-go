@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	urls "net/url"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -35,7 +36,62 @@ type baz struct {
 
 type arrStruct []baz
 
+func TestUrlname(t *testing.T) {
+
+	name := "%E6%98%A5%E5%A4%A9%E5%8F%AF%E7%9C%9F%E6%98%AF%E4%B8%AA%E5%B0%8F%E8%AE%A8%E5%8E%8C%E9%AC%BC%EF%BC%8C%E5%9C%A8%E6%88%91%E5%BF%83%E9%87%8C%E5%81%B7%E5%81%B7%E5%85%BB%E4%BA%86%E4%B8%80%E5%8F%AA%E5%B0%8F%E9%B9%BF%EF%BC%8C%E5%B0%B1%E6%92%92%E6%89%8B%E4%B8%8D%E7%AE%A1%E4%BA%86%E2%9C%A8%E2%9C%A8%E2%9C%A8"
+	// escapeUrl := urls.QueryEscape(name)
+
+	t.Log(urls.QueryUnescape(name))
+	name = "darren is  iphone"
+	t.Log(urls.QueryUnescape(name))
+
+}
+
+func TestBuInterface(t *testing.T) {
+	arr := []Buiding{House{}, Shop{}, Toilet{}}
+
+	for _, v := range arr {
+		v.Builds()
+	}
+}
+
+func TestTickerFor(t *testing.T) {
+
+	tt := time.NewTicker(time.Second * 1)
+	i := 1
+	for ; true; <-tt.C {
+		fmt.Println("tick", i)
+		i++
+	}
+
+}
+
+func TestByte(t *testing.T) {
+	ss := "dHJ1ZQ=="
+	var vv interface{}
+	err := json.Unmarshal([]byte(ss), &vv)
+	t.Log(vv, err)
+}
+
+// -gcflags '-m -l'
+func TestAddPoint(t *testing.T) {
+	println(addV1(1, 2))
+	println(addV2(1, 2))
+}
+func addV2(a, b int) (add *int) {
+	add = new(int)
+	*add = a + b
+	return add
+}
+func addV1(a, b int) *int {
+	add := 0
+	add = a + b
+	return &add
+}
+
 func TestTimeDaysAdd(t *testing.T) {
+	t.Log(time.Now().String())
+	t.Log(time.Now().GoString())
 	now := time.Now().Unix()
 	t.Log(now, now+3600*24)
 	tt := time.Unix(1697839585, 0)
@@ -53,7 +109,20 @@ func TestSleepSpeed(t *testing.T) {
 }
 
 func TestContains(t *testing.T) {
-	t.Log(strings.Contains(strings.ToLower("shenZhou"), "shenzhou"))
+	// t.Log(strings.Contains(strings.ToLower("shenZhou"), "shenzhou"))
+	// t.Log(strings.Contains("darren91231231i1892", "darren"))
+	t.Log(getLatestIpAddr("127.0.0.1, 115.171.170.95, 10.5.12.212"))
+}
+
+func getLatestIpAddr(clientIP string) string {
+	if index := strings.LastIndex(clientIP, ","); index >= 0 {
+		clientIP = clientIP[index+1:]
+	}
+	clientIP = strings.TrimSpace(clientIP)
+	if len(clientIP) > 0 {
+		return clientIP
+	}
+	return ""
 }
 
 func (b arrStruct) Len() int {
@@ -482,8 +551,10 @@ func TestSliceSplit(t *testing.T) {
 	ss := aa[2:2]
 
 	var name string
-	name = "asd"
+	name = "asSSd"
 	aaaa := strings.Count(name, "")
+
+	t.Log(strings.ToUpper(name))
 	t.Log(aaaa)
 	t.Log(ss, 2222)
 }
@@ -1553,8 +1624,6 @@ func TestChanV2(t *testing.T) {
 
 func TestQuickSoft(t *testing.T) {
 	arr := []int{4, 3, 5, 1, 2, 6, 33, 12, 1, 55, 3, 2, 111, 57, 7, 5}
-	// arrStruct := []int{4, 3, 5, 1, 2, 6}
-
 	fmt.Println(arr)
 	QuickSoft(arr, 0, len(arr)-1)
 	fmt.Println(arr)
@@ -1564,7 +1633,6 @@ func TestQuickSoft(t *testing.T) {
 func TestHeapSort(t *testing.T) {
 	// arrStruct := []int{4, 3, 5, 1, 2, 6, 7}
 	arr := []int{1, 4, 3, 2, 6, 5, 8, 7, 9, 0}
-	arr = []int{4, 3, 5, 1, 2, 6}
 
 	fmt.Println(arr)
 
@@ -1686,23 +1754,6 @@ func DfsTree(tree *structures.TreeNode) {
 
 // 深度遍历 压栈处理
 func DfsTreeV2(tree *structures.TreeNode) {
-	if tree == nil {
-		return
-	}
-	var stack []*structures.TreeNode
-	// 先压栈顶元素
-	stack = []*structures.TreeNode{tree}
-	for len(stack) != 0 {
-		node := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		fmt.Println(node.Val)
-		if node.Right != nil {
-			stack = append(stack, node.Right)
-		}
-		if node.Left != nil {
-			stack = append(stack, node.Left)
-		}
-	}
 
 }
 

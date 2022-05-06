@@ -168,7 +168,7 @@ func QuickSoft(arr []int, start, end int) {
 	arr[l], arr[start] = arr[start], arr[l]
 	// fmt.Println(l, start, r, end)
 
-	QuickSoft(arr, start, l)
+	QuickSoft(arr, start, l-1)
 	QuickSoft(arr, l+1, end)
 }
 
