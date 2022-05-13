@@ -6,7 +6,6 @@ require (
 	github.com/Darrenzzy/person-go v1.0.7
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/Shopify/sarama v1.28.0
-	github.com/coreos/etcd v3.3.25+incompatible
 	github.com/go-kratos/kratos v1.0.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-xorm/xorm v0.7.9
@@ -27,10 +26,6 @@ require (
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
-	github.com/coreos/bbolt v1.3.2 // indirect
-	github.com/coreos/go-semver v0.3.0 // indirect
-	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e // indirect
-	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/denisenkom/go-mssqldb v0.10.0 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect
@@ -40,18 +35,15 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
-	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
-	github.com/google/uuid v1.1.2 // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
 	github.com/jcmturner/gofork v1.0.0 // indirect
 	github.com/jcmturner/gokrb5/v8 v8.4.2 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
-	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/klauspost/compress v1.11.7 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
@@ -69,7 +61,6 @@ require (
 	golang.org/x/net v0.0.0-20210330075724-22f4162a9025 // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	golang.org/x/tools v0.0.0-20201224043029-2b0845dc783e // indirect
-	google.golang.org/genproto v0.0.0-20200402124713-8ff61da6d932 // indirect
 	google.golang.org/grpc v1.29.1 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect

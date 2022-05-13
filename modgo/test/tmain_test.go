@@ -36,6 +36,18 @@ type baz struct {
 
 type arrStruct []baz
 
+// 洗牌算法
+func TestRandRange(t *testing.T) {
+	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
+	for i := 0; i < len(arr)-1; i++ {
+		rand.Seed(time.Now().UnixNano())
+		a := rand.Intn(len(arr) - i)
+		arr[i], arr[a] = arr[a], arr[i]
+	}
+
+	t.Log(arr)
+}
+
 func TestUrlname(t *testing.T) {
 
 	name := "%E6%98%A5%E5%A4%A9%E5%8F%AF%E7%9C%9F%E6%98%AF%E4%B8%AA%E5%B0%8F%E8%AE%A8%E5%8E%8C%E9%AC%BC%EF%BC%8C%E5%9C%A8%E6%88%91%E5%BF%83%E9%87%8C%E5%81%B7%E5%81%B7%E5%85%BB%E4%BA%86%E4%B8%80%E5%8F%AA%E5%B0%8F%E9%B9%BF%EF%BC%8C%E5%B0%B1%E6%92%92%E6%89%8B%E4%B8%8D%E7%AE%A1%E4%BA%86%E2%9C%A8%E2%9C%A8%E2%9C%A8"
