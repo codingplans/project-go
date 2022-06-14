@@ -268,6 +268,12 @@ func TestClassDef(t *testing.T) {
 	DefClass(fn)
 }
 
+func Example_Print() {
+	score := []int{1, 2, 3}
+	fmt.Println(score)
+	// Output: [1 2 3]
+}
+
 func Test_structChan(t *testing.T) {
 
 	var v BigBar
