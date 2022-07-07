@@ -36,6 +36,46 @@ type baz struct {
 
 type arrStruct []baz
 
+func TestBigSlice(t *testing.T) {
+
+}
+
+func TestShanValue(t *testing.T) {
+	brokers := strings.Split("10.7.68.185:9092,10.7.68.186:9092,10.7.68.188:9092", ",")
+	t.Log(brokers)
+}
+
+func TestSelectToGo(t *testing.T) {
+
+	a := 2
+
+dodo:
+	println(0)
+
+	switch {
+	case a < 5:
+		println(5)
+
+	case 1 == a:
+		println(1)
+	case 2 == a:
+		a = 1
+		println(2)
+		goto dodo
+	default:
+	}
+
+}
+
+func TestMapDel(t *testing.T) {
+	var p map[string]string
+	p = nil
+	delete(p, "a")
+
+	ii := int64(123_2123)
+	println(ii)
+}
+
 // 洗牌算法
 func TestRandRange(t *testing.T) {
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
@@ -80,9 +120,19 @@ func TestTickerFor(t *testing.T) {
 
 func TestByte(t *testing.T) {
 	ss := "dHJ1ZQ=="
+	ss = "d"
 	var vv interface{}
 	err := json.Unmarshal([]byte(ss), &vv)
 	t.Log(vv, err)
+}
+func TestJsonByte(t *testing.T) {
+	ss := NewA()
+	b, _ := json.Marshal(ss)
+	t.Log(b, string(b))
+	t.Log(b, *(*string)(unsafe.Pointer(&b)))
+	b = nil
+	t.Log(b, 22, *(*string)(unsafe.Pointer(&b)))
+
 }
 
 // -gcflags '-m -l'
@@ -101,6 +151,71 @@ func addV1(a, b int) *int {
 	return &add
 }
 
+func TestGoPanic(t *testing.T) {
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				t.Log("panic 11111", err)
+			}
+		}()
+		i := 1
+		for i < 10 {
+			i++
+			if i == 4 {
+				panic(2)
+			}
+			time.Sleep(time.Second)
+		}
+		t.Log("end 1")
+
+	}()
+
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				t.Log("panic 11111", err)
+			}
+		}()
+		i := 1
+		for i < 5 {
+			i++
+			t.Log(i)
+			time.Sleep(time.Second)
+		}
+		t.Log("end 2")
+	}()
+	ch2 := make(chan int)
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				t.Log("panic 11111", err)
+			}
+		}()
+		i := 1
+		for {
+			ch2 <- i
+			i++
+			t.Log(333)
+			time.Sleep(time.Second * 10)
+
+		}
+	}()
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				t.Log("panic 11111", err)
+			}
+		}()
+		i := 1
+		for {
+			t.Log(<-ch2, i)
+		}
+	}()
+	ch := make(chan int)
+	ch <- 1
+
+}
+
 func TestTimeDaysAdd(t *testing.T) {
 	t.Log(time.Now().String())
 	t.Log(time.Now().GoString())
@@ -108,6 +223,16 @@ func TestTimeDaysAdd(t *testing.T) {
 	t.Log(now, now+3600*24)
 	tt := time.Unix(1697839585, 0)
 	t.Log(tt)
+	ts := time.Now()
+	tm1 := time.Date(ts.Year(), ts.Month(), ts.Day(), 0, 0, 0, 0, ts.Location())
+	// tm2 := tm1.AddDate(0, 0, 1)
+	t.Log(tm1, tm1.Unix())
+
+	// 7天前0点
+	day7 := ts.AddDate(0, 0, -7)
+	before7Day := strconv.FormatInt(time.Date(day7.Year(), day7.Month(), day7.Day(), 0, 0, 0, 0, ts.Location()).Unix(), 10)
+	t.Log(before7Day)
+
 }
 
 func TestSleepSpeed(t *testing.T) {

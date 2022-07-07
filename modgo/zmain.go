@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/prometheus/common/log"
 	"golang.org/x/text/feature/plural"
 )
@@ -126,14 +127,6 @@ func minPathSum(grid [][]int) int {
 		}
 	}
 	return dp[x-1][y-1]
-}
-
-func foreacc(arr [][]int) {
-	for _, v := range arr {
-		log.Info(v)
-	}
-	log.Info("\n\n")
-
 }
 
 func min(x, y int) int {
