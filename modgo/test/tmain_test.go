@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"math/rand"
 	urls "net/url"
 	"reflect"
@@ -36,7 +37,21 @@ type baz struct {
 
 type arrStruct []baz
 
-func TestBigSlice(t *testing.T) {
+func TestSliceInfo(t *testing.T) {
+	sliceint := make([]int64, 45000)                                                     // 指向元素类型为int32的1000个元素的数组的切片
+	fmt.Println("Size of []int32:", unsafe.Sizeof(sliceint))                             // 24
+	fmt.Println("Size of [1000]int32:", unsafe.Sizeof([1000]int64{}))                    // 4000
+	fmt.Println("Real size of s:", unsafe.Sizeof(sliceint)+unsafe.Sizeof([1000]int64{})) // 4024
+}
+
+func TestStringToByte(t *testing.T) {
+	buf := make([]byte, 1)
+	var r io.Reader
+
+	r = &bytes.Buffer{}
+
+	n, err := r.Read(buf)
+	t.Log(n, err)
 
 }
 
