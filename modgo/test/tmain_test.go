@@ -37,6 +37,28 @@ type baz struct {
 
 type arrStruct []baz
 
+// 测试闭包方法 可以让方法内部的变量不受外部的影响
+func TestClosure(t *testing.T) {
+	last := time.Unix(1657761812, 0).Format("2006-01-02 15:04:05")
+	defer func(a string) {
+		t.Log(1, a)
+	}(last)
+
+	last = "1"
+
+	defer func(a *string) {
+		t.Log(2, *a)
+	}(&last)
+	last = "2"
+
+	defer func() {
+		t.Log(3, last)
+	}()
+	last = "3"
+	t.Log(last)
+	return
+}
+
 func TestSliceInfo(t *testing.T) {
 	sliceint := make([]int64, 45000)                                                     // 指向元素类型为int32的1000个元素的数组的切片
 	fmt.Println("Size of []int32:", unsafe.Sizeof(sliceint))                             // 24
