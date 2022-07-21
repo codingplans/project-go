@@ -37,6 +37,57 @@ type baz struct {
 
 type arrStruct []baz
 
+func TestBateInt(t *testing.T) {
+	t.Log(unsafe.Sizeof(int64(100)))
+	t.Log(unsafe.Sizeof(int32(100)))
+	t.Log(unsafe.Sizeof(int16(100)))
+	t.Log(unsafe.Sizeof(int8(100)))
+	t.Log(unsafe.Sizeof(100))
+	t.Log(unsafe.Sizeof(string("1")))
+	// 	 tmain_test.go: 8
+	//    tmain_test.go: 4
+	//    tmain_test.go: 2
+	//    tmain_test.go: 1
+	//    tmain_test.go: 8
+	//    tmain_test.go: 16
+}
+
+func TestDeepCopy(t *testing.T) {
+	a := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	deepCopy := func(x, y interface{}) {
+		b, err := json.Marshal(x)
+		if err != nil {
+			t.Log(err)
+		}
+		t.Log(string(b), b, x)
+		fmt.Printf("%p \n", x)
+		fmt.Printf("%p \n", b)
+		err = json.Unmarshal(b, y)
+		fmt.Printf("%p \n", y)
+		if err != nil {
+			t.Log(err)
+		}
+	}
+	m := make([]int, 0)
+	fmt.Printf("## %p \n", m)
+
+	deepCopy(a, &m)
+	fmt.Printf("## %p \n", m)
+	t.Log(m)
+
+}
+
+func TestParseInt(t *testing.T) {
+	s := "1048576"
+	i, err := strconv.Atoi(s)
+	t.Log(i, err)
+	ii, err := strconv.ParseInt(s, 10, 128)
+	t.Log(ii, err)
+	ii, err = strconv.ParseInt(s, 5, 64)
+	t.Log(ii, err)
+
+}
+
 // 测试闭包方法 可以让方法内部的变量不受外部的影响
 func TestClosure(t *testing.T) {
 	last := time.Unix(1657761812, 0).Format("2006-01-02 15:04:05")
@@ -116,7 +167,13 @@ func TestMapDel(t *testing.T) {
 // 洗牌算法
 func TestRandRange(t *testing.T) {
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
+
 	for i := 0; i < len(arr)-1; i++ {
+		t.Log(rand.Intn(10))
+		t.Log(rand.Intn(10))
+		t.Log(rand.Intn(10))
+		t.Log(rand.Intn(10))
+
 		rand.Seed(time.Now().UnixNano())
 		a := rand.Intn(len(arr) - i)
 		arr[i], arr[a] = arr[a], arr[i]

@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"os"
+	"strings"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
 	_ "github.com/lib/pq"
-	"os"
-	"strings"
 )
 
 var engine *xorm.Engine
@@ -60,176 +61,9 @@ var UsByMobile = make(map[string]mapUser, 0)
 var UsByIdCard = make(map[string]mapUser, 0)
 
 func main() {
-	GetRenshiData()
-	GetUserData()
-	WriteOneCsv()
-	WriteTwoCsv()
-	WriteThreeCsv()
-
-}
-
-// 读取用户数据
-func GetUserData() {
-	var err error
-
-	sql := "select t_user.username, t_user.nickname, t_user.code as node_code, t_user.mobile_phone,node_id, t_node_new.nature, t_node_new.full_name, " +
-		"t_node_new.code as node_code2,t_idcard.name, t_idcard.id_number, emp_number from t_user left join t_user_cert on t_user.id = t_user_cert." +
-		"id left join t_idcard on t_user_cert.idcard_id = t_idcard.id left join t_node_new on t_user.node_id = t_node_new.id where t_user.username is not null and t_user." +
-		"disabled = 0 limit 10000;"
-	us := make([]user, 0)
-
-	err = rsEngine.SQL(sql).Find(&us)
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	if len(us) == 0 {
-		fmt.Println("遍历结束 当前数量：")
-		return
-	}
-
-	for _, v := range us {
-		if v.IdNumber != "" {
-			tUser := mapUser{}
-			if vv, ok := UsByIdCard[v.IdNumber]; ok {
-				tUser = vv
-			}
-			tUser.Users = append(tUser.Users, v)
-			if v.Nature == 2 {
-				tUser.UserCount += 1
-			}
-			if v.Nature == 1 {
-				tUser.JiamengUserCount += 1
-			}
-
-			if vUsers, ok := RsUsByIdCard[v.IdNumber]; ok {
-				for _, vUser := range vUsers {
-					if vUser.Nature == 2 {
-						tUser.RsUserCount += 1
-					}
-					if vUser.Nature == 1 {
-						tUser.RsJiamengUserCount += 1
-					}
-				}
-			}
-			UsByIdCard[v.IdNumber] = tUser
-
-		}
-
-		// 第二条
-		if v.MobilePhone != "" && v.IdNumber != "" {
-			k := fmt.Sprintf("%s_%s", v.IdNumber, v.MobilePhone)
-			tmep2 := mapUser{}
-			if vv, ok := UsByIdCardMobile[k]; ok {
-				tmep2 = vv
-				tmep2.Users = append(tmep2.Users, v)
-			} else {
-				tmep2.Users = []user{v}
-			}
-
-			if v.Nature == 1 {
-				tmep2.JiamengUserCount += 1
-			}
-			if v.Nature == 2 {
-				tmep2.UserCount += 1
-			}
-			UsByIdCardMobile[k] = tmep2
-		}
-
-		// 第三条
-		if v.MobilePhone != "" {
-			tUser := mapUser{}
-			if vv, ok := UsByMobile[v.MobilePhone]; ok {
-				tUser = vv
-			}
-			tUser.Users = append(tUser.Users, v)
-			if v.Nature == 2 {
-				tUser.UserCount += 1
-			}
-			if v.Nature == 1 {
-				tUser.JiamengUserCount += 1
-			}
-			UsByMobile[v.MobilePhone] = tUser
-		}
-	}
-	fmt.Println("用户数据读取完毕")
-}
-
-func GetRenshiData() {
-	var err error
-	sql := "select emp_no, base_ec_employee.name, mobile, id_card," +
-		"base_ec_position.name as position_name from base_ec_employee left join base_ec_position on position_id = base_ec_position.id where (base_ec_employee.status != 0 and base_ec_employee.status != 4);"
-
-	sss := make([]rsUser, 0)
-	err = engine.SQL(sql).Find(&sss)
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	// /NCxxxxx 为直营
-	for _, v := range sss {
-		if strings.HasPrefix(v.EmpNo, "NC") {
-			// fmt.Println("直营")
-			v.Nature = 2
-		} else {
-			// fmt.Println("加盟")
-			v.Nature = 1
-		}
-		// 走第一条
-		if v.IdCard != "" {
-			tmp := []rsUser{v}
-			if vv, ok := RsUsByIdCard[v.IdCard]; ok {
-				tmp = append(vv, v)
-			}
-			RsUsByIdCard[v.IdCard] = tmp
-
-		}
-
-		// 走第二条
-		if v.Mobile != "" && v.IdCard != "" {
-			tmep2 := mapUser{}
-			k := fmt.Sprintf("%s_%s", v.IdCard, v.Mobile)
-			if vv, ok := UsByIdCardMobile[k]; ok {
-				tmep2 = vv
-				tmep2.RsUsers = append(tmep2.RsUsers, v)
-			} else {
-				tmep2.RsUsers = []rsUser{v}
-			}
-
-			if v.Nature == 1 {
-				tmep2.RsJiamengUserCount++
-			}
-			if v.Nature == 2 {
-				tmep2.RsUserCount++
-			}
-			UsByIdCardMobile[k] = tmep2
-		}
-
-		// 走第三条
-		if v.Mobile != "" {
-			tmep2 := mapUser{}
-			if vv, ok := UsByMobile[v.Mobile]; ok {
-				tmep2 = vv
-				tmep2.RsUsers = append(tmep2.RsUsers, v)
-			} else {
-				tmep2.RsUsers = []rsUser{v}
-			}
-
-			if v.Nature == 1 {
-				tmep2.RsJiamengUserCount++
-			}
-			if v.Nature == 2 {
-				tmep2.RsUserCount++
-			}
-			UsByMobile[v.Mobile] = tmep2
-		}
-
-	}
-
-	fmt.Println("人事信息读取完毕 !!!!!!!!")
+	// WriteOneCsv()
+	// WriteTwoCsv()
+	// WriteThreeCsv()
 
 }
 
