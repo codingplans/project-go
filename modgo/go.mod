@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/Darrenzzy/person-go v1.0.7
 	github.com/PuerkitoBio/goquery v1.6.1
+	github.com/RoaringBitmap/roaring v1.2.1
 	github.com/Shopify/sarama v1.28.0
 	github.com/go-kratos/kratos v1.0.0
 	github.com/go-sql-driver/mysql v1.6.0
@@ -25,6 +26,7 @@ require (
 	github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4 // indirect
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/denisenkom/go-mssqldb v0.10.0 // indirect
@@ -48,6 +50,7 @@ require (
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/prometheus/client_golang v1.5.1 // indirect

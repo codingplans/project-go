@@ -25,17 +25,17 @@ type rsUser struct {
 }
 
 type user struct {
-	Username    string `json:"username"`
-	Nickname    string `json:"nickname"`
-	NodeCode    string `json:"node_code"`
+	Username string `json:"username"`
+	Nickname string `json:"nickname"`
+	// NodeCode    string `json:"node_code"`
 	MobilePhone string `json:"mobile_phone"`
 	NodeId      string `json:"node_id"`
-	Nature      int    `json:"nature"` // 网点类型1：加盟，2：直营
-	FullName    string `json:"full_name"`
-	NodeCode2   string `json:"node_code_2"`
-	Name        string `json:"name"`
-	IdNumber    string `json:"id_number"`
-	EmpNumber   string `json:"emp_number"`
+	// Nature      int    `json:"nature"` // 网点类型1：加盟，2：直营
+	// FullName string `json:"full_name"`
+	// NodeCode2   string `json:"node_code_2"`
+	// Name      string `json:"username"`
+	// IdNumber  string `json:"id_number"`
+	EmpNumber string `json:"emp_number"`
 }
 
 type mapUser struct {
@@ -64,6 +64,19 @@ func main() {
 	// WriteOneCsv()
 	// WriteTwoCsv()
 	// WriteThreeCsv()
+	SlecrList()
+}
+func SlecrList() {
+	l := make([]*user, 0, 10)
+	// l := make([]*user, 0)
+	fmt.Printf("%p", &l)
+
+	fmt.Println("\n", cap(l))
+	err := rsEngine.Table("t_user").Limit(11).Find(&l)
+	fmt.Println(cap(l))
+	fmt.Println(err)
+	fmt.Printf("%p \n", &l)
+	fmt.Println(l)
 
 }
 

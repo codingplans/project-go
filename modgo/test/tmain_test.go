@@ -3,10 +3,12 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"math/big"
 	"math/rand"
 	urls "net/url"
 	"reflect"
@@ -22,6 +24,7 @@ import (
 	"unsafe"
 
 	"github.com/Darrenzzy/person-go/structures"
+	"github.com/RoaringBitmap/roaring/roaring64"
 )
 
 type Fn struct {
@@ -36,6 +39,123 @@ type baz struct {
 }
 
 type arrStruct []baz
+
+func TestAssertions(t *testing.T) {
+	// v := []int64{1, 2, 3}
+	// if ht, ok := tr.(*http.Transport); ok {
+	// 	stdreq = ht.Request()
+	// }
+	// a, ok := v.([]uint64)
+
+	m := make(map[int64]uint64)
+	for i := int64(-1110); i < 820000; i++ {
+		// m[i] = uint64(i + 199)
+		m[i] = uint64(i)
+	}
+	t.Log("over", len(m))
+
+}
+
+func TestBitMap(t *testing.T) {
+	BitMap := roaring64.NewBitmap()
+	BitMap2 := roaring64.NewBitmap()
+	BitMap2.Add(uint64(4))
+	BitMap3 := roaring64.NewBitmap()
+	BitMap3.Add(uint64(5))
+	BitMap3.Add(uint64(1))
+
+	// BitMap.Add(uint64(1))
+	// BitMap.Add(uint64(2))
+	// BitMap.Add(uint64(3))
+	BitMap.AddMany([]uint64{1, 4, 5, 2, 3})
+
+	t.Log(bitMapToSlice(BitMap))
+	BitMap.AndNot(BitMap2)
+	t.Log(bitMapToSlice(BitMap))
+	BitMap.Or(BitMap3)
+	t.Log(bitMapToSlice(BitMap))
+
+}
+
+func bitMapToSlice(bitmap *roaring64.Bitmap) []int64 {
+	maxLen := 4096
+	total := make([]int64, 0, maxLen)
+	buf := make([]uint64, maxLen)
+	bmIter := bitmap.ManyIterator()
+	for n := bmIter.NextMany(buf); n != 0; n = bmIter.NextMany(buf) {
+		// much faster tests... (10s -> 5ms)
+		// fmt.Println("return num:-->", n)
+		// for i, v := range buf[:n] {
+		//	// much faster tests...
+		//	fmt.Printf("index:[%v]:%v\n", i, v)
+		// }
+		for _, v := range buf[:n] {
+			total = append(total, int64(v))
+		}
+	}
+	return total
+}
+
+func TestStructTransfer(t *testing.T) {
+	a := &Fn{}
+	a.A = "3"
+	a.C = "3"
+	type b interface {
+		mark1()
+		mark2()
+	}
+	var m []b
+	m = append(m, a)
+	t.Logf("%+v", m[0])
+	for _, b2 := range m {
+		b2.mark1()
+		t.Log(a)
+		b2.mark2()
+		t.Log(a)
+		c, err := b2.(*Fn)
+		d, err := b2.(interface{})
+		t.Log(err, d)
+		t.Log(err, c)
+	}
+}
+func (a *Fn) mark1() {
+	a.A = "1"
+}
+func (a *Fn) mark2() {
+	a.A = "2"
+	a.B = "2"
+}
+
+func TestHash(t *testing.T) {
+
+	for _, TestString := range [][]int64{
+		nil,
+		{1000, 1001},
+		{1000, 1101},
+		{1001, 1101},
+		{2, 1, 23, 124, 143, 4152, 412, 2, 1},
+		{2, 1, 23, 124, 144, 4152, 412, 2, 1},
+		{2, 1, 23, 4152, 412, 2, 1},
+		{2, 1, 23, 124, 14, 4152, 412, 2, 22, 2, 2, 22},
+	} {
+
+		// 先 序列化 在md5 下 在转int64
+		bs, _ := json.Marshal(TestString)
+
+		Md5Inst := md5.New()
+		Md5Inst.Write(bs)
+		Result := Md5Inst.Sum(nil)
+		hStr := fmt.Sprintf("%x", Result)
+		t.Log(TestString, hStr)
+
+		i := new(big.Int)
+		i.SetBytes([]byte(hStr)) // octal
+		fmt.Println(i)
+
+		fmt.Println("******:", i.Int64())
+	}
+
+}
 
 func TestBateInt(t *testing.T) {
 	t.Log(unsafe.Sizeof(int64(100)))
@@ -267,7 +387,7 @@ func TestGoPanic(t *testing.T) {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				t.Log("panic 11111", err)
+				t.Log("panic 99999", err)
 			}
 		}()
 		i := 1
@@ -282,22 +402,25 @@ func TestGoPanic(t *testing.T) {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				t.Log("panic 11111", err)
+				t.Log("panic 2222", err)
 			}
 		}()
 		i := 1
 		for {
+			if i == 4 {
+				panic("2222")
+			}
 			ch2 <- i
 			i++
-			t.Log(333)
-			time.Sleep(time.Second * 10)
+			t.Log(222)
+			time.Sleep(time.Second * 2)
 
 		}
 	}()
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				t.Log("panic 11111", err)
+				t.Log("panic 3333", err)
 			}
 		}()
 		i := 1
@@ -305,8 +428,23 @@ func TestGoPanic(t *testing.T) {
 			t.Log(<-ch2, i)
 		}
 	}()
-	ch := make(chan int)
-	ch <- 1
+
+	av := func() {
+		t.Log(1)
+		go func() {
+			defer func() {
+				if err := recover(); err != nil {
+					t.Log("panic 4444", err)
+				}
+			}()
+			panic(1)
+		}()
+		t.Log(2)
+
+	}
+
+	go av()
+	time.Sleep(time.Hour * 10)
 
 }
 
