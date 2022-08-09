@@ -11,6 +11,7 @@ import (
 	"math/big"
 	"math/rand"
 	urls "net/url"
+	"os"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -39,6 +40,34 @@ type baz struct {
 }
 
 type arrStruct []baz
+
+func TestArranges(t *testing.T) {
+	aa := []int64{1, 23, 45}
+
+	l := 2
+	for len(aa) != 0 {
+		if len(aa) < l {
+			l = len(aa)
+		}
+		t.Log(aa)
+		aa = aa[l:]
+	}
+}
+
+func TestArrslice(t *testing.T) {
+	arr := [10]int{}
+	arr[6] = 1
+	arr[4] = 11
+	t.Log(arr)
+	m := make(map[int][10]int)
+	m[1] = arr
+	m[0] = arr
+	t.Log(m)
+	arr[2] = 1
+	m[3] = arr
+	t.Log(m)
+
+}
 
 func TestAssertions(t *testing.T) {
 	// v := []int64{1, 2, 3}
@@ -158,7 +187,7 @@ func TestHash(t *testing.T) {
 }
 
 func TestBateInt(t *testing.T) {
-	t.Log(unsafe.Sizeof(int64(100)))
+	t.Log(unsafe.Sizeof(int64(1000000)))
 	t.Log(unsafe.Sizeof(int32(100)))
 	t.Log(unsafe.Sizeof(int16(100)))
 	t.Log(unsafe.Sizeof(int8(100)))
@@ -231,6 +260,10 @@ func TestClosure(t *testing.T) {
 }
 
 func TestSliceInfo(t *testing.T) {
+
+	s := fmt.Sprintf("%s 已经 %d 岁了。 \n ", "asd", 212)
+	io.WriteString(os.Stdout, s)
+
 	sliceint := make([]int64, 45000)                                                     // 指向元素类型为int32的1000个元素的数组的切片
 	fmt.Println("Size of []int32:", unsafe.Sizeof(sliceint))                             // 24
 	fmt.Println("Size of [1000]int32:", unsafe.Sizeof([1000]int64{}))                    // 4000
@@ -455,6 +488,7 @@ func TestTimeDaysAdd(t *testing.T) {
 	t.Log(now, now+3600*24)
 	tt := time.Unix(1697839585, 0)
 	t.Log(tt)
+	t.Log(tt.Day())
 	ts := time.Now()
 	tm1 := time.Date(ts.Year(), ts.Month(), ts.Day(), 0, 0, 0, 0, ts.Location())
 	// tm2 := tm1.AddDate(0, 0, 1)
@@ -529,7 +563,28 @@ func TestSortSlice(t *testing.T) {
 func TestWriteSlice(t *testing.T) {
 	app := make([]int64, 0, 1000)
 	var lock sync.RWMutex
-	// wgs := sync.WaitGroup{}
+	var lock2 sync.RWMutex
+
+	a := 2
+
+	go func(a *int) {
+		lock2.RLock()
+		time.Sleep(time.Second * 5)
+		*a = 3
+		lock2.RUnlock()
+		println("成功释放")
+	}(&a)
+
+	for i := 0; i < 10; i++ {
+		go func(i int) {
+			lock2.Lock()
+			a = i
+			println(a)
+			lock2.Unlock()
+		}(i)
+	}
+	// 以上例子表明 当读锁时候 ，写锁会被阻塞
+
 	wg.Add(10)
 	go func() {
 		i := 0
@@ -543,6 +598,7 @@ func TestWriteSlice(t *testing.T) {
 			i++
 		}
 	}()
+	wg.Wait()
 
 	go func() {
 		tic := time.NewTicker(100 * time.Microsecond)
@@ -636,10 +692,27 @@ func Test_structChan(t *testing.T) {
 	var v BigBar
 	m := make(chan struct{})
 	t.Log(unsafe.Sizeof(v))
-	go func(a *BigBar) {
-		_ = a
-		m <- struct{}{}
-	}(&v)
+	// 大于2M的变量 协程会不执行:
+	// fatal error: newproc: function arguments too large for new goroutine
+	// go func(a BigBar) {
+	// 	_ = a
+	// 	m <- struct{}{}
+	// }(v)
+	go func() {
+		println(1232)
+		time.Sleep(time.Minute * 1)
+		<-m
+		println(123)
+	}()
+	// // 正常参数传递 没有大小限制
+	// task3 := func(a BigBar) (err error) {
+	// 	_ = a
+	// 	m <- struct{}{}
+	// 	return nil
+	// }
+	// t.Log(task3(v))
+
+	// 协程参数变量尽量用指针
 	<-m
 }
 
@@ -2165,6 +2238,8 @@ func TestWeiyi(t *testing.T) {
 	bb := 4
 	t.Log(aa >> 1)
 	t.Log(aa << 10)
+	// 10亿
+	t.Log(1 << 30)
 	// 取相反数
 	t.Log(^99)
 	// 异位或
