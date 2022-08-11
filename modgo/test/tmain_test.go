@@ -25,7 +25,6 @@ import (
 	"unsafe"
 
 	"github.com/Darrenzzy/person-go/structures"
-	"github.com/RoaringBitmap/roaring/roaring64"
 )
 
 type Fn struct {
@@ -43,6 +42,8 @@ type arrStruct []baz
 
 func TestArranges(t *testing.T) {
 	aa := []int64{1, 23, 45}
+
+	t.Log(aa[0:3])
 
 	l := 2
 	for len(aa) != 0 {
@@ -83,46 +84,6 @@ func TestAssertions(t *testing.T) {
 	}
 	t.Log("over", len(m))
 
-}
-
-func TestBitMap(t *testing.T) {
-	BitMap := roaring64.NewBitmap()
-	BitMap2 := roaring64.NewBitmap()
-	BitMap2.Add(uint64(4))
-	BitMap3 := roaring64.NewBitmap()
-	BitMap3.Add(uint64(5))
-	BitMap3.Add(uint64(1))
-
-	// BitMap.Add(uint64(1))
-	// BitMap.Add(uint64(2))
-	// BitMap.Add(uint64(3))
-	BitMap.AddMany([]uint64{1, 4, 5, 2, 3})
-
-	t.Log(bitMapToSlice(BitMap))
-	BitMap.AndNot(BitMap2)
-	t.Log(bitMapToSlice(BitMap))
-	BitMap.Or(BitMap3)
-	t.Log(bitMapToSlice(BitMap))
-
-}
-
-func bitMapToSlice(bitmap *roaring64.Bitmap) []int64 {
-	maxLen := 4096
-	total := make([]int64, 0, maxLen)
-	buf := make([]uint64, maxLen)
-	bmIter := bitmap.ManyIterator()
-	for n := bmIter.NextMany(buf); n != 0; n = bmIter.NextMany(buf) {
-		// much faster tests... (10s -> 5ms)
-		// fmt.Println("return num:-->", n)
-		// for i, v := range buf[:n] {
-		//	// much faster tests...
-		//	fmt.Printf("index:[%v]:%v\n", i, v)
-		// }
-		for _, v := range buf[:n] {
-			total = append(total, int64(v))
-		}
-	}
-	return total
 }
 
 func TestStructTransfer(t *testing.T) {
