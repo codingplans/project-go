@@ -39,6 +39,58 @@ type baz struct {
 }
 
 type arrStruct []baz
+type w struct {
+	q int
+}
+
+func TestDeferPrint(t *testing.T) {
+
+	a, b := &w{q: 1}, &w{q: 1}
+	defer func() {
+		cc(10, a, cc(100, a, b))
+	}()
+	a.q = 2
+	defer func() {
+		cc(20, a, cc(200, a, b))
+	}()
+}
+
+func cc(index int, a, b *w) *w {
+	println(index, a.q, b.q, a.q+b.q)
+	a.q += b.q
+	return a
+}
+
+func TestSizeOf(t *testing.T) {
+	type T struct {
+		// _ [0]atomic.Int64
+		x int32
+	}
+
+	type A struct {
+		T
+		v int32
+	}
+	t.Log(unsafe.Sizeof(A{}))
+
+	type B struct {
+		// // _ [0]atomic.Int64
+		x   int32
+		v   int32
+		vv  int32
+		vvv int32
+	}
+	type C struct {
+		// _ [0]atomic.Int64
+		x int32
+		// v int64
+	}
+
+	t.Log(unsafe.Sizeof(B{}))
+	i := int32(1)
+	t.Log(unsafe.Sizeof(i))
+	t.Log(unsafe.Sizeof(C{}))
+}
 
 func TestArranges(t *testing.T) {
 	aa := []int64{1, 23, 45}
@@ -582,16 +634,30 @@ func TestWriteSlice(t *testing.T) {
 
 func TestChanCtx(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Second)
-	ctx = context.WithValue(ctx, "key", "value")
-	defer cancel()
-
-	go handle(ctx, 500*time.Millisecond)
-	select {
-	case <-ctx.Done():
-		fmt.Println("main", ctx.Err())
-
-	}
+	ctx = context.WithValue(ctx, "key", "darren")
+	// defer func() {
+	// 	t.Log(ctx.Value("key"))
+	// 	cancel()
+	//
+	// 	t.Log(ctx.Value("key"))
+	// }()
+	go handle2(ctx, time.Second*5)
+	go handle(ctx, 5000*time.Millisecond)
 	t.Log(ctx.Value("key"))
+	t.Log(ctx.Err())
+	t.Log(time.Now().Format("2006-01-02 15:04:05"))
+	cancel()
+	select {
+	case <-time.After(time.Second * 100):
+		fmt.Println("over")
+	}
+}
+func handle2(ctx context.Context, duration time.Duration) {
+	select {
+	case <-time.After(duration):
+		fmt.Println("handle2   with", duration)
+		fmt.Println(ctx.Value("key"), "handle2 ")
+	}
 }
 
 func handle(ctx context.Context, duration time.Duration) {
@@ -1298,7 +1364,8 @@ func TestArrayGroup(t *testing.T) {
 }
 
 // 当前用例
-// 	期望： 1,8，2，7，3，6,4，5
+//
+//	期望： 1,8，2，7，3，6,4，5
 func TestReverseV3(t *testing.T) {
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	list := structures.Ints2List(arr)
