@@ -1,13 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"crypto/md5"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"math"
 	"math/big"
 	"math/rand"
 	urls "net/url"
@@ -15,6 +19,7 @@ import (
 	"reflect"
 	"regexp"
 	"runtime"
+	"runtime/debug"
 	"sort"
 	"strconv"
 	"strings"
@@ -24,7 +29,10 @@ import (
 	"time"
 	"unsafe"
 
+	"testgo/modgo/crypto"
+
 	"github.com/Darrenzzy/person-go/structures"
+	jsoniter "github.com/json-iterator/go"
 )
 
 type Fn struct {
@@ -39,23 +47,70 @@ type baz struct {
 }
 
 type arrStruct []baz
-type w struct {
+type w2 struct {
 	q int
+}
+
+func TestFileIo(t *testing.T) {
+	f := &os.File{}
+	w := bufio.NewWriter(f)
+	a, s := w.WriteString("qwe \n")
+	t.Log(a, s)
+
+	w.Flush()
+	f.Close()
+
+}
+
+func TestPoolNew(t *testing.T) {
+	// disable GC so we can control when it happens.
+	defer debug.SetGCPercent(debug.SetGCPercent(-1))
+	runtime.GOMAXPROCS(1)
+
+	i := 0
+	p := sync.Pool{
+		New: func() interface{} {
+			i++
+			return i
+		},
+	}
+	if v := p.Get(); v != 1 {
+		t.Fatalf("got %v; want 1", v)
+	}
+	if v := p.Get(); v != 2 {
+		t.Fatalf("got %v; want 2", v)
+	}
+	p.Put(33)
+	t.Log(p.Get())
+	p.Put(44)
+	runtime.GC()
+	t.Log(p.Get())
+
+	// Make sure that the goroutine doesn't migrate to another P
+	// between Put and Get calls.
+	p.Put(42)
+	if v := p.Get(); v != 42 {
+		t.Fatalf("got %v; want 42", v)
+	}
+
+	if v := p.Get(); v != 3 {
+		t.Fatalf("got %v; want 3", v)
+	}
 }
 
 func TestDeferPrint(t *testing.T) {
 
-	a, b := &w{q: 1}, &w{q: 1}
+	a, b := &w2{q: 1}, &w2{q: 1}
 	defer func() {
-		cc(10, a, cc(100, a, b))
+		printInt(10, a, printInt(100, a, b))
 	}()
 	a.q = 2
 	defer func() {
-		cc(20, a, cc(200, a, b))
+		printInt(20, a, printInt(200, a, b))
 	}()
 }
 
-func cc(index int, a, b *w) *w {
+func printInt(index int, a, b *w2) *w2 {
 	println(index, a.q, b.q, a.q+b.q)
 	a.q += b.q
 	return a
@@ -156,6 +211,7 @@ func TestStructTransfer(t *testing.T) {
 		t.Log(a)
 		c, err := b2.(*Fn)
 		d, err := b2.(interface{})
+
 		t.Log(err, d)
 		t.Log(err, c)
 	}
@@ -283,14 +339,82 @@ func TestSliceInfo(t *testing.T) {
 	fmt.Println("Real size of s:", unsafe.Sizeof(sliceint)+unsafe.Sizeof([1000]int64{})) // 4024
 }
 
+func TestFileSecrie(t *testing.T) {
+
+	err := backupSecret("./tmp/", "sss.conf",
+		&PayWay{Id: 123,
+			Name: "qqq"})
+	if err != nil {
+		t.Error(err)
+	}
+
+	cf := &PayWay{}
+	err = loadExSecret(cf, "./tmp/sss.conf")
+	if err != nil {
+		t.Error(err)
+	}
+
+}
+
+func loadExSecret(conf interface{}, confName string) error {
+	data, err := ioutil.ReadFile(confName)
+	if err != nil {
+		return err
+	}
+	raw, err := crypto.AesDecode(string(data))
+	raws := trimComments([]byte(raw))
+	if err = json.Unmarshal(raws, conf); err != nil {
+		fmt.Printf("Parse conf %v failed: %v", string(raws), err)
+		return err
+	}
+	return nil
+}
+
+func backupSecret(RestDir, filename string, conf *PayWay) error {
+	confBytes, err := jsoniter.MarshalIndent(conf, "", "    ")
+	if err != nil {
+		return fmt.Errorf("runner config %v marshal failed, err is %v", conf, err)
+	}
+	// 判断默认备份文件夹是否存在，不存在就尝试创建
+	if _, err := os.Stat(RestDir); err != nil {
+		if os.IsNotExist(err) {
+			if err = os.Mkdir(RestDir, 0755); err != nil && !os.IsExist(err) {
+				return fmt.Errorf("rest default dir not exists and make dir failed, err is %v", err)
+			}
+		}
+	}
+
+	// 配置文件加密
+	cpted, err := crypto.AesEncode(string(confBytes))
+	if err != nil {
+		return fmt.Errorf("runner config %v crypto failed, err is %v", conf, err)
+	}
+
+	return ioutil.WriteFile(RestDir+filename, []byte(cpted), 0644)
+}
+
 func TestStringToByte(t *testing.T) {
-	buf := make([]byte, 1)
 	var r io.Reader
 
-	r = &bytes.Buffer{}
+	// r = &bytes.Buffer{}
+	r = bytes.NewBufferString("#$12fddd11")
+	// r = bytes.NewBufferString("sdasdqw")
+	fmt.Println(r)
 
+	buf := make([]byte, 4)
 	n, err := r.Read(buf)
-	t.Log(n, err)
+	t.Log(n, err, buf)
+
+	if err != nil {
+		panic(err)
+	}
+	size := binary.BigEndian.Uint32(buf)
+	if size == 0 {
+		t.Error("nil!!!", size)
+	}
+	data := make([]byte, size)
+	a, err := r.Read(data)
+	t.Log(err, a, size, len(data))
 
 }
 
@@ -334,10 +458,10 @@ func TestMapDel(t *testing.T) {
 func TestRandRange(t *testing.T) {
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
 
+	t.Log(math.Round(922337203685477580))
+	t.Log(math.Round(9223372036854775807.9111))
+	t.Log(math.Round(9223372036854775807.1111))
 	for i := 0; i < len(arr)-1; i++ {
-		t.Log(rand.Intn(10))
-		t.Log(rand.Intn(10))
-		t.Log(rand.Intn(10))
 		t.Log(rand.Intn(10))
 
 		rand.Seed(time.Now().UnixNano())

@@ -1,6 +1,6 @@
 module testgo/modgo
 
-go 1.18
+go 1.17
 
 require (
 	github.com/Darrenzzy/person-go v1.0.7
@@ -11,6 +11,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-xorm/xorm v0.7.9
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
+	github.com/json-iterator/go v1.1.12
 	github.com/lib/pq v1.10.2
 	github.com/looplab/fsm v0.2.0
 	github.com/parnurzeal/gorequest v0.2.16
@@ -50,6 +51,8 @@ require (
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/pkg/errors v0.8.1 // indirect
