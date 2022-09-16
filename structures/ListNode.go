@@ -108,24 +108,14 @@ func Reverse(pHead *ListNode) *ListNode {
 	// 方法一 ：最好理解
 	var newList *ListNode
 	for m != nil {
+		// 先把下一个全部移送新变量
 		nt := m.Next
+		// 把反转链顺到主后面
 		m.Next = newList
+		// 主的是个反转完整链在给 反转链
 		newList = m
+		// 把临时变量放回主连
 		m = nt
-		// TravelList(newList)
 	}
-
-	// 方法二：
-	// var pnh *ListNode
-	// for m != nil {
-	// 	newList = m
-	// 	m = m.Next
-	// 	TravelList(newList)
-	//
-	// 	newList.Next = pnh
-	// 	pnh = newList
-	//
-	// 	TravelList(pnh)
-	// }
 	return newList
 }

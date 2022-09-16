@@ -51,6 +51,118 @@ type w2 struct {
 	q int
 }
 
+func TestSpinsWords(t *testing.T) {
+	t.Log(SpinWords("www abcdefg eeee"))
+}
+
+func SpinWords(str string) string {
+	space := " "
+	str2 := ""
+	// arr := []string{}
+	m, n := 0, 0
+	for i, k := range str {
+		if string(k) == space {
+			m = i
+		}
+		if m != n {
+			str2 += " "
+			// println(strings.Trim(str[n:m], " "))
+			arr := strings.Trim(str[n:m], " ")
+			if len(arr) <= 5 {
+				for j := range arr {
+					str2 += string(arr[j])
+				}
+			} else {
+				for j := range arr {
+					str2 += string(arr[len(arr)-1-j])
+				}
+			}
+			n = m
+		}
+	}
+	if n != len(str) {
+		str2 += " "
+
+		arr := strings.Trim(str[n:], " ")
+		if len(arr) <= 5 {
+			for j := range arr {
+				str2 += string(arr[j])
+			}
+		} else {
+			for j := range arr {
+				str2 += string(arr[len(arr)-1-j])
+			}
+		}
+	}
+	// str2 += " "
+	//
+	// if len(arr) <= 5 {
+	// 	for j := range arr {
+	// 		str2 += arr[j]
+	// 	}
+	// 	arr = []string{}
+	// } else {
+	// 	for j := range arr {
+	// 		str2 += arr[len(arr)-1-j]
+	// 	}
+	// 	arr = []string{}
+	// }
+	return strings.TrimLeft(str2, " ")
+} // SpinWords
+
+func TestMatrix(t *testing.T) {
+	t.Log(Determinant([][]int{{1}}))
+	t.Log(Determinant([][]int{{1, 3}, {2, 5}}))
+	t.Log(Determinant([][]int{{2, 5, 3}, {1, -2, -1}, {1, 3, 4}}))
+}
+
+func Determinant(matrix [][]int) int {
+	// your code here
+	line := len(matrix[0])
+	y := len(matrix)
+
+	if line == 1 {
+		return matrix[0][0]
+	}
+
+	if line == 2 {
+		return cal(matrix)
+	}
+	temp := 0
+	for i := 0; i < y; i++ {
+		symbol := 1
+		if i%2 != 0 {
+			symbol = -1
+		}
+		temp += symbol * matrix[0][i] * Determinant(cal2(matrix, 0, i))
+	}
+	return temp
+}
+
+func cal(matrix [][]int) int {
+	if len(matrix) == 2 {
+		return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
+	}
+	return 0
+}
+
+func cal2(matrix [][]int, x, y int) [][]int {
+	var arr [][]int
+	for i := 1; i < len(matrix); i++ {
+		if i != x {
+			var arr2 []int
+			for j := 0; j < len(matrix[i]); j++ {
+				if j != y {
+					arr2 = append(arr2, matrix[i][j])
+				}
+			}
+			arr = append(arr, arr2)
+		}
+	}
+	fmt.Println(arr, x, y)
+	return arr
+}
+
 func TestFileIo(t *testing.T) {
 	f := &os.File{}
 	w := bufio.NewWriter(f)
@@ -2223,7 +2335,8 @@ func TestChanV2(t *testing.T) {
 }
 
 func TestQuickSoft(t *testing.T) {
-	arr := []int{4, 3, 5, 1, 2, 6, 33, 12, 1, 55, 3, 2, 111, 57, 7, 5}
+	// arr := []int{4, 3, 5, 1, 2, 6, 33, 12, 1, 55, 3, 2, 111, 57, 7, 5}
+	arr := []int{2, 9, 3, 333, 8, 11, 4, 7, 6, 5, 22, 115, 3}
 	fmt.Println(arr)
 	QuickSoft(arr, 0, len(arr)-1)
 	fmt.Println(arr)
