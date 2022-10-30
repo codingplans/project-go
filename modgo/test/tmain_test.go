@@ -51,8 +51,55 @@ type w2 struct {
 	q int
 }
 
+func TestQuicksss(t *testing.T) {
+	arr := []int{3, 5, 1, 9, 8, 344, 1, 5555, 44, 2}
+	fmt.Println(arr)
+	quicksss(arr, 0, len(arr)-1)
+	fmt.Println(arr)
+
+}
+
+func quicksss(arr []int, l, r int) {
+	if l >= r {
+		return
+	}
+	mid := continaes(arr, l, r)
+	quicksss(arr, l, mid-1)
+	quicksss(arr, mid+1, r)
+}
+func continaes(arr []int, l, r int) int {
+	if l >= r {
+		return l
+	}
+	s := l
+	for l < r {
+		for arr[s] >= arr[l] && l < r {
+			l++
+		}
+		for arr[s] <= arr[r] && l < r {
+			r--
+		}
+		if arr[r] != arr[l] {
+			arr[r], arr[l] = arr[l], arr[r]
+		}
+	}
+	arr[l], arr[s] = arr[s], arr[l]
+
+	return l
+}
+
 func TestSpinsWords(t *testing.T) {
+	t.Log(reverse(-123456789))
+	t.Log(reverse(123))
 	t.Log(SpinWords("www abcdefg eeee"))
+}
+func reverse(x int) int {
+	n := 0
+	for x != 0 {
+		n = n*10 + x%10
+		x = x / 10
+	}
+	return n
 }
 
 func SpinWords(str string) string {
@@ -2336,7 +2383,9 @@ func TestChanV2(t *testing.T) {
 
 func TestQuickSoft(t *testing.T) {
 	// arr := []int{4, 3, 5, 1, 2, 6, 33, 12, 1, 55, 3, 2, 111, 57, 7, 5}
-	arr := []int{2, 9, 3, 333, 8, 11, 4, 7, 6, 5, 22, 115, 3}
+	// arr := []int{2, 9, 3, 333, 8, 11, 4, 7, 6, 5, 22, 115, 3}
+	arr := []int{3, 5, 1, 9, 8, 344, 1, 5555, 44, 2}
+
 	fmt.Println(arr)
 	QuickSoft(arr, 0, len(arr)-1)
 	fmt.Println(arr)
