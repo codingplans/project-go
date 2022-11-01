@@ -35,12 +35,6 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-type Fn struct {
-	A string
-	B string
-	C string
-	D string
-}
 type baz struct {
 	bar int
 	foo int
@@ -86,6 +80,62 @@ func continaes(arr []int, l, r int) int {
 	arr[l], arr[s] = arr[s], arr[l]
 
 	return l
+}
+
+type Fn struct {
+	A string `json:"a"`
+	B string `json:"b"`
+	C string `json:"c"`
+	D string `json:"d"`
+	*bazs
+}
+type bazs struct {
+	Bar int `json:"bar"`
+	Foo int `json:"foo"`
+}
+type MacStruct interface {
+	Open() int
+	Close() bool
+}
+type M2 struct {
+	OK    bool
+	Other string
+}
+
+func (m *M2) Close() bool {
+	m.OK = false
+	return m.OK
+}
+func (m *M2) Open() int {
+	return 1
+}
+
+func NewM2() MacStruct {
+	return &M2{OK: true}
+}
+
+func TestInterfaceDesign(t *testing.T) {
+	m := NewM2()
+	t.Log(m.Open())
+	t.Log(m.Close())
+
+}
+
+func TestStructEmbed(t *testing.T) {
+	js := `{"a":"2","b":"2","bar":1,"foo":10}`
+	bs := Fn{"a", "ww", "qq", "www", &bazs{
+		Bar: 1,
+		Foo: 2,
+	}}
+
+	bb, err := json.Marshal(bs)
+	t.Log(string(bb))
+	err = json.Unmarshal([]byte(js), &bs)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	t.Log(bs.A, bs.Foo)
+
 }
 
 func TestSpinsWords(t *testing.T) {
@@ -779,6 +829,7 @@ func TestGoPanic(t *testing.T) {
 
 func TestTimeDaysAdd(t *testing.T) {
 	t.Log(time.Now().String())
+	t.Log(time.Now().Year())
 	t.Log(time.Now().GoString())
 	now := time.Now().Unix()
 	t.Log(now, now+3600*24)
