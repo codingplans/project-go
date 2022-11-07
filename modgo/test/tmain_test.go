@@ -995,7 +995,7 @@ func TestWriteSlice(t *testing.T) {
 			lock2.RUnlock()
 		}(i)
 	}
-	// 以上例子表明 当写锁时候 ，重复多次读锁会被阻塞 ，直到写锁释放
+	// 以上例子表明 当没有写锁时候 ，可以重复多次读锁
 	wg.Wait()
 
 	go func() {
