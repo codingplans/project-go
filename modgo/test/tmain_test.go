@@ -16,6 +16,7 @@ import (
 	"math/rand"
 	urls "net/url"
 	"os"
+	"os/signal"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -43,6 +44,37 @@ type baz struct {
 type arrStruct []baz
 type w2 struct {
 	q int
+}
+
+func TestSigns(t *testing.T) {
+	// 用非阻塞方案 可以提前保留信号，然后到时间后再处理
+	c := make(chan os.Signal, 1)
+
+	// 用阻塞方案 在sleep期间，信号会被阻塞，直到sleep结束，所以需要再按一次
+	// c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt)
+
+	time.Sleep(5 * time.Second)
+
+	// Block until a signal is received.
+	s := <-c
+	fmt.Println("Got signal:", s)
+}
+
+// 错误的调用示例
+func TestPanics(t *testing.T) {
+	fn := func() {
+		fmt.Println("recobered: ", recover())
+
+	}
+	defer func() {
+		fn() // 错误方式
+
+		// fmt.Println("recobered: ", recover()) // 正确方式
+
+	}()
+	panic("not good")
+	// time.Sleep(time.Second)
 }
 
 func TestQuicksss(t *testing.T) {
@@ -913,6 +945,7 @@ func TestWriteSlice(t *testing.T) {
 	var lock2 sync.RWMutex
 
 	a := 2
+	wg.Add(1)
 
 	go func(a *int) {
 		lock2.RLock()
@@ -920,6 +953,7 @@ func TestWriteSlice(t *testing.T) {
 		*a = 3
 		lock2.RUnlock()
 		println("成功释放")
+		wg.Done()
 	}(&a)
 
 	for i := 0; i < 10; i++ {
@@ -931,8 +965,39 @@ func TestWriteSlice(t *testing.T) {
 		}(i)
 	}
 	// 以上例子表明 当读锁时候 ，写锁会被阻塞
+	wg.Wait()
+	wg.Add(1)
+	go func() {
+		lock2.Lock()
+		a = 1
+		println("写锁中", a, time.Now().Unix())
+		time.Sleep(time.Second * 5)
+		lock2.Unlock()
+		wg.Done()
+	}()
 
-	wg.Add(10)
+	for i := 0; i < 10; i++ {
+		go func(i int) {
+			lock2.RLock()
+			println("读取变量：", i, time.Now().Unix())
+			lock2.RUnlock()
+
+		}(a)
+	}
+	// 以上例子表明 当写锁时候 ，重复多次读锁会被阻塞 ，直到写锁释放
+	wg.Wait()
+
+	wg.Add(1)
+	for i := 0; i < 10; i++ {
+		go func(i int) {
+			lock2.RLock()
+			println("没有写锁时：读取变量：", i, time.Now().Unix())
+			lock2.RUnlock()
+		}(i)
+	}
+	// 以上例子表明 当写锁时候 ，重复多次读锁会被阻塞 ，直到写锁释放
+	wg.Wait()
+
 	go func() {
 		i := 0
 		for {
