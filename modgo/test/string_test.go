@@ -57,7 +57,6 @@ func BenchmarkBufferStr(b *testing.B) {
 // goarch: amd64
 // pkg: testgo/modgo/test
 // cpu: Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz
-// cpu: Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz
 // BenchmarkAddStr-8      	172992486	         7.022 ns/op
 // BenchmarkSprintStr-8   	 8747796	       133.8 ns/op
 // BenchmarkJoinStr-8     	33202748	        36.98 ns/op

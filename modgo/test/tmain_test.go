@@ -1124,6 +1124,13 @@ func Test_structChan(t *testing.T) {
 	// 	_ = a
 	// 	m <- struct{}{}
 	// }(v)
+
+	// // 指针传递 不会造成异常
+	// go func(a *BigBar) {
+	// 	_ = a
+	// 	m <- struct{}{}
+	// }(&v)
+
 	go func() {
 		println(1232)
 		time.Sleep(time.Minute * 1)
