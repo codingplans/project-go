@@ -35,15 +35,42 @@ import (
 	"github.com/Darrenzzy/person-go/structures"
 	jsoniter "github.com/json-iterator/go"
 )
+ 
+type w2 struct {
+	q int
+}
 
 type baz struct {
 	bar int
 	foo int
 }
-
 type arrStruct []baz
-type w2 struct {
-	q int
+
+func TestGoGroutines(t *testing.T) {
+	arr := make(arrStruct, 0, 1000)
+	for i := 1; i < 1000; i++ {
+		arr = append(arr, baz{bar: i, foo: i})
+	}
+
+	fn := func(k int, v *baz, list arrStruct) {
+		for i, _ := range list {
+			if i == k {
+				continue
+			}
+			if list[i] == *v {
+				fmt.Println("not match ", list[i], v, i)
+			}
+		}
+
+	}
+	wg := sync.WaitGroup{}
+	wg.Add(len(arr))
+	for i, b := range arr {
+		go fn(i, &b, arr)
+		wg.Done()
+	}
+	wg.Wait()
+
 }
 
 func TestSigns(t *testing.T) {
