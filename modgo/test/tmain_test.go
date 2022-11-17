@@ -35,7 +35,7 @@ import (
 	"github.com/Darrenzzy/person-go/structures"
 	jsoniter "github.com/json-iterator/go"
 )
- 
+
 type w2 struct {
 	q int
 }
@@ -45,6 +45,15 @@ type baz struct {
 	foo int
 }
 type arrStruct []baz
+
+func TestStructIsNil(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		var foo []*baz
+		t.Log(foo == nil)
+		foo = append(foo, &baz{bar: 1, foo: 1})
+		t.Log(foo == nil)
+	}
+}
 
 func TestGoGroutines(t *testing.T) {
 	arr := make(arrStruct, 0, 1000)

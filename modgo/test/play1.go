@@ -7,19 +7,19 @@ import (
 	"time"
 )
 
-type baz struct {
+type bazz struct {
 	bar int
 	foo int
 }
-type arrStruct []baz
+type arrStructs []bazz
 
-func main() {
-	arr := make(arrStruct, 0, 1000)
+func main1() {
+	arr := make(arrStructs, 0, 1000)
 	for i := 1; i < 1000; i++ {
-		arr = append(arr, baz{bar: i, foo: i})
+		arr = append(arr, bazz{bar: i, foo: i})
 	}
 
-	// fn := func(k int, v baz, list arrStruct) {
+	// fn := func(k int, v bazz, list arrStructs) {
 	// 	for i, _ := range list {
 	// 		if i == k {
 	// 			continue
