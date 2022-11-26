@@ -233,8 +233,9 @@ func WriteThreeCsv() {
 func init() {
 	var err error
 
+	dsn := os.Getenv("MYSQL_TEST_HOST")
 	// 用户表
-	engine, err = xorm.NewEngine("mysql", "")
+	engine, err = xorm.NewEngine("mysql", dsn)
 	if err != nil {
 		fmt.Println(err.Error())
 		return

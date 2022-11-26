@@ -34,6 +34,7 @@ import (
 
 	"github.com/Darrenzzy/person-go/structures"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/samber/lo"
 )
 
 type w2 struct {
@@ -45,6 +46,20 @@ type baz struct {
 	foo int
 }
 type arrStruct []baz
+
+func TestSliceFunc(t *testing.T) {
+
+	// Fn := func(arr []int) {
+	//
+	// }
+
+	m := lo.Map[int64, string]([]int64{1, 2, 3, 4}, func(x int64, index int) string {
+		println(index)
+		return strconv.FormatInt(x+1, 10)
+	})
+	t.Log(len(m), m)
+
+}
 
 func TestStructIsNil(t *testing.T) {
 	for i := 0; i < 10; i++ {
