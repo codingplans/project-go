@@ -35,6 +35,8 @@ import (
 	"github.com/Darrenzzy/person-go/structures"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/samber/lo"
+	"github.com/shopspring/decimal"
+	"go.uber.org/goleak"
 )
 
 type w2 struct {
@@ -45,7 +47,81 @@ type baz struct {
 	bar int
 	foo int
 }
+
+type baz2 struct {
+	bar int
+	foo int
+	fzz []int
+}
 type arrStruct []baz
+
+// 拷贝指针结构体
+func TestCopystruct(t *testing.T) {
+	a := &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+	b := &baz2{bar: 3}
+	*b = *a
+	a.bar = 2
+	t.Log(a, b)
+}
+
+func xielou() { // 待测试的方法
+	// ch := make(chan struct{}, 1)
+	ch := make(chan struct{})
+	go func() {
+		ch <- struct{}{}
+	}()
+	// <-ch
+}
+
+func TestXielou(t *testing.T) {
+	// defer goleak.VerifyNone(t)
+	xielou()
+	err := goleak.Find()
+	t.Log(err)
+	// time.Sleep(3 * time.Second)
+}
+
+func TestAppendToSlice(t *testing.T) {
+
+	fn := func(res *[][]int) {
+		r := *res
+		r = append(r, []int{1})
+
+		// *res = r
+	}
+	rr := make([][]int, 0)
+	fn(&rr)
+	fmt.Println("\n", len(rr))
+
+	type A struct {
+		Arr [][]int
+	}
+	funoo := func(k *A) {
+		k.Arr = append(k.Arr, []int{1})
+	}
+	a := A{}
+	funoo(&a)
+	fmt.Println("\n", len(a.Arr))
+
+}
+
+func TestFloatString(t *testing.T) {
+	f, ok1 := decimal.NewFromString("3421.12")
+
+	dd := f
+	dd2 := decimal.NewFromInt(4444)
+	a := dd.Mul(decimal.NewFromInt(100)).Div(dd2).Sub(decimal.NewFromInt(1)).String()
+	t.Log(a)
+	t.Log(dd.Div(dd2).Sub(decimal.NewFromInt(1)).Mul(decimal.NewFromInt(100)))
+	t.Log(dd.Mul(decimal.NewFromInt(100)).Div(dd2))
+	t.Log(dd.Mul(decimal.NewFromInt(100)))
+
+	if ok1 != nil {
+		return
+	}
+	v, ok := f.Float64()
+	t.Log(v, ok, ok1)
+}
 
 func TestSliceFunc(t *testing.T) {
 
@@ -623,6 +699,8 @@ func TestClosure(t *testing.T) {
 func TestSliceInfo(t *testing.T) {
 
 	s := fmt.Sprintf("%s 已经 %d 岁了。 \n ", "asd", 212)
+	// t.Log(fmt.Sprintf("%.2f 已经 %d 岁了。 \n ", "22.222%", 212))
+	t.Log(strings.TrimSuffix("22.3322%", "%"))
 	io.WriteString(os.Stdout, s)
 
 	sliceint := make([]int64, 45000)                                                     // 指向元素类型为int32的1000个元素的数组的切片
@@ -1130,6 +1208,8 @@ func TestBoolSize(t *testing.T) {
 	println(len(aa), cap(aa), unsafe.Sizeof(aa), &aa)
 
 	var b = make(map[int64]bool, 0)
+	b[1] = true
+	t.Log(b[2], b[1])
 	if unsafe.Sizeof(b) != 1 {
 		t.Errorf("bool size is %d, want 1", unsafe.Sizeof(b))
 	}
