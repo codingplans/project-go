@@ -46,6 +46,25 @@ type baz struct {
 }
 type arrStruct []baz
 
+func TestFuncnil(t *testing.T) {
+	fn := func(x int) { print(x) }
+	pn := func() int {
+		fn = nil
+		return 1
+	}
+	defer fn(pn())
+}
+func TestFuncnil2(t *testing.T) {
+	fn := func(x int) { print(x) }
+	pn := func() int {
+		fn = nil
+		return 2
+	}
+	fn(1)
+	fn(pn())
+	pn()
+}
+
 func TestStructIsNil(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		var foo []*baz
