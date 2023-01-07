@@ -64,8 +64,31 @@ func main() {
 	// WriteOneCsv()
 	// WriteTwoCsv()
 	// WriteThreeCsv()
-	SlecrList()
+	// SlecrList()
+	Find()
 }
+
+func Find() {
+	// ma := make([]interface{}, 0)
+	ma := make([]*UnionReport, 0)
+	sql := engine.Table("union_report").Cols("day_date", "source", "id")
+
+	// sql =  sql.Where("day_date = ?", "2020-09-01").And("source = ?", "1")
+	sql.And("source = ?", 1)
+	sql.IsClosed()
+	sql.Find(&ma)
+
+	fmt.Println(ma)
+
+	sss := sql.Clone()
+
+	// sss.And("day_date = ?", "2020-09-01")
+	aa, err := sss.FindAndCount(&ma)
+
+	fmt.Println(ma)
+	fmt.Println(aa, err)
+}
+
 func SlecrList() {
 	l := make([]*user, 0, 10)
 	// l := make([]*user, 0)
@@ -78,6 +101,31 @@ func SlecrList() {
 	fmt.Printf("%p \n", &l)
 	fmt.Println(l)
 
+}
+
+type UnionReport struct {
+	Id           int64  `xorm:"not null pk autoincr INT(10)"`
+	Source       int64  `xorm:"not null default 0 comment('数据源 1 七猫 2 联盟') SMALLINT(5)"`
+	DayDate      string `xorm:"not null default 0 comment('日期 Ymd格式如 20210121') index INT(10)"`
+	PartnerId    int64  `xorm:"not null default 0 comment('广告商   1自定义  2 广点通  3 穿山甲  4百度  5直客   6讯飞   7Admob  8InMobi 9Vungle 10 快手') index SMALLINT(5)"`
+	Platform     int64  `xorm:"not null default 0 comment('平台 1安卓 2ios') index INT(10)"`
+	AdUnitId     int64  `xorm:"not null default '' comment('广告位id') index VARCHAR(100)"`
+	RequestCount int64  `xorm:"not null default 0 comment('请求') INT(10)"`
+	ReturnCount  int64  `xorm:"not null default 0 comment('返回') INT(10)"`
+	FillRatio    string `xorm:"not null default 0.00 comment('填充率') DECIMAL(10,2)"`
+	ExposeCount  int64  `xorm:"not null default 0 comment('曝光') INT(10)"`
+	ExposeRatio  string `xorm:"not null default 0.00 comment('曝光率') DECIMAL(10,2)"`
+	ClickCount   int64  `xorm:"not null default 0 comment('点击') INT(10)"`
+	ClickRatio   string `xorm:"not null default 0.00 comment('点击率') DECIMAL(10,2)"`
+	Ecpm         string `xorm:"not null default 0.00 comment('ecpm 单位元') DECIMAL(10,2)"`
+	Income       string `xorm:"not null default 0.00 comment('收益单位 元，可以计算ecpm') DECIMAL(12,2)"`
+	CreatedAt    int64  `xorm:"not null default 0 INT(10)"`
+	UpdatedAt    int64  `xorm:"not null default 0 INT(10)"`
+	RExposeCount int64  `xorm:"not null default 0 comment('实际曝光') INT(10)"`
+}
+
+func (m *UnionReport) TableName() string {
+	return "union_report"
 }
 
 func WriteOneCsv() {
@@ -185,8 +233,9 @@ func WriteThreeCsv() {
 func init() {
 	var err error
 
+	dsn := os.Getenv("MYSQL_TEST_HOST")
 	// 用户表
-	engine, err = xorm.NewEngine("mysql", "******?charset=utf8")
+	engine, err = xorm.NewEngine("mysql", dsn)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -195,13 +244,13 @@ func init() {
 	fmt.Println(engine.DB().Ping(), "mysql 连接成功")
 
 	// 人事表
-	pgsource := "******?sslmode=disable"
-	rsEngine, err = xorm.NewEngine("postgres", pgsource)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	rsEngine.ShowSQL(true)
-	fmt.Println(rsEngine.DB().Ping(), "psql 连接成功")
+	// pgsource := "******?sslmode=disable"
+	// rsEngine, err = xorm.NewEngine("postgres", pgsource)
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	return
+	// }
+	// rsEngine.ShowSQL(true)
+	// fmt.Println(rsEngine.DB().Ping(), "psql 连接成功")
 
 }
