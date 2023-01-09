@@ -55,6 +55,20 @@ type baz2 struct {
 }
 type arrStruct []baz
 
+func TestRandTimeMin(t *testing.T) {
+	// sleepHour := 1
+	ts := time.Now()
+	sleepHour := 28 - ts.Hour()
+	rand.Seed(time.Now().Unix())
+	for i := 0; i < 10; i++ {
+
+		a := time.Duration(sleepHour)*time.Minute*60 - time.Duration(rand.Intn(20))*time.Minute
+		// a := time.Duration(sleepHour)*time.Minute*60 - time.Duration(rand.Intn(20))*time.Minute
+		t.Log(a.Minutes())
+		t.Log(a)
+	}
+}
+
 // 拷贝指针结构体
 func TestCopystruct(t *testing.T) {
 	a := &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
