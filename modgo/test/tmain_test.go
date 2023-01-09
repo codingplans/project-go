@@ -68,6 +68,24 @@ func TestRandTimeMin(t *testing.T) {
 		t.Log(a)
 	}
 }
+func TestFuncnil(t *testing.T) {
+	fn := func(x int) { print(x) }
+	pn := func() int {
+		fn = nil
+		return 1
+	}
+	defer fn(pn())
+}
+func TestFuncnil2(t *testing.T) {
+	fn := func(x int) { print(x) }
+	pn := func() int {
+		fn = nil
+		return 2
+	}
+	fn(1)
+	fn(pn())
+	pn()
+}
 
 // 拷贝指针结构体
 func TestCopystruct(t *testing.T) {
@@ -148,7 +166,6 @@ func TestSliceFunc(t *testing.T) {
 		return strconv.FormatInt(x+1, 10)
 	})
 	t.Log(len(m), m)
-
 }
 
 func TestStructIsNil(t *testing.T) {
