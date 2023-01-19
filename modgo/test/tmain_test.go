@@ -34,6 +34,8 @@ import (
 
 	"github.com/Darrenzzy/person-go/structures"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/panjf2000/ants"
+	"github.com/panjf2000/ants/v2"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"go.uber.org/goleak"
@@ -54,6 +56,11 @@ type baz2 struct {
 	fzz []int
 }
 type arrStruct []baz
+
+func TestAntfunc() {
+	HttpAccessWorkerPool, _ = ants.NewPoolWithFunc(6000, func(i interface{}) {
+
+}
 
 func TestRandTimeMin(t *testing.T) {
 	// sleepHour := 1
