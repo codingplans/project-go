@@ -7,10 +7,8 @@ import (
 	"crypto/md5"
 	"encoding/binary"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"math/big"
 	"math/rand"
@@ -30,6 +28,7 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/pkg/errors"
 	"testgo/modgo/crypto"
 
 	"github.com/Darrenzzy/person-go/structures"
@@ -55,6 +54,32 @@ type baz2 struct {
 }
 type arrStruct []baz
 
+func TestWatchCan(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	go watch(ctx, "【监控1】")
+	go watch(ctx, "【监控2】")
+	go watch(ctx, "【监控3】")
+
+	time.Sleep(10 * time.Second)
+	fmt.Println("可以了，通知监控停止")
+	cancel()
+	// 为了检测监控过是否停止，如果没有监控输出，就表示停止了
+	time.Sleep(5 * time.Second)
+}
+
+func watch(ctx context.Context, name string) {
+	for {
+		select {
+		default:
+			fmt.Println(name, "goroutine监控中...")
+			time.Sleep(2 * time.Second)
+		case <-ctx.Done():
+			fmt.Println(name, "监控退出，停止了...")
+			return
+
+		}
+	}
+}
 func TestRandTimeMin(t *testing.T) {
 	// sleepHour := 1
 	ts := time.Now()
@@ -184,7 +209,7 @@ func TestGoGroutines(t *testing.T) {
 	}
 
 	fn := func(k int, v *baz, list arrStruct) {
-		for i, _ := range list {
+		for i := range list {
 			if i == k {
 				continue
 			}
@@ -562,6 +587,16 @@ func TestArranges(t *testing.T) {
 }
 
 func TestArrslice(t *testing.T) {
+	mm := make(map[int]int, 100)
+	t.Logf("%p", &mm)
+	t.Log(reflect.TypeOf(mm))
+	t.Log(len(mm))
+	for i := 0; i < 1000; i++ {
+		mm[i] = i
+	}
+	t.Logf("%p", &mm)
+	t.Log(len(mm))
+
 	arr := [10]int{}
 	arr[6] = 1
 	arr[4] = 11
@@ -758,7 +793,7 @@ func TestFileSecrie(t *testing.T) {
 }
 
 func loadExSecret(conf interface{}, confName string) error {
-	data, err := ioutil.ReadFile(confName)
+	data, err := os.ReadFile(confName)
 	if err != nil {
 		return err
 	}
@@ -791,7 +826,7 @@ func backupSecret(RestDir, filename string, conf *PayWay) error {
 		return fmt.Errorf("runner config %v crypto failed, err is %v", conf, err)
 	}
 
-	return ioutil.WriteFile(RestDir+filename, []byte(cpted), 0644)
+	return os.WriteFile(RestDir+filename, []byte(cpted), 0644)
 }
 
 func TestStringToByte(t *testing.T) {
@@ -1094,8 +1129,8 @@ func TestSortSlice(t *testing.T) {
 		{2, 3},
 		{6, 4},
 	}
-	sort.Sort(arrStruct(s))
 	fmt.Printf("%+v\n", s)
+	sort.Sort(arrStruct(s))
 	fmt.Printf("%+v\n", s)
 }
 
@@ -1194,20 +1229,14 @@ func TestWriteSlice(t *testing.T) {
 func TestChanCtx(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Second)
 	ctx = context.WithValue(ctx, "key", "darren")
-	// defer func() {
-	// 	t.Log(ctx.Value("key"))
-	// 	cancel()
-	//
-	// 	t.Log(ctx.Value("key"))
-	// }()
 	go handle2(ctx, time.Second*5)
-	go handle(ctx, 5000*time.Millisecond)
+	go handle(ctx, time.Second*1)
 	t.Log(ctx.Value("key"))
 	t.Log(ctx.Err())
 	t.Log(time.Now().Format("2006-01-02 15:04:05"))
 	cancel()
 	select {
-	case <-time.After(time.Second * 100):
+	case <-time.After(time.Second * 10):
 		fmt.Println("over")
 	}
 }
@@ -2832,9 +2861,10 @@ func BfsTree(tree *structures.TreeNode) {
 
 func TestWeiyi(t *testing.T) {
 	// 000011
-	aa := 3
+	aa := 20
 	// 0000100
 	bb := 4
+	t.Log(aa & (aa - 1))
 	t.Log(aa >> 1)
 	t.Log(aa << 10)
 	// 10亿
