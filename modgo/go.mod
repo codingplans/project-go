@@ -27,11 +27,12 @@ require (
 	go.uber.org/goleak v1.2.0
 	go.uber.org/zap v1.16.0
 	golang.org/x/text v0.3.7
-	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd
-	google.golang.org/protobuf v1.28.1
-	xorm.io/xorm v1.3.2
+	testgo/modgo/crypto v0.0.0-20211102110000-000000000000
 )
 
+replace (
+	testgo/modgo/crypto v0.0.0-20211102110000-000000000000 => ./crypto
+	)
 require (
 	github.com/BurntSushi/toml v1.2.0 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
