@@ -5,9 +5,12 @@ import (
 	"bytes"
 	"context"
 	"crypto/md5"
+	crand "crypto/rand"
+	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/tidwall/gjson"
 	"io"
 	"math"
 	"math/big"
@@ -29,6 +32,7 @@ import (
 	"unsafe"
 
 	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 	"testgo/modgo/crypto"
 
 	"github.com/Darrenzzy/person-go/structures"
@@ -53,6 +57,50 @@ type baz2 struct {
 	fzz []int
 }
 type arrStruct []baz
+
+const jsonBs = `[
+      {
+      "first": "last",
+      "last": "Prichard"
+    },
+    {
+      "first": "Janet",
+      "last": "Prichard"
+    }
+]`
+
+func TestGjson(t *testing.T) {
+	value := gjson.Get(jsonBs, "name.last")
+	println(value.String())
+	value = gjson.Get(jsonBs, "#.first")
+	println(value.String())
+	println(gjson.Get(jsonBs, "#").Int())
+	t.Log(gjson.Get(jsonBs, "#.last").Array()[1])
+
+}
+
+func TestInterfaceV(t *testing.T) {
+	type options struct {
+		InfoLogger interface{ Infof(string, ...any) }
+	}
+	o := &options{}
+	o.InfoLogger = new(foo)
+	o.InfoLogger.Infof("test")
+}
+
+type foo struct {
+}
+
+func (*foo) Infof(s string, any ...interface{}) {
+	println(s)
+
+}
+
+func TestSliceContains(t *testing.T) {
+	sql := "11,3222,33,2233"
+	sqls := strings.Split(sql, ",")
+	t.Log(slices.Contains(sqls, "22"))
+}
 
 func TestWatchCan(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -486,6 +534,22 @@ func TestFileIo(t *testing.T) {
 
 }
 
+func TestRanddd(t *testing.T) {
+	a, er := randomString(32)
+	t.Log(a, er)
+}
+
+// 生成随机字符串
+func randomString(length int) (string, error) {
+	rb := make([]byte, length)
+	_, err := crand.Read(rb)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(base64.URLEncoding.EncodeToString(rb), rb)
+	return base64.URLEncoding.EncodeToString(rb), nil
+}
+
 func TestPoolNew(t *testing.T) {
 	// disable GC so we can control when it happens.
 	defer debug.SetGCPercent(debug.SetGCPercent(-1))
@@ -551,6 +615,8 @@ func TestSizeOf(t *testing.T) {
 		v int32
 	}
 	t.Log(unsafe.Sizeof(A{}))
+	var ss string
+	t.Log(unsafe.Sizeof(ss))
 
 	type B struct {
 		// // _ [0]atomic.Int64
