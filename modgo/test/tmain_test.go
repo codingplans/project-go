@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"io"
+	"log"
 	"math"
 	"math/big"
 	"math/rand"
@@ -58,7 +59,54 @@ type baz2 struct {
 }
 type arrStruct []baz
 
-const jsonBs = `[
+func TestGoCtx(t *testing.T) {
+	var l chan struct{}
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	ctx = context.WithValue(ctx, "key", "value")
+	go func() {
+		time.Sleep(4 * time.Second)
+		GetA(ctx, "1")
+	}()
+	go func() {
+		time.Sleep(2 * time.Second)
+		ctxx, cancel := context.WithTimeout(ctx, 2*time.Second)
+		defer cancel()
+		GetA(ctxx, "2")
+	}()
+	<-l
+
+}
+func GetA(ctx context.Context, f string) {
+	log.Println(f, ctx.Value("key"))
+	select {
+	case <-ctx.Done():
+		println("done")
+	}
+}
+
+func RecoverGO(f func()) {
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("%+v\n", errors.Errorf("%+v", r))
+			}
+		}()
+		f()
+	}()
+}
+
+func TestMapStruct(t *testing.T) {
+	foos := make(map[int]*w2)
+	foos[0] = &w2{q: 1}
+	m1 := make(map[int]decimal.Decimal)
+	m1[0].Add(decimal.NewFromFloat(2.0))
+	fmt.Printf("m1: %v", foos[0])
+	fmt.Printf("m1: %v", m1[0])
+}
+
+func TestGjson(t *testing.T) {
+	jsonBs := `[
       {
       "first": "last",
       "last": "Prichard"
@@ -68,8 +116,6 @@ const jsonBs = `[
       "last": "Prichard"
     }
 ]`
-
-func TestGjson(t *testing.T) {
 	value := gjson.Get(jsonBs, "name.last")
 	println(value.String())
 	value = gjson.Get(jsonBs, "#.first")
