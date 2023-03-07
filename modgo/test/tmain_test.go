@@ -178,7 +178,8 @@ func TestRandTimeMin(t *testing.T) {
 	// sleepHour := 1
 	ts := time.Now()
 	sleepHour := 28 - ts.Hour()
-	rand.Seed(time.Now().Unix())
+	a := rand.NewSource(1)
+	a.Seed(time.Now().Unix())
 	for i := 0; i < 10; i++ {
 
 		a := time.Duration(sleepHour)*time.Minute*60 - time.Duration(rand.Intn(20))*time.Minute
@@ -227,9 +228,27 @@ func xielou() { // 待测试的方法
 func TestXielou(t *testing.T) {
 	// defer goleak.VerifyNone(t)
 	xielou()
-	err := goleak.Find()
-	t.Log(err)
+	goLeakCheck()
 	// time.Sleep(3 * time.Second)
+}
+
+func goLeakCheck() {
+	ticker := time.NewTimer(1 * time.Second)
+	for {
+		select {
+		case <-ticker.C:
+			RecoverGO(
+				func() {
+					err := goleak.Find()
+					if err != nil {
+						fmt.Println("定时打印当前进程中存在内存泄露风险的代码段：goleak check")
+						fmt.Println(err)
+					}
+				},
+			)
+		}
+	}
+
 }
 
 func TestAppendToSlice(t *testing.T) {
@@ -1341,7 +1360,8 @@ func TestWriteSlice(t *testing.T) {
 func TestChanCtx(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Second)
 	ctx = context.WithValue(ctx, "key", "darren")
-	go handle2(ctx, time.Second*5)
+	wgsync := new(sync.Once)
+	handle2(ctx, time.Second*1, wgsync)
 	go handle(ctx, time.Second*1)
 	t.Log(ctx.Value("key"))
 	t.Log(ctx.Err())
@@ -1352,11 +1372,24 @@ func TestChanCtx(t *testing.T) {
 		fmt.Println("over")
 	}
 }
-func handle2(ctx context.Context, duration time.Duration) {
-	select {
-	case <-time.After(duration):
-		fmt.Println("handle2   with", duration)
-		fmt.Println(ctx.Value("key"), "handle2 ")
+
+// 实现一个在执行的任务，超时时必须结束，停止任务
+func handle2(ctx context.Context, duration time.Duration, wgsync *sync.Once) {
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Println("handle2  case <-ctx.Done():  with", duration)
+			return
+		case <-time.After(time.Millisecond):
+			fmt.Println("handle2  log  with", duration)
+			wgsync.Do(func() {
+				time.Sleep(time.Second * 40)
+				fmt.Println("handle2  sssssssssss  with", duration)
+			})
+			fmt.Println("handle2  log end  with", duration)
+		default:
+
+		}
 	}
 }
 

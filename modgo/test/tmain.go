@@ -430,4 +430,3 @@ func trimCommentsLine(line []byte) []byte {
 	}
 	return newLine
 }
-
