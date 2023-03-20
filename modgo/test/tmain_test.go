@@ -985,11 +985,6 @@ func TestStringToByte(t *testing.T) {
 
 }
 
-func TestShanValue(t *testing.T) {
-	brokers := strings.Split("10.7.68.185:9092,10.7.68.186:9092,10.7.68.188:9092", ",")
-	t.Log(brokers)
-}
-
 func TestSelectToGo(t *testing.T) {
 
 	a := 2
