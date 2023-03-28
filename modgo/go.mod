@@ -26,7 +26,7 @@ require (
 	github.com/tidwall/gjson v1.14.4
 	go.uber.org/goleak v1.2.0
 	go.uber.org/zap v1.16.0
-	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
+	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0
 	golang.org/x/text v0.7.0
 	testgo/modgo/crypto v0.0.0-20211102110000-000000000000
 )

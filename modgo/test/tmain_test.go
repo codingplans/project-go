@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tidwall/gjson"
+	"golang.org/x/exp/slog"
 	"io"
 	"log"
 	"math"
@@ -58,6 +59,12 @@ type baz2 struct {
 	fzz []int
 }
 type arrStruct []baz
+
+func TestSlog(t *testing.T) {
+	slog.Info("ok", "aa")
+	slog.Debug("ok", "aa")
+
+}
 
 func TestGoCtx(t *testing.T) {
 	var l chan struct{}
