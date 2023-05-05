@@ -11,12 +11,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tidwall/gjson"
-	"golang.org/x/exp/slog"
+	"golang.org/x/sync/errgroup"
 	"io"
 	"log"
 	"math"
 	"math/big"
-	"math/rand"
+	rand "math/rand"
 	urls "net/url"
 	"os"
 	"os/signal"
@@ -29,6 +29,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"syscall"
 	"testing"
 	"time"
 	"unsafe"
@@ -60,47 +61,126 @@ type baz2 struct {
 }
 type arrStruct []baz
 
-func TestSlog(t *testing.T) {
-	slog.Info("ok", "aa")
-	slog.Debug("ok", "aa")
+func TestBigSlice(t *testing.T) {
+	arr := []int{0, 5: 0, 2}
+	t.Log(len(arr))
+}
+
+var x int
+
+func f() bool {
+	x++
+	return x < 5
+}
+
+func TestFors(t *testing.T) {
+	for f(); f(); f() {
+		println("ok", x)
+	}
+}
+
+// 用于阻塞主进程，等待信号
+func hookSignals() {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(
+		sigChan,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGQUIT,
+	)
+	switch <-sigChan {
+	case syscall.SIGQUIT: // terminate now
+		log.Printf("Server Stop")
+	case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM:
+		log.Println("Server GracefulStop")
+	}
+}
+
+// 这个例子说明 即便存在协程错误，都需要等全部协程结束后，才会返回错误，会有阻塞风险问题，建议使用ctx来控制协程超时，这样不影响主流程等待阻塞。
+func TestErrGroup(t *testing.T) {
+	c, _ := context.WithTimeout(context.Background(), 1*time.Second)
+	cc, _ := errgroup.WithContext(c)
+	cc.Go(func() error {
+		t.Log("ok", "aa")
+		time.Sleep(2 * time.Second)
+		return nil
+	})
+	cc.Go(func() error {
+		t.Log("ok", "aa")
+		time.Sleep(1 * time.Second)
+		return errors.New("err")
+	})
+	cc.Go(func() error {
+		t.Log("ok", "aa")
+		time.Sleep(13 * time.Second)
+		return nil
+	})
+
+	err := cc.Wait()
+	if err != nil {
+		t.Log("err", err)
+		return
+	}
 
 }
 
 func TestGoCtx(t *testing.T) {
-	var l chan struct{}
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	ctx = context.WithValue(ctx, "key", "value")
-	go func() {
-		time.Sleep(4 * time.Second)
-		GetA(ctx, "1")
-	}()
-	go func() {
-		time.Sleep(2 * time.Second)
-		ctxx, cancel := context.WithTimeout(ctx, 2*time.Second)
-		defer cancel()
-		GetA(ctxx, "2")
-	}()
-	<-l
 
+	//go func() {
+	//	time.Sleep(4 * time.Second)
+	//	GetA(ctx, "1")
+	//}()
+	//go func() {
+	//	time.Sleep(2 * time.Second)
+	//	//ctxx, _ := context.WithTimeout(context.Background(), 4*time.Second)
+	//	ctxx, _ := context.WithTimeout(ctx, 14*time.Second)
+	//	//defer cancel()
+	//	GetA(ctxx, "2")
+	//}()
+	t.Log(betch())
+	hookSignals()
 }
-func GetA(ctx context.Context, f string) {
-	log.Println(f, ctx.Value("key"))
+
+func betch() []int {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx = context.WithValue(ctx, "key", "value")
+	flows := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	var w sync.WaitGroup
+	res := []int{}
+	for _, flow := range flows {
+		flow := flow
+		w.Add(1)
+		RecoverGO(func() {
+			defer w.Done()
+			//ctxx, cel := context.WithTimeout(ctx, 4*time.Second)
+			//defer cel()
+			ctxx := ctx
+			a := GetA(ctxx, flow)
+			res = append(res, a)
+		})
+	}
+	RecoverGO(func() {
+		w.Wait()
+		cancel()
+	})
 	select {
 	case <-ctx.Done():
-		println("done")
+		log.Println("Timeout  goroutines occurred.")
 	}
+	return res
 }
 
-func RecoverGO(f func()) {
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				fmt.Printf("%+v\n", errors.Errorf("%+v", r))
-			}
-		}()
-		f()
-	}()
+func GetA(ctx context.Context, f int) int {
+	time.Sleep(time.Duration((f)) * time.Second)
+	log.Println(f, ctx.Value("key"))
+	if ctx.Err() != nil {
+		log.Println(ctx.Err().Error())
+	}
+	return f
 }
 
 func TestMapStruct(t *testing.T) {
@@ -341,6 +421,7 @@ func TestGoGroutines(t *testing.T) {
 	}
 	wg := sync.WaitGroup{}
 	wg.Add(len(arr))
+
 	for i, b := range arr {
 		go fn(i, &b, arr)
 		wg.Done()
@@ -1645,17 +1726,22 @@ func TestWgAdd(t *testing.T) {
 	k := uint64(1)
 	md := make([]int, 1000)
 
-	for i := int(1); i < 1000; i++ {
-		md[i] = i
-		wgs.Add(1)
-		go func(i int) {
-			md[int(k)] = int(i)
-			atomic.AddUint64(&k, 1)
-			wgs.Done()
+	wgs.Add(1)
 
-		}(i)
-	}
-
+	//for i := int(1); i < 1000; i++ {
+	//	md[i] = i
+	//	wgs.Add(1)
+	//	go func(i int) {
+	//		md[int(k)] = int(i)
+	//		atomic.AddUint64(&k, 1)
+	//		wgs.Done()
+	//
+	//	}(i)
+	//}
+	wgs.Done()
+	//wgs.Done()
+	//wgs.Done()
+	time.Sleep(time.Second)
 	wgs.Wait()
 	t.Log(md, len(md))
 	md = md[:k]

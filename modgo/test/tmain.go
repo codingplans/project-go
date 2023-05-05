@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"fmt"
+	"github.com/pkg/errors"
 	"runtime"
 )
 
@@ -429,4 +431,15 @@ func trimCommentsLine(line []byte) []byte {
 		newLine = append(newLine, line[i])
 	}
 	return newLine
+}
+
+func RecoverGO(f func()) {
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("%+v\n", errors.Errorf("%+v", r))
+			}
+		}()
+		f()
+	}()
 }
