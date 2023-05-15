@@ -1,0 +1,21 @@
+# 使用 Ubuntu 作为基础镜像
+FROM --platform=linux/amd64 ubuntu:22.04 as base
+
+MAINTAINER itdream "darrenzzy@126.com"
+
+RUN  sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+
+# 更新 apt-get 源并安装 zsh 和 git
+RUN apt-get clean && apt-get update && apt-get install -y zsh git python3 python3-pip  systemctl curl wget
+
+# 安装 oh-my-zsh
+#RUN #sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+RUN sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+
+# 将 zsh 设置为默认 shell
+RUN chsh -s $(which zsh)
+
+RUN git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+
+RUN ~/.fzf/install

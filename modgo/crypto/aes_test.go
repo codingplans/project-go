@@ -2,7 +2,7 @@ package crypto
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -23,7 +23,7 @@ func TestAES(m *testing.T) {
 }
 
 func TestFile(t *testing.T) {
-	bs, _ := ioutil.ReadFile("testfile")
+	bs, _ := os.ReadFile("testfile")
 	de, err := AesDecode(string(bs))
 	if err != nil {
 		panic(err)

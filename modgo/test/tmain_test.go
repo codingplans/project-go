@@ -5,12 +5,13 @@ import (
 	"bytes"
 	"context"
 	"crypto/md5"
+	crand "crypto/rand"
+	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"log"
 	"math"
 	"math/big"
 	"math/rand"
@@ -26,10 +27,16 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"syscall"
 	"testing"
 	"time"
 	"unsafe"
 
+	"github.com/tidwall/gjson"
+	"golang.org/x/sync/errgroup"
+
+	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 	"testgo/modgo/crypto"
 
 	"github.com/Darrenzzy/person-go/structures"
@@ -117,11 +124,212 @@ func GOCTX(ctx context.Context) {
 
 }
 
+func TestBigSlice(t *testing.T) {
+	arr := []int{0, 5: 0, 2}
+	t.Log(len(arr))
+}
+
+var x int
+
+func f() bool {
+	x++
+	return x < 5
+}
+
+func TestFors(t *testing.T) {
+	for f(); f(); f() {
+		println("ok", x)
+	}
+}
+
+// 用于阻塞主进程，等待信号
+func hookSignals() {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(
+		sigChan,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGQUIT,
+	)
+	switch <-sigChan {
+	case syscall.SIGQUIT: // terminate now
+		log.Printf("Server Stop")
+	case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM:
+		log.Println("Server GracefulStop")
+	}
+}
+
+// 这个例子说明 即便存在协程错误，都需要等全部协程结束后，才会返回错误，会有阻塞风险问题，建议使用ctx来控制协程超时，这样不影响主流程等待阻塞。
+func TestErrGroup(t *testing.T) {
+	c, _ := context.WithTimeout(context.Background(), 1*time.Second)
+	cc, _ := errgroup.WithContext(c)
+	cc.Go(func() error {
+		t.Log("ok", "aa")
+		time.Sleep(2 * time.Second)
+		return nil
+	})
+	cc.Go(func() error {
+		t.Log("ok", "aa")
+		time.Sleep(1 * time.Second)
+		return errors.New("err")
+	})
+	cc.Go(func() error {
+		t.Log("ok", "aa")
+		time.Sleep(13 * time.Second)
+		return nil
+	})
+
+	err := cc.Wait()
+	if err != nil {
+		t.Log("err", err)
+		return
+	}
+
+}
+
+func TestGoCtx(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	ctx = context.WithValue(ctx, "key", "value")
+
+	// go func() {
+	//	time.Sleep(4 * time.Second)
+	//	GetA(ctx, "1")
+	// }()
+	// go func() {
+	//	time.Sleep(2 * time.Second)
+	//	//ctxx, _ := context.WithTimeout(context.Background(), 4*time.Second)
+	//	ctxx, _ := context.WithTimeout(ctx, 14*time.Second)
+	//	//defer cancel()
+	//	GetA(ctxx, "2")
+	// }()
+	t.Log(betch())
+	hookSignals()
+}
+
+func betch() []int {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx = context.WithValue(ctx, "key", "value")
+	flows := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	var w sync.WaitGroup
+	res := []int{}
+	for _, flow := range flows {
+		flow := flow
+		w.Add(1)
+		RecoverGO(func() {
+			defer w.Done()
+			// ctxx, cel := context.WithTimeout(ctx, 4*time.Second)
+			// defer cel()
+			ctxx := ctx
+			a := GetA(ctxx, flow)
+			res = append(res, a)
+		})
+	}
+	RecoverGO(func() {
+		w.Wait()
+		cancel()
+	})
+	select {
+	case <-ctx.Done():
+		log.Println("Timeout  goroutines occurred.")
+	}
+	return res
+}
+
+func GetA(ctx context.Context, f int) int {
+	time.Sleep(time.Duration((f)) * time.Second)
+	log.Println(f, ctx.Value("key"))
+	if ctx.Err() != nil {
+		log.Println(ctx.Err().Error())
+	}
+	return f
+}
+
+func TestMapStruct(t *testing.T) {
+	foos := make(map[int]*w2)
+	foos[0] = &w2{q: 1}
+	m1 := make(map[int]decimal.Decimal)
+	m1[0].Add(decimal.NewFromFloat(2.0))
+	fmt.Printf("m1: %v", foos[0])
+	fmt.Printf("m1: %v", m1[0])
+}
+
+func TestGjson(t *testing.T) {
+	jsonBs := `[
+      {
+      "first": "last",
+      "last": "Prichard"
+    },
+    {
+      "first": "Janet",
+      "last": "Prichard"
+    }
+]`
+	value := gjson.Get(jsonBs, "name.last")
+	println(value.String())
+	value = gjson.Get(jsonBs, "#.first")
+	println(value.String())
+	println(gjson.Get(jsonBs, "#").Int())
+	t.Log(gjson.Get(jsonBs, "#.last").Array()[1])
+
+}
+
+func TestInterfaceV(t *testing.T) {
+	type options struct {
+		InfoLogger interface{ Infof(string, ...any) }
+	}
+	o := &options{}
+	o.InfoLogger = new(foo)
+	o.InfoLogger.Infof("test")
+}
+
+type foo struct {
+}
+
+func (*foo) Infof(s string, any ...interface{}) {
+	println(s)
+
+}
+
+func TestSliceContains(t *testing.T) {
+	sql := "11,3222,33,2233"
+	sqls := strings.Split(sql, ",")
+	t.Log(slices.Contains(sqls, "22"))
+}
+
+func TestWatchCan(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	go watch(ctx, "【监控1】")
+	go watch(ctx, "【监控2】")
+	go watch(ctx, "【监控3】")
+
+	time.Sleep(10 * time.Second)
+	fmt.Println("可以了，通知监控停止")
+	cancel()
+	// 为了检测监控过是否停止，如果没有监控输出，就表示停止了
+	time.Sleep(5 * time.Second)
+}
+
+func watch(ctx context.Context, name string) {
+	for {
+		select {
+		default:
+			fmt.Println(name, "goroutine监控中...")
+			time.Sleep(2 * time.Second)
+		case <-ctx.Done():
+			fmt.Println(name, "监控退出，停止了...")
+			return
+
+		}
+	}
+}
 func TestRandTimeMin(t *testing.T) {
 	// sleepHour := 1
 	ts := time.Now()
 	sleepHour := 28 - ts.Hour()
-	rand.Seed(time.Now().Unix())
+	a := rand.NewSource(1)
+	a.Seed(time.Now().Unix())
 	for i := 0; i < 10; i++ {
 
 		a := time.Duration(sleepHour)*time.Minute*60 - time.Duration(rand.Intn(20))*time.Minute
@@ -170,9 +378,27 @@ func xielou() { // 待测试的方法
 func TestXielou(t *testing.T) {
 	// defer goleak.VerifyNone(t)
 	xielou()
-	err := goleak.Find()
-	t.Log(err)
+	goLeakCheck()
 	// time.Sleep(3 * time.Second)
+}
+
+func goLeakCheck() {
+	ticker := time.NewTimer(1 * time.Second)
+	for {
+		select {
+		case <-ticker.C:
+			RecoverGO(
+				func() {
+					err := goleak.Find()
+					if err != nil {
+						fmt.Println("定时打印当前进程中存在内存泄露风险的代码段：goleak check")
+						fmt.Println(err)
+					}
+				},
+			)
+		}
+	}
+
 }
 
 func TestAppendToSlice(t *testing.T) {
@@ -246,7 +472,7 @@ func TestGoGroutines(t *testing.T) {
 	}
 
 	fn := func(k int, v *baz, list arrStruct) {
-		for i, _ := range list {
+		for i := range list {
 			if i == k {
 				continue
 			}
@@ -258,6 +484,7 @@ func TestGoGroutines(t *testing.T) {
 	}
 	wg := sync.WaitGroup{}
 	wg.Add(len(arr))
+
 	for i, b := range arr {
 		go fn(i, &b, arr)
 		wg.Done()
@@ -523,6 +750,22 @@ func TestFileIo(t *testing.T) {
 
 }
 
+func TestRanddd(t *testing.T) {
+	a, er := randomString(32)
+	t.Log(a, er)
+}
+
+// 生成随机字符串
+func randomString(length int) (string, error) {
+	rb := make([]byte, length)
+	_, err := crand.Read(rb)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(base64.URLEncoding.EncodeToString(rb), rb)
+	return base64.URLEncoding.EncodeToString(rb), nil
+}
+
 func TestPoolNew(t *testing.T) {
 	// disable GC so we can control when it happens.
 	defer debug.SetGCPercent(debug.SetGCPercent(-1))
@@ -588,6 +831,8 @@ func TestSizeOf(t *testing.T) {
 		v int32
 	}
 	t.Log(unsafe.Sizeof(A{}))
+	var ss string
+	t.Log(unsafe.Sizeof(ss))
 
 	type B struct {
 		// // _ [0]atomic.Int64
@@ -624,6 +869,16 @@ func TestArranges(t *testing.T) {
 }
 
 func TestArrslice(t *testing.T) {
+	mm := make(map[int]int, 100)
+	t.Logf("%p", &mm)
+	t.Log(reflect.TypeOf(mm))
+	t.Log(len(mm))
+	for i := 0; i < 1000; i++ {
+		mm[i] = i
+	}
+	t.Logf("%p", &mm)
+	t.Log(len(mm))
+
 	arr := [10]int{}
 	arr[6] = 1
 	arr[4] = 11
@@ -820,7 +1075,7 @@ func TestFileSecrie(t *testing.T) {
 }
 
 func loadExSecret(conf interface{}, confName string) error {
-	data, err := ioutil.ReadFile(confName)
+	data, err := os.ReadFile(confName)
 	if err != nil {
 		return err
 	}
@@ -853,7 +1108,7 @@ func backupSecret(RestDir, filename string, conf *PayWay) error {
 		return fmt.Errorf("runner config %v crypto failed, err is %v", conf, err)
 	}
 
-	return ioutil.WriteFile(RestDir+filename, []byte(cpted), 0644)
+	return os.WriteFile(RestDir+filename, []byte(cpted), 0644)
 }
 
 func TestStringToByte(t *testing.T) {
@@ -879,11 +1134,6 @@ func TestStringToByte(t *testing.T) {
 	a, err := r.Read(data)
 	t.Log(err, a, size, len(data))
 
-}
-
-func TestShanValue(t *testing.T) {
-	brokers := strings.Split("10.7.68.185:9092,10.7.68.186:9092,10.7.68.188:9092", ",")
-	t.Log(brokers)
 }
 
 func TestSelectToGo(t *testing.T) {
@@ -1166,8 +1416,8 @@ func TestSortSlice(t *testing.T) {
 		{2, 3},
 		{6, 4},
 	}
-	sort.Sort(arrStruct(s))
 	fmt.Printf("%+v\n", s)
+	sort.Sort(arrStruct(s))
 	fmt.Printf("%+v\n", s)
 }
 
@@ -1266,28 +1516,36 @@ func TestWriteSlice(t *testing.T) {
 func TestChanCtx(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Second)
 	ctx = context.WithValue(ctx, "key", "darren")
-	// defer func() {
-	// 	t.Log(ctx.Value("key"))
-	// 	cancel()
-	//
-	// 	t.Log(ctx.Value("key"))
-	// }()
-	go handle2(ctx, time.Second*5)
-	go handle(ctx, 5000*time.Millisecond)
+	wgsync := new(sync.Once)
+	handle2(ctx, time.Second*1, wgsync)
+	go handle(ctx, time.Second*1)
 	t.Log(ctx.Value("key"))
 	t.Log(ctx.Err())
 	t.Log(time.Now().Format("2006-01-02 15:04:05"))
 	cancel()
 	select {
-	case <-time.After(time.Second * 100):
+	case <-time.After(time.Second * 10):
 		fmt.Println("over")
 	}
 }
-func handle2(ctx context.Context, duration time.Duration) {
-	select {
-	case <-time.After(duration):
-		fmt.Println("handle2   with", duration)
-		fmt.Println(ctx.Value("key"), "handle2 ")
+
+// 实现一个在执行的任务，超时时必须结束，停止任务
+func handle2(ctx context.Context, duration time.Duration, wgsync *sync.Once) {
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Println("handle2  case <-ctx.Done():  with", duration)
+			return
+		case <-time.After(time.Millisecond):
+			fmt.Println("handle2  log  with", duration)
+			wgsync.Do(func() {
+				time.Sleep(time.Second * 40)
+				fmt.Println("handle2  sssssssssss  with", duration)
+			})
+			fmt.Println("handle2  log end  with", duration)
+		default:
+
+		}
 	}
 }
 
@@ -1541,17 +1799,22 @@ func TestWgAdd(t *testing.T) {
 	k := uint64(1)
 	md := make([]int, 1000)
 
-	for i := int(1); i < 1000; i++ {
-		md[i] = i
-		wgs.Add(1)
-		go func(i int) {
-			md[int(k)] = int(i)
-			atomic.AddUint64(&k, 1)
-			wgs.Done()
+	wgs.Add(1)
 
-		}(i)
-	}
-
+	// for i := int(1); i < 1000; i++ {
+	//	md[i] = i
+	//	wgs.Add(1)
+	//	go func(i int) {
+	//		md[int(k)] = int(i)
+	//		atomic.AddUint64(&k, 1)
+	//		wgs.Done()
+	//
+	//	}(i)
+	// }
+	wgs.Done()
+	// wgs.Done()
+	// wgs.Done()
+	time.Sleep(time.Second)
 	wgs.Wait()
 	t.Log(md, len(md))
 	md = md[:k]
@@ -2904,9 +3167,10 @@ func BfsTree(tree *structures.TreeNode) {
 
 func TestWeiyi(t *testing.T) {
 	// 000011
-	aa := 3
+	aa := 20
 	// 0000100
 	bb := 4
+	t.Log(aa & (aa - 1))
 	t.Log(aa >> 1)
 	t.Log(aa << 10)
 	// 10亿
