@@ -34,8 +34,6 @@ import (
 
 	"github.com/Darrenzzy/person-go/structures"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/panjf2000/ants"
-	"github.com/panjf2000/ants/v2"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"go.uber.org/goleak"
@@ -57,8 +55,65 @@ type baz2 struct {
 }
 type arrStruct []baz
 
-func TestAntfunc() {
-	HttpAccessWorkerPool, _ = ants.NewPoolWithFunc(6000, func(i interface{}) {
+func findSubstring(s string, words []string) []int {
+	wordLen := len(words[0])
+	totalWords := len(words)
+	totalLen := wordLen * totalWords
+	result := make([]int, 0)
+
+	if len(s) < totalLen {
+		return result
+	}
+
+	wordCounts := make(map[string]int)
+	for _, w := range words {
+		wordCounts[w]++
+	}
+
+	for i := 0; i <= len(s)-totalLen; i++ {
+		seen := make(map[string]int)
+		j := 0
+		for ; j < totalWords; j++ {
+			sub := s[i+j*wordLen : i+(j+1)*wordLen]
+			if _, ok := wordCounts[sub]; !ok {
+				break
+			}
+			seen[sub]++
+			if seen[sub] > wordCounts[sub] {
+				break
+			}
+		}
+		if j == totalWords {
+			result = append(result, i)
+		}
+	}
+
+	return result
+}
+func TestReverssss(t *testing.T) {
+	aa := findSubstring("barfoofoobarthefoobarman", []string{"bar", "foo", "the"})
+
+	t.Logf("%v", aa)
+}
+
+func TestGroutineDFS(t *testing.T) {
+	ctx := context.TODO()
+	ctx, cancel := context.WithCancel(ctx)
+	GOCTX(ctx)
+	contexts = append(contexts, ctx)
+	cancel()
+}
+
+var contexts []context.Context
+
+type otherContext struct {
+	context.Context
+}
+
+func GOCTX(ctx context.Context) {
+	o := otherContext{ctx}
+	c, _ := context.WithCancel(o)
+	contexts = append(contexts, c)
 
 }
 
@@ -911,6 +966,16 @@ func TestTickerFor(t *testing.T) {
 }
 
 func TestByte(t *testing.T) {
+
+	var commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
+	var commonIV3 = []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
+	t.Log(commonIV)
+	t.Log(commonIV3)
+
+	a, _ := json.Marshal(commonIV)
+	t.Log(string(a))
+	aa, _ := json.Marshal(commonIV3)
+	t.Log(string(aa))
 	ss := "dHJ1ZQ=="
 	ss = "d"
 	var vv interface{}
