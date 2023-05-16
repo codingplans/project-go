@@ -10,13 +10,11 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/tidwall/gjson"
-	"golang.org/x/sync/errgroup"
 	"io"
 	"log"
 	"math"
 	"math/big"
-	rand "math/rand"
+	"math/rand"
 	urls "net/url"
 	"os"
 	"os/signal"
@@ -33,6 +31,9 @@ import (
 	"testing"
 	"time"
 	"unsafe"
+
+	"github.com/tidwall/gjson"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/pkg/errors"
 	"golang.org/x/exp/slices"
@@ -60,6 +61,31 @@ type baz2 struct {
 	fzz []int
 }
 type arrStruct []baz
+
+// bug： 使用切片指针，导致取到最后一个值的指针
+func TestGoV(t *testing.T) {
+	arr := []int64{1, 2, 3, 4, 5, 6}
+	for _, i := range arr {
+		// i := i
+		t.Run(fmt.Sprintf("test-%d", i), func(t *testing.T) {
+			t.Parallel()
+			t.Log(i)
+		})
+	}
+}
+
+func ff() {
+	fmt.Println("ff")
+}
+func TestForSlice(t *testing.T) {
+	list := []func(){func() {
+		fmt.Println("oo")
+	}}
+	var f2 func() = ff
+	for _, f2 = range list {
+		f2()
+	}
+}
 
 func TestBigSlice(t *testing.T) {
 	arr := []int{0, 5: 0, 2}
@@ -130,17 +156,17 @@ func TestGoCtx(t *testing.T) {
 	defer cancel()
 	ctx = context.WithValue(ctx, "key", "value")
 
-	//go func() {
+	// go func() {
 	//	time.Sleep(4 * time.Second)
 	//	GetA(ctx, "1")
-	//}()
-	//go func() {
+	// }()
+	// go func() {
 	//	time.Sleep(2 * time.Second)
 	//	//ctxx, _ := context.WithTimeout(context.Background(), 4*time.Second)
 	//	ctxx, _ := context.WithTimeout(ctx, 14*time.Second)
 	//	//defer cancel()
 	//	GetA(ctxx, "2")
-	//}()
+	// }()
 	t.Log(betch())
 	hookSignals()
 }
@@ -156,8 +182,8 @@ func betch() []int {
 		w.Add(1)
 		RecoverGO(func() {
 			defer w.Done()
-			//ctxx, cel := context.WithTimeout(ctx, 4*time.Second)
-			//defer cel()
+			// ctxx, cel := context.WithTimeout(ctx, 4*time.Second)
+			// defer cel()
 			ctxx := ctx
 			a := GetA(ctxx, flow)
 			res = append(res, a)
@@ -722,10 +748,10 @@ func TestPoolNew(t *testing.T) {
 		t.Fatalf("got %v; want 2", v)
 	}
 	p.Put(33)
-	t.Log(p.Get())
+	t.Log(p.Get().(int))
 	p.Put(44)
 	runtime.GC()
-	t.Log(p.Get())
+	t.Log(p.Get().(int))
 
 	// Make sure that the goroutine doesn't migrate to another P
 	// between Put and Get calls.
@@ -1728,7 +1754,7 @@ func TestWgAdd(t *testing.T) {
 
 	wgs.Add(1)
 
-	//for i := int(1); i < 1000; i++ {
+	// for i := int(1); i < 1000; i++ {
 	//	md[i] = i
 	//	wgs.Add(1)
 	//	go func(i int) {
@@ -1737,10 +1763,10 @@ func TestWgAdd(t *testing.T) {
 	//		wgs.Done()
 	//
 	//	}(i)
-	//}
+	// }
 	wgs.Done()
-	//wgs.Done()
-	//wgs.Done()
+	// wgs.Done()
+	// wgs.Done()
 	time.Sleep(time.Second)
 	wgs.Wait()
 	t.Log(md, len(md))
