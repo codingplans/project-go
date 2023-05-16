@@ -32,11 +32,10 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/tidwall/gjson"
-	"golang.org/x/sync/errgroup"
-
 	"github.com/pkg/errors"
+	"github.com/tidwall/gjson"
 	"golang.org/x/exp/slices"
+	"golang.org/x/sync/errgroup"
 	"testgo/modgo/crypto"
 
 	"github.com/Darrenzzy/person-go/structures"
@@ -61,6 +60,68 @@ type baz2 struct {
 	fzz []int
 }
 type arrStruct []baz
+
+func findSubstring(s string, words []string) []int {
+	wordLen := len(words[0])
+	totalWords := len(words)
+	totalLen := wordLen * totalWords
+	result := make([]int, 0)
+
+	if len(s) < totalLen {
+		return result
+	}
+
+	wordCounts := make(map[string]int)
+	for _, w := range words {
+		wordCounts[w]++
+	}
+
+	for i := 0; i <= len(s)-totalLen; i++ {
+		seen := make(map[string]int)
+		j := 0
+		for ; j < totalWords; j++ {
+			sub := s[i+j*wordLen : i+(j+1)*wordLen]
+			if _, ok := wordCounts[sub]; !ok {
+				break
+			}
+			seen[sub]++
+			if seen[sub] > wordCounts[sub] {
+				break
+			}
+		}
+		if j == totalWords {
+			result = append(result, i)
+		}
+	}
+
+	return result
+}
+func TestReverssss(t *testing.T) {
+	aa := findSubstring("barfoofoobarthefoobarman", []string{"bar", "foo", "the"})
+
+	t.Logf("%v", aa)
+}
+
+func TestGroutineDFS(t *testing.T) {
+	ctx := context.TODO()
+	ctx, cancel := context.WithCancel(ctx)
+	GOCTX(ctx)
+	contexts = append(contexts, ctx)
+	cancel()
+}
+
+var contexts []context.Context
+
+type otherContext struct {
+	context.Context
+}
+
+func GOCTX(ctx context.Context) {
+	o := otherContext{ctx}
+	c, _ := context.WithCancel(o)
+	contexts = append(contexts, c)
+
+}
 
 // bug： 使用切片指针，导致取到最后一个值的指针
 func TestGoV(t *testing.T) {
@@ -748,10 +809,10 @@ func TestPoolNew(t *testing.T) {
 		t.Fatalf("got %v; want 2", v)
 	}
 	p.Put(33)
-	t.Log(p.Get().(int))
+	t.Log(p.Get())
 	p.Put(44)
 	runtime.GC()
-	t.Log(p.Get().(int))
+	t.Log(p.Get())
 
 	// Make sure that the goroutine doesn't migrate to another P
 	// between Put and Get calls.

@@ -16,6 +16,8 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/lib/pq v1.10.2
 	github.com/looplab/fsm v0.2.0
+	github.com/panjf2000/ants v1.3.0
+	github.com/panjf2000/ants/v2 v2.7.1
 	github.com/panjf2000/ants/v2 v2.7.0
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/pkg/errors v0.9.1
@@ -23,6 +25,12 @@ require (
 	github.com/samber/lo v1.35.0
 	github.com/shopspring/decimal v1.2.0
 	github.com/sirupsen/logrus v1.9.0
+	github.com/spf13/cast v1.3.0
+	github.com/spf13/cobra v1.6.0
+	github.com/stretchr/testify v1.8.1
+	go.uber.org/goleak v1.2.0
+	go.uber.org/zap v1.16.0
+	golang.org/x/text v0.3.7
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 	github.com/tidwall/gjson v1.14.4
@@ -47,6 +55,7 @@ require (
 	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/denisenkom/go-mssqldb v0.10.0 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
@@ -84,6 +93,7 @@ require (
 	github.com/prometheus/procfs v0.0.11 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/smartystreets/assertions v1.13.0 // indirect
+	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/smartystreets/goconvey v1.7.2 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
