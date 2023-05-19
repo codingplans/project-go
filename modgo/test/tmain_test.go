@@ -98,7 +98,6 @@ func findSubstring(s string, words []string) []int {
 }
 func TestReverssss(t *testing.T) {
 	aa := findSubstring("barfoofoobarthefoobarman", []string{"bar", "foo", "the"})
-
 	t.Logf("%v", aa)
 }
 
@@ -107,7 +106,12 @@ func TestGroutineDFS(t *testing.T) {
 	ctx, cancel := context.WithCancel(ctx)
 	GOCTX(ctx)
 	contexts = append(contexts, ctx)
-	cancel()
+	defer cancel()
+	for _, ctx2 := range contexts {
+		if ctx2.Err() != nil {
+			t.Log(ctx2.Err())
+		}
+	}
 }
 
 var contexts []context.Context
@@ -119,8 +123,8 @@ type otherContext struct {
 func GOCTX(ctx context.Context) {
 	o := otherContext{ctx}
 	c, _ := context.WithCancel(o)
+	fmt.Println(c.Err())
 	contexts = append(contexts, c)
-
 }
 
 // bug： 使用切片指针，导致取到最后一个值的指针
@@ -320,6 +324,41 @@ func TestSliceContains(t *testing.T) {
 	sql := "11,3222,33,2233"
 	sqls := strings.Split(sql, ",")
 	t.Log(slices.Contains(sqls, "22"))
+}
+
+// 并发写入ctx， 需要加锁
+func TestWatchContext(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	var r sync.Mutex
+	var s int32
+	for i := 0; i < 100; i++ {
+		i := i
+		go func() {
+			r.Lock()
+			defer r.Unlock()
+			if atomic.AddInt32(&s, 1) == 70 {
+				cancel()
+			}
+			select {
+			case <-ctx.Done():
+				// t.Log(i, "主动退")
+				return
+			default:
+			}
+
+			ctx = context.WithValue(ctx, fmt.Sprintf("key %d", i), fmt.Sprintf("key %d", i))
+			t.Log(i, ctx.Err())
+
+		}()
+	}
+	time.Sleep(2 * time.Second)
+	for i := 0; i < 100; i++ {
+		if v := ctx.Value(fmt.Sprintf("key %d", i)); v != nil {
+			t.Log(v)
+		}
+	}
+	return
 }
 
 func TestWatchCan(t *testing.T) {
