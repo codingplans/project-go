@@ -32,17 +32,16 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/Darrenzzy/person-go/structures"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
+	"github.com/samber/lo"
+	"github.com/shopspring/decimal"
 	"github.com/tidwall/gjson"
+	"go.uber.org/goleak"
 	"golang.org/x/exp/slices"
 	"golang.org/x/sync/errgroup"
 	"testgo/modgo/crypto"
-
-	"github.com/Darrenzzy/person-go/structures"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/samber/lo"
-	"github.com/shopspring/decimal"
-	"go.uber.org/goleak"
 )
 
 type w2 struct {
@@ -2063,7 +2062,7 @@ func TestPanicV4(t *testing.T) {
 		S *int64
 		K string
 	}
-
+	t.Logf("%+v", errors.New("123"))
 	w := int64(2)
 	aa := R{
 		S: &w,
