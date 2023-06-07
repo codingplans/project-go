@@ -60,6 +60,37 @@ type baz2 struct {
 }
 type arrStruct []baz
 
+func TestIoAll(t *testing.T) {
+	sc := `{"a":1,"b":2}`
+	reader := strings.NewReader(sc)
+	var sss strings.Builder
+	verb := make([]byte, 3)
+	for {
+		full, err := reader.Read(verb)
+		if err != nil {
+			t.Log(err)
+			break
+		}
+		if full == 0 {
+			t.Log("full==0")
+			break
+		}
+
+		sss.Write(verb)
+
+		t.Log(string(verb))
+	}
+	t.Log(sss.String(), sss.Len())
+
+}
+
+func BenchmarkInt63Threadsafe(b *testing.B) {
+	for n := b.N; n > 0; n-- {
+		b.Log(rand.Intn(10))
+		// b.Log(rand.Int())
+	}
+}
+
 func findSubstring(s string, words []string) []int {
 	wordLen := len(words[0])
 	totalWords := len(words)
@@ -2034,19 +2065,6 @@ func TestForRange(t *testing.T) {
 func TestTimeMicr(t *testing.T) {
 	t.Log(strconv.FormatInt(time.Now().Unix(), 10))
 	t.Log(time.Now().Unix() * 1000)
-}
-
-func TestAdd(t *testing.T) {
-	s := Add(url)
-	if s == "" {
-		t.Errorf("Test.Add error!")
-	}
-}
-
-func BenchmarkAdd(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		Add(url)
-	}
 }
 
 func TestSpilt(t *testing.T) {

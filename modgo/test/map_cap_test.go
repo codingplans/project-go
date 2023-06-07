@@ -30,17 +30,17 @@ func MapCap4() {
 	}
 }
 
-func BenchmarkMapCap2(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		MapCap2()
-	}
-}
-
 func BenchmarkMapCap1(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		MapCap1()
+	}
+}
+
+func BenchmarkMapCap2(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		MapCap2()
 	}
 }
 
