@@ -10,6 +10,37 @@ import (
 	json "github.com/json-iterator/go"
 )
 
+func TestPoolStressss(t *testing.T) {
+	const P = 10
+	N := int(1e6)
+	if testing.Short() {
+		N /= 100
+	}
+	N /= 10000
+	var p sync.Pool
+	done := make(chan bool)
+	for i := 0; i < P; i++ {
+		go func() {
+			var v any = 0
+			for j := 0; j < N; j++ {
+				if v == nil {
+					v = 0
+				}
+				p.Put(v)
+				v = p.Get()
+				if v != nil && v.(int) != 0 {
+					t.Errorf("expect 0, got %v", v)
+					break
+				}
+			}
+			done <- true
+		}()
+	}
+	for i := 0; i < P; i++ {
+		<-done
+	}
+}
+
 type Student struct {
 	Name   string
 	Info   map[string]SSSS
@@ -52,9 +83,9 @@ func bufs() []byte {
 	return buf
 }
 
-var buf = bufs()
-
 func BenchmarkUnmarshal(b *testing.B) {
+	var buf = bufs()
+
 	for n := 0; n < b.N; n++ {
 		stu := &Student{}
 		json.Unmarshal(buf, stu)
@@ -62,6 +93,7 @@ func BenchmarkUnmarshal(b *testing.B) {
 }
 
 func BenchmarkUnmarshalWithPool(b *testing.B) {
+	var buf = bufs()
 	for n := 0; n < b.N; n++ {
 		stu := studentPool.Get().(*Student)
 		json.Unmarshal(buf, stu)
