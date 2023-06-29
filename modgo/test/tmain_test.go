@@ -32,17 +32,16 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/Darrenzzy/person-go/structures"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
+	"github.com/samber/lo"
+	"github.com/shopspring/decimal"
 	"github.com/tidwall/gjson"
+	"go.uber.org/goleak"
 	"golang.org/x/exp/slices"
 	"golang.org/x/sync/errgroup"
 	"testgo/modgo/crypto"
-
-	"github.com/Darrenzzy/person-go/structures"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/samber/lo"
-	"github.com/shopspring/decimal"
-	"go.uber.org/goleak"
 )
 
 type w2 struct {
@@ -60,6 +59,55 @@ type baz2 struct {
 	fzz []int
 }
 type arrStruct []baz
+
+func TestRandtime(t *testing.T) {
+	// rand.Seed(time.Now().UnixNano())
+	var wg sync.WaitGroup
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		t.Log(rand.Intn(100))
+	}
+
+}
+
+func TestSlicestrings(t *testing.T) {
+	// arr := []interface{}{}
+	arr := []int64{}
+	srr := `[22, 111]`
+	err := json.Unmarshal([]byte(srr), &arr)
+	t.Log(arr, err)
+}
+
+func TestIoAll(t *testing.T) {
+	sc := `{"a":1,"b":2}`
+	reader := strings.NewReader(sc)
+	var sss strings.Builder
+	verb := make([]byte, 3)
+	for {
+		full, err := reader.Read(verb)
+		if err != nil {
+			t.Log(err)
+			break
+		}
+		if full == 0 {
+			t.Log("full==0")
+			break
+		}
+
+		sss.Write(verb)
+
+		t.Log(string(verb))
+	}
+	t.Log(sss.String(), sss.Len())
+
+}
+
+func BenchmarkInt63Threadsafe(b *testing.B) {
+	for n := b.N; n > 0; n-- {
+		b.Log(rand.Intn(10))
+		// b.Log(rand.Int())
+	}
+}
 
 func findSubstring(s string, words []string) []int {
 	wordLen := len(words[0])
@@ -98,7 +146,6 @@ func findSubstring(s string, words []string) []int {
 }
 func TestReverssss(t *testing.T) {
 	aa := findSubstring("barfoofoobarthefoobarman", []string{"bar", "foo", "the"})
-
 	t.Logf("%v", aa)
 }
 
@@ -107,7 +154,12 @@ func TestGroutineDFS(t *testing.T) {
 	ctx, cancel := context.WithCancel(ctx)
 	GOCTX(ctx)
 	contexts = append(contexts, ctx)
-	cancel()
+	defer cancel()
+	for _, ctx2 := range contexts {
+		if ctx2.Err() != nil {
+			t.Log(ctx2.Err())
+		}
+	}
 }
 
 var contexts []context.Context
@@ -119,8 +171,8 @@ type otherContext struct {
 func GOCTX(ctx context.Context) {
 	o := otherContext{ctx}
 	c, _ := context.WithCancel(o)
+	fmt.Println(c.Err())
 	contexts = append(contexts, c)
-
 }
 
 // bug： 使用切片指针，导致取到最后一个值的指针
@@ -320,6 +372,41 @@ func TestSliceContains(t *testing.T) {
 	sql := "11,3222,33,2233"
 	sqls := strings.Split(sql, ",")
 	t.Log(slices.Contains(sqls, "22"))
+}
+
+// 并发写入ctx， 需要加锁
+func TestWatchContext(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	var r sync.Mutex
+	var s int32
+	for i := 0; i < 100; i++ {
+		i := i
+		go func() {
+			r.Lock()
+			defer r.Unlock()
+			if atomic.AddInt32(&s, 1) == 70 {
+				cancel()
+			}
+			select {
+			case <-ctx.Done():
+				// t.Log(i, "主动退")
+				return
+			default:
+			}
+
+			ctx = context.WithValue(ctx, fmt.Sprintf("key %d", i), fmt.Sprintf("key %d", i))
+			t.Log(i, ctx.Err())
+
+		}()
+	}
+	time.Sleep(2 * time.Second)
+	for i := 0; i < 100; i++ {
+		if v := ctx.Value(fmt.Sprintf("key %d", i)); v != nil {
+			t.Log(v)
+		}
+	}
+	return
 }
 
 func TestWatchCan(t *testing.T) {
@@ -894,6 +981,8 @@ func TestArranges(t *testing.T) {
 
 func TestArrslice(t *testing.T) {
 	mm := make(map[int]int, 100)
+	mm[1] = 1
+	t.Log(len(mm))
 	t.Logf("%p", &mm)
 	t.Log(reflect.TypeOf(mm))
 	t.Log(len(mm))
@@ -1362,7 +1451,7 @@ func TestTimeDaysAdd(t *testing.T) {
 	now := time.Now().Unix()
 	t.Log(now, now+3600*24)
 	tt := time.Unix(1697839585, 0)
-	t.Log(tt)
+	t.Log(tt.Format("2006-01-02 15:04:05"))
 	t.Log(tt.Day())
 	ts := time.Now()
 	tm1 := time.Date(ts.Year(), ts.Month(), ts.Day(), 0, 0, 0, 0, ts.Location())
@@ -1998,19 +2087,6 @@ func TestTimeMicr(t *testing.T) {
 	t.Log(time.Now().Unix() * 1000)
 }
 
-func TestAdd(t *testing.T) {
-	s := Add(url)
-	if s == "" {
-		t.Errorf("Test.Add error!")
-	}
-}
-
-func BenchmarkAdd(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		Add(url)
-	}
-}
-
 func TestSpilt(t *testing.T) {
 	msg := "aaskjdhakshdlkhsada审"
 	t.Log(len(strings.Split(msg, "审批于")))
@@ -2024,7 +2100,7 @@ func TestPanicV4(t *testing.T) {
 		S *int64
 		K string
 	}
-
+	t.Logf("%+v", errors.New("123"))
 	w := int64(2)
 	aa := R{
 		S: &w,
@@ -2516,119 +2592,6 @@ func TestMaxLeng(t *testing.T) {
 	// t.Log(maxLength([]int{2, 3, 4, 1, 5}))
 	// t.Log(maxLength([]int{2, 2, 3, 4, 1, 5}))
 	t.Log(maxLength([]int{1, 1, 1, 2, 2, 3, 4, 5, 6, 7, 7, 8, 9}))
-}
-
-func TestIsValid(t *testing.T) {
-	// t.Log(isValid("[](){}"))
-	// t.Log(isValid("[]({}[]{{{}}}){}"))
-	// t.Log(isValid("{[}]"))
-	// t.Log(isValid("]"))
-	// t.Log(Fibonacci(4))
-	// t.Log(FibonacciV2(4))
-	// t.Log(Fibonacci(10))
-	// t.Log(FibonacciV2(30))
-	// t.Log(search([]int{1, 2, 2, 3, 3, 6, 8, 8, 8, 9, 9, 9}, 6))
-	// t.Log(search([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 6))
-	// t.Log(search([]int{1, 1, 1, 1, 6, 6, 6, 6, 6, 7, 8, 9, 10, 10, 101}, 101))
-	// t.Log(search([]int{-2, 1, 2}, -2))
-	t.Log(LRU([][]int{{1, 1, 1}, {1, 2, 2}, {1, 3, 2}, {2, 1}, {1, 4, 4}, {2, 2}}, 3))
-}
-
-type Lru struct {
-	md   map[int]*node
-	buf  int
-	max  int
-	head *node
-	tail *node
-}
-
-type node struct {
-	pre, next *node
-	val, key  int
-}
-
-func LRU(operators [][]int, k int) []int {
-	// write code here
-	lru := initLru(k)
-	res := []int{}
-	for i := range operators {
-		if operators[i][0] == 1 {
-			lru.set(operators[i][1], operators[i][2])
-
-		} else {
-			res = append(res, lru.get(operators[i][1]))
-		}
-	}
-	return res
-}
-func initLru(k int) Lru {
-	return Lru{
-		md:  make(map[int]*node),
-		max: k,
-	}
-}
-
-func (this *Lru) get(k int) int {
-	if v, ok := this.md[k]; ok {
-		this.remove(v)
-		this.add(v)
-		return v.val
-	}
-	return -1
-}
-func (this *Lru) set(k, x int) {
-	if v, ok := this.md[k]; ok {
-		this.remove(v)
-		this.add(v)
-		return
-	} else {
-		n := &node{val: x, key: k}
-		this.md[k] = n
-		this.add(n)
-
-	}
-
-	if len(this.md) > this.max {
-		delete(this.md, this.tail.key)
-		this.remove(this.tail)
-	}
-
-}
-
-func (this *Lru) remove(n *node) {
-	if this.head == n {
-		this.head = n.next
-		this.head.pre = nil
-		return
-	}
-
-	if this.tail == n {
-		this.tail = n.pre
-		n.pre.next = nil
-		n.pre = nil
-		return
-
-	}
-
-	n.pre.next = n.next
-	n.next.pre = n.pre
-
-	return
-
-}
-
-func (this *Lru) add(n *node) {
-	n.next = this.head
-	if this.head != nil {
-		this.head.pre = n
-	}
-	this.head = n
-	if this.tail == nil {
-		this.tail = n
-		this.tail.next = nil
-	}
-
-	return
 }
 
 func search(nums []int, target int) int {

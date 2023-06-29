@@ -3,11 +3,13 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/go-xorm/xorm"
+	"xorm.io/xorm"
+
 	_ "github.com/lib/pq"
 )
 
@@ -61,11 +63,12 @@ var UsByMobile = make(map[string]mapUser, 0)
 var UsByIdCard = make(map[string]mapUser, 0)
 
 func main() {
+	OperatorDb()
 	// WriteOneCsv()
 	// WriteTwoCsv()
 	// WriteThreeCsv()
 	// SlecrList()
-	Find()
+	// Find()
 }
 
 func Find() {
@@ -80,7 +83,7 @@ func Find() {
 
 	fmt.Println(ma)
 
-	sss := sql.Clone()
+	sss := sql
 
 	// sss.And("day_date = ?", "2020-09-01")
 	aa, err := sss.FindAndCount(&ma)
@@ -237,5 +240,50 @@ func init() {
 	// }
 	// rsEngine.ShowSQL(true)
 	// fmt.Println(rsEngine.DB().Ping(), "psql 连接成功")
+
+}
+
+type User struct {
+	Id           int64 `xorm:"pk autoincr 'id'"`
+	Username     string
+	Email        string
+	PasswordHash string `xorm:"varchar(200)"`
+	// Created      time.Time `xorm:"created"`
+	// Updated      time.Time `xorm:"updated"`
+	// Deleted int `xorm:"deleted"`
+	DeletedAt int `xorm:"deleted" json:"deleted_at"`
+	// Deleted int `xorm:"deleted_at"`
+}
+
+func (u *User) TableName() string {
+	return "user"
+}
+
+func OperatorDb() {
+
+	var user User
+	var err error
+	var b int64
+	_, err = engine.ID(1).Get(&user)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	// SELECT * FROM user WHERE id = ?
+	b, err = engine.ID(1).Delete(&user)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	log.Println(b)
+	// UPDATE user SET ..., deleted_at = ? WHERE id = ?
+	_, err = engine.ID(1).Get(&user)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	// 再次调用Get，此时将返回false, nil，即记录不存在
+	b, err = engine.ID(1).Delete(&user)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	log.Println(b)
 
 }

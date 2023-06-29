@@ -4,11 +4,13 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/parnurzeal/gorequest"
 	"net/http"
-
+	"sync"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/gin-gonic/gin"
+	"github.com/parnurzeal/gorequest"
 )
 
 type QuotedPrice struct {
@@ -28,9 +30,36 @@ type QuotedPrice struct {
 // }
 
 func main() {
+	g := gin.New()
+	m := sync.Map{}
+	g.GET("/", func(c *gin.Context) {
 
-	aa, _ := crawl("https://www.boc.cn/sourcedb/whpj/enindex_1619.html")
-	fmt.Printf("%+v", aa)
+		// fmt.Println(c.Request.URL.Query().Get("i"), 222222)
+		m.Store(c.Request.URL.Query().Get("i"), true)
+		time.Sleep(30 * time.Millisecond)
+		c.String(200, "ok")
+	})
+
+	go func() {
+		tt := time.NewTicker(50 * time.Second)
+		for {
+			select {
+			case <-tt.C:
+				for i := 0; i < 1000000; i++ {
+					if _, ok := m.Load(i); !ok {
+						fmt.Println(i)
+					}
+				}
+				m = sync.Map{}
+			}
+		}
+
+	}()
+
+	g.Run(":8081")
+
+	// aa, _ := crawl("https://www.boc.cn/sourcedb/whpj/enindex_1619.html")
+	// fmt.Printf("%+v", aa)
 }
 
 func crawl(url string) (map[string]QuotedPrice, error) {

@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/panjf2000/ants/v2"
-	"github.com/valyala/fasthttp"
 	"io"
 	"net/http"
 	"os"
@@ -13,6 +10,9 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/panjf2000/ants/v2"
+	"github.com/valyala/fasthttp"
 )
 
 var (
@@ -36,24 +36,25 @@ func count() {
 
 var fail string
 
-func sendGetRequest() {
+// 通过httpfast 包发送测试
+func sendGetRequest(i string) {
 	req := fasthttp.AcquireRequest()
 	req.SetRequestURI("http://localhost:8081/")
 	req.Header.SetMethod(fasthttp.MethodGet)
+	req.URI().QueryArgs().Add("i", i)
 	resp := fasthttp.AcquireResponse()
 	err := client.Do(req, resp)
 	fasthttp.ReleaseRequest(req)
 	defer fasthttp.ReleaseResponse(resp)
-	//httpClient := http.Client{Timeout: 2 * time.Second}
-	//req, _ := http.NewRequest("GET", "http://localhost:8081/", nil)
+	// httpClient := http.Client{Timeout: 2 * time.Second}
+	// req, _ := http.NewRequest("GET", "http://localhost:8081/", nil)
 	// 获取响应
-	//_, err := httpClient.Do(req)
+	// _, err := httpClient.Do(req)
 	if err == nil {
-		//fmt.Printf("DEBUG Response: %s\n", resp.Body())
+		// fmt.Printf("DEBUG Response: %s\n", resp.Body())
 		mu.Lock() // 上锁
 		ok++
 		mu.Unlock() // 上锁
-
 	} else {
 		mu.Lock()
 		no++
@@ -64,8 +65,8 @@ func sendGetRequest() {
 
 // 处理请求
 func dorequest(i interface{}) {
-	//sendGetRequest()
-	err := GetApiData("http://localhost:8081/", nil, nil)
+	// sendGetRequest()
+	err := GetApiData("http://localhost:8081", map[string]string{"i": i.(string)}, nil)
 	if err != nil {
 		mu.Lock() // 上锁
 		ok++
@@ -74,9 +75,8 @@ func dorequest(i interface{}) {
 		mu.Lock()
 		no++
 		mu.Unlock()
-		fmt.Fprintf(os.Stderr, "ERR Connection error: %v\n", err)
 	}
-	fmt.Println(i)
+	// fmt.Println(i)
 	wgAnt.Done()
 
 }
@@ -84,8 +84,9 @@ func dorequest(i interface{}) {
 var client *fasthttp.Client
 
 var httpClient = &http.Client{
-	Timeout:   time.Second * 60,
-	Transport: &http.Transport{DisableKeepAlives: true},
+	Timeout: time.Second * 60,
+	// Transport: &http.Transport{DisableKeepAlives: true},
+	Transport: &http.Transport{DisableKeepAlives: false},
 }
 
 // GetApiData 最小化请求 ，可复用于其他三方api 作为基础依赖
@@ -99,8 +100,8 @@ func GetApiData(path string, params, header map[string]string) []byte {
 		return nil
 	}
 	// resp, err := s.httpClt.Get(path)
-	//req.Close = true
-	//req.Header.Add("Connection", "close")
+	// req.Close = true
+	// req.Header.Add("Connection", "close")
 	q := req.URL.Query()
 	for s2, s3 := range params {
 		q.Add(s2, s3)
@@ -129,39 +130,21 @@ func GetApiData(path string, params, header map[string]string) []byte {
 }
 
 func main() {
-	//readTimeout, _ := time.ParseDuration("500ms")
-	//writeTimeout, _ := time.ParseDuration("500ms")
-	//maxIdleConnDuration, _ := time.ParseDuration("1h")
-	//client = &fasthttp.Client{
-	//	MaxConnsPerHost:               2000,
-	//	ReadTimeout:                   readTimeout,
-	//	WriteTimeout:                  writeTimeout,
-	//	MaxIdleConnDuration:           maxIdleConnDuration,
-	//	NoDefaultUserAgentHeader:      true, // Don't send: User-Agent: fasthttp
-	//	DisableHeaderNamesNormalizing: true, // If you set the case on your headers correctly you can enable this
-	//	DisablePathNormalizing:        true,
-	//	// increase DNS cache time to an hour instead of default minute
-	//	Dial: (&fasthttp.TCPDialer{
-	//		Concurrency:      4096,
-	//		DNSCacheDuration: time.Hour,
-	//	}).Dial,
-	//}
+	// g := gin.New()
+	// g.GET("/", func(c *gin.Context) {
+	// 	time.Sleep(30 * time.Millisecond)
+	// 	c.String(200, "ok")
+	// })
+	// go g.Run(":8081")
 
-	g := gin.New()
-	g.GET("/", func(c *gin.Context) {
-		time.Sleep(30 * time.Millisecond)
-		c.String(200, "ok")
-	})
-	go g.Run(":8081")
-
-	//使用所有CPU核心
+	// 使用所有CPU核心
 	runtime.GOMAXPROCS(runtime.NumCPU())
-
+	fmt.Println(runtime.NumCPU(), 22222)
 	go count()
 
 	time.Sleep(1 * time.Millisecond)
 
-	chairPool, _ := ants.NewPoolWithFunc(50000, dorequest) // 声明有几把电椅
+	chairPool, _ := ants.NewPoolWithFunc(5000, dorequest) // 声明有几把电椅
 	defer chairPool.Release()
 
 	for {

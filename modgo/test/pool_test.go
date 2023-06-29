@@ -2,8 +2,7 @@ package main
 
 import (
 	"bytes"
-	"fmt"
-	"math/rand"
+	"crypto/rand"
 	"sync"
 	"testing"
 
@@ -41,62 +40,63 @@ func TestPoolStressss(t *testing.T) {
 	}
 }
 
-type Student struct {
+type studentV1 struct {
 	Name   string
-	Info   map[string]SSSS
+	Info   map[string]complexV1
 	Remark [1024]byte
+}
+
+type complexFoo struct {
+	M map[string]any
+}
+type complexV1 struct {
+	MM map[string]complexFoo
 }
 
 var studentPool = sync.Pool{
 	New: func() interface{} {
-		return new(Student)
+		return new(studentV1)
 	},
 }
 
 func randomBytes(n int) [1024]byte {
 	b := make([]byte, n)
-	rand.Read(b)
+	_, err := rand.Read(b)
+	if err != nil {
+		return [1024]byte{}
+	}
 	var array [1024]byte
 	copy(array[:], b)
 	return array
 }
 
-type SSS struct {
-	M map[string]any
-}
-type SSSS struct {
-	MM map[string]SSS
-}
-
 func bufs() []byte {
+	a := make(map[string]complexV1, 0)
+	a["foo"] = complexV1{MM: map[string]complexFoo{"bars": {M: map[string]any{"bar": 1}}}}
 
-	a := make(map[string]SSSS, 0)
-	a["aa"] = SSSS{MM: map[string]SSS{"bb": {M: map[string]any{"bb": 1}}}}
-
-	student := &Student{
+	student := &studentV1{
 		Name:   "randomString(10)",
 		Info:   a,
 		Remark: randomBytes(1024),
 	}
-	fmt.Println(student)
+	// fmt.Println(student)
 	buf, _ := json.Marshal(student)
 	return buf
 }
 
-func BenchmarkUnmarshal(b *testing.B) {
-	var buf = bufs()
+var complexBuf = bufs()
 
+func BenchmarkUnmarshal(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		stu := &Student{}
-		json.Unmarshal(buf, stu)
+		stu := &studentV1{}
+		json.Unmarshal(complexBuf, stu)
 	}
 }
 
 func BenchmarkUnmarshalWithPool(b *testing.B) {
-	var buf = bufs()
 	for n := 0; n < b.N; n++ {
-		stu := studentPool.Get().(*Student)
-		json.Unmarshal(buf, stu)
+		stu := studentPool.Get().(*studentV1)
+		json.Unmarshal(complexBuf, stu)
 		studentPool.Put(stu)
 	}
 }
@@ -113,6 +113,7 @@ func BenchmarkBufferWithPool(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		buf := bufferPool.Get().(*bytes.Buffer)
 		buf.Write(data)
+
 		buf.Reset()
 		bufferPool.Put(buf)
 	}
