@@ -59,7 +59,7 @@ func NewRedis() (r *redis.Redis, cf func(), err error) {
 	cfg.Config = &pool.Config{
 		Active:      10,
 		Idle:        5,
-		IdleTimeout: xtime.Duration(90 * time.Second),
+		IdleTimeout: xtime.Duration(time.Second),
 	}
 	RSs = redis.NewRedis(&cfg)
 	cf = func() { r.Close() }
@@ -68,8 +68,10 @@ func NewRedis() (r *redis.Redis, cf func(), err error) {
 }
 
 func ping(r *redis.Redis) (err error) {
-	if _, err = r.Do(context.TODO(), "SET", "ping", "pong"); err != nil {
-		log.Error("conn.Set(PING) error(%v)", err)
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
+	// time.Sleep(time.Second * 2)
+	if _, err = r.Do(ctx, "SET", "ping", "pong"); err != nil {
+		log.Errorf("conn.Set(PING) error(%v)", err)
 	}
 	return
 }

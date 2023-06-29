@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -19,6 +22,35 @@ func bitMapToSlice(bitmap *roaring64.Bitmap) []int64 {
 	}
 	return total
 }
+
+func strToNum(s string) int64 {
+	var result strings.Builder
+	for _, r := range s {
+		result.WriteString(fmt.Sprintf("%03d", r))
+	}
+	num, _ := strconv.ParseInt(result.String(), 10, 64)
+	return num
+}
+
+func numToStr(s string) string {
+	str2 := ""
+	for i := 0; i < len(s); i += 3 {
+		// 把每三位数字转回字符
+		if num2, err := strconv.Atoi(s[i : i+3]); err == nil {
+			str2 += fmt.Sprintf("%d", num2)
+		}
+	}
+	return str2
+
+	// s := fmt.Sprintf("%09d", num) // 用零填充到9位
+	// var result strings.Builder
+	// for i := 0; i+2 < len(s); i += 3 {
+	// 	val, _ := strconv.Atoi(s[i : i+3])
+	// 	result.WriteRune(rune(val))
+	// }
+	// return result.String()
+}
+
 func BitMap1() {
 	BitMap := roaring64.NewBitmap()
 	ts := time.Now()
@@ -91,7 +123,13 @@ func BenchmarkBitMapV2(b *testing.B) {
 }
 
 func TestBitMapV1(t *testing.T) {
-	BitMap1()
+	// strr := "xkasdilnwqoidnoascboian"
+	strr := "123451"
+	num := strToNum(strr)
+	t.Log(num)
+	t.Logf("%v", numToStr(fmt.Sprintf("%09d", num)))
+
+	// BitMap1()
 }
 
 func TestBitMapV2(t *testing.T) {

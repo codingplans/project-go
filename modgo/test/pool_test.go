@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"math/rand"
+	"crypto/rand"
 	"sync"
 	"testing"
 
@@ -30,7 +30,10 @@ var studentPool = sync.Pool{
 
 func randomBytes(n int) [1024]byte {
 	b := make([]byte, n)
-	rand.Read(b)
+	_, err := rand.Read(b)
+	if err != nil {
+		return [1024]byte{}
+	}
 	var array [1024]byte
 	copy(array[:], b)
 	return array
@@ -79,6 +82,7 @@ func BenchmarkBufferWithPool(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		buf := bufferPool.Get().(*bytes.Buffer)
 		buf.Write(data)
+
 		buf.Reset()
 		bufferPool.Put(buf)
 	}
