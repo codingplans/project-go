@@ -2,27 +2,19 @@ package main
 
 import "testing"
 
-func TestIsValid(t *testing.T) {
-	// t.Log(isValid("[](){}"))
-	// t.Log(isValid("[]({}[]{{{}}}){}"))
-	// t.Log(isValid("{[}]"))
-	// t.Log(isValid("]"))
-	// t.Log(Fibonacci(4))
-	// t.Log(FibonacciV2(4))
-	// t.Log(Fibonacci(10))
-	// t.Log(FibonacciV2(30))
-	// t.Log(search([]int{1, 2, 2, 3, 3, 6, 8, 8, 8, 9, 9, 9}, 6))
-	// t.Log(search([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 6))
-	// t.Log(search([]int{1, 1, 1, 1, 6, 6, 6, 6, 6, 7, 8, 9, 10, 10, 101}, 101))
-	// t.Log(search([]int{-2, 1, 2}, -2))
-	t.Log(LRU([][]int{{1, 1, 1}, {1, 2, 2}, {1, 3, 2}, {2, 1}, {1, 4, 4}, {2, 2}}, 3))
+func TestLru(t *testing.T) {
+	l := initlru(3)
+	arr := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	for _, i2 := range arr {
+		l.set(i2, i2)
+	}
+	l.rangeLru()
 }
 
 type Lru struct {
-	md   map[int]*node
-	max  int
-	head *node
-	tail *node
+	m          map[int]*node
+	max        int
+	head, tail *node
 }
 
 type node struct {
@@ -30,85 +22,73 @@ type node struct {
 	val, key  int
 }
 
-func LRU(operators [][]int, k int) []int {
-	// write code here
-	lru := initLru(k)
-	res := []int{}
-	for i := range operators {
-		if operators[i][0] == 1 {
-			lru.set(operators[i][1], operators[i][2])
-
-		} else {
-			res = append(res, lru.get(operators[i][1]))
-		}
-	}
-	return res
-}
-func initLru(k int) Lru {
-	return Lru{
-		md:  make(map[int]*node),
-		max: k,
+func initlru(k int) *Lru {
+	return &Lru{
+		m:    make(map[int]*node, k),
+		max:  k,
+		head: nil,
+		tail: nil,
 	}
 }
 
-func (this *Lru) get(k int) int {
-	if v, ok := this.md[k]; ok {
-		this.remove(v)
-		this.add(v)
-		return v.val
-	}
-	return -1
-}
-func (this *Lru) set(k, x int) {
-	if v, ok := this.md[k]; ok {
-		this.remove(v)
-		this.add(v)
-		return
-	} else {
-		n := &node{val: x, key: k}
-		this.md[k] = n
-		this.add(n)
-
-	}
-
-	if len(this.md) > this.max {
-		delete(this.md, this.tail.key)
-		this.remove(this.tail)
-	}
-
-}
-
-func (this *Lru) remove(n *node) {
-	if this.head == n {
-		this.head = n.next
-		this.head.pre = nil
+func (l *Lru) remove(n *node) {
+	if l.head == n {
+		// l.head = l.head.next
+		l.head = n.next
+		l.head.pre = nil
 		return
 	}
-
-	if this.tail == n {
-		this.tail = n.pre
+	if l.tail == n {
+		l.tail = n.pre
 		n.pre.next = nil
 		n.pre = nil
 		return
 	}
-
 	n.pre.next = n.next
 	n.next.pre = n.pre
-
-	return
-
 }
 
-func (this *Lru) add(n *node) {
-	n.next = this.head
-	if this.head != nil {
-		this.head.pre = n
+func (l *Lru) get(k int) int {
+	if v, ok := l.m[k]; ok {
+		l.remove(v)
+		l.add(v)
+		return v.val
 	}
-	this.head = n
-	if this.tail == nil {
-		this.tail = n
-		this.tail.next = nil
+	return -1
+}
+
+func (l *Lru) set(k, v int) {
+
+	if s, ok := l.m[k]; ok {
+		l.remove(s)
+		l.add(s)
+		return
+	}
+	if len(l.m) >= l.max {
+		delete(l.m, l.tail.key)
+		l.remove(l.tail)
+	}
+	n := &node{key: k, val: v}
+	l.m[k] = n
+	l.add(n)
+
+}
+func (l *Lru) add(n *node) {
+	n.next = l.head
+	if l.head != nil {
+		l.head.pre = nil
+	}
+	l.head = n
+	if l.tail == nil {
+		l.tail = l.head
+		l.tail.next = nil
 	}
 
-	return
+}
+func (l *Lru) rangeLru() {
+	n := l.head
+	for n != nil {
+		println(n.val, n.key)
+		n = n.next
+	}
 }

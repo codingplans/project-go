@@ -60,6 +60,183 @@ type baz2 struct {
 }
 type arrStruct []baz
 
+func TestYushu(t *testing.T) {
+	fastrand := uint64(717)
+	n := uint64(4)
+	t.Log(uint32(uint64(fastrand) * uint64(n) >> 32))
+	t.Log(uint32(fastrand % n))
+}
+
+func TestYieldLocked(t *testing.T) {
+	const N = 10
+	c := make(chan bool)
+	for i := 0; i < N; i++ {
+		go func() {
+			runtime.LockOSThread()
+
+			runtime.Gosched()
+			time.Sleep(time.Millisecond)
+		}()
+	}
+	<-c
+}
+
+// 控制多协程作业，超时退出
+func TestMultiGoroutine(t *testing.T) {
+	target := int64(9910)
+	ch := make(chan struct{}, 1)
+	var wg sync.WaitGroup
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, os.Interrupt)
+	fn := func(c context.Context, data []int64) {
+		defer wg.Done()
+		for _, i := range data {
+			select {
+			case <-c.Done():
+				return
+			default:
+				if i == target {
+					log.Println("find it222", c.Err())
+					ch <- struct{}{}
+					return
+				}
+			}
+			time.Sleep(time.Millisecond * 1800)
+		}
+		return
+	}
+	arr := make([]int64, 0, 10000)
+	for i := 0; i < 100000; i++ {
+		arr = append(arr, int64(i))
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	go func() {
+		<-c
+		cancel()
+	}()
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go fn(ctx, arr[(2000*(i)):(2000*(i+1))-1])
+	}
+	go func() {
+		select {
+		case <-ctx.Done():
+			if ctx.Err() == context.DeadlineExceeded {
+				t.Log("timeouted ok")
+			}
+			t.Log("主动结束 ok222")
+		case <-ch:
+			cancel()
+			t.Log("find it", ctx.Err())
+		}
+	}()
+	wg.Wait()
+	close(ch)
+}
+
+// 读取并转换900KB变量
+func TestBufferToByte(t *testing.T) {
+	// 创建一个900KB大小的变量
+	dataB := make([]byte, 900*1024) // 900KB
+	for i := 0; i < 900*1024; i++ {
+		dataB[i] = byte('1' + (i % 9)) // '1' to '9'
+	}
+	// 假设把这个数据转移到一个新的结构上
+	type NewStruct struct {
+		Data []byte
+	}
+	var ns NewStruct
+
+	// 创建一个bytes.Reader对象
+	reader := bytes.NewReader(dataB)
+
+	// 使用ioutil.ReadAll读取Reader对象的所有字节
+	readData, err := io.ReadAll(reader)
+	if err != nil {
+		fmt.Println("Error reading dataB:", err)
+		return
+	}
+	// 将读取到的字节转移到新的结构上
+	ns.Data = readData
+
+	t.Log(string(ns.Data[:20]), string(dataB[:20]))
+	// 验证转移是否成功
+	fmt.Println(len(ns.Data) == len(dataB)) // 应该打印 "true"
+
+}
+
+func TestPrintNum(t *testing.T) {
+	even := make(chan bool)
+	odd := make(chan bool)
+
+	fn := func(self, other chan bool, start int) {
+		for i := start; i <= 100; i += 2 {
+			<-self // 等待自己的轮次
+			fmt.Println(i)
+			other <- true // 唤醒另一个协程
+		}
+	}
+
+	go fn(even, odd, 1) // 协程打印奇数
+	go fn(odd, even, 2) // 协程打印偶数
+	even <- true        // 启动第一个协程
+	wg.Add(1)
+	wg.Wait()
+	// even <- true        // 启动第一个协程
+	// var input string
+	fmt.Scanln() // 等待两个协程结束
+}
+
+// 协程交叉打印数字 V2
+func TestPrintNumV2(t *testing.T) {
+	var m sync.Mutex
+	cond := sync.NewCond(&m)
+
+	var turn = 1
+	upperLimit := 100
+
+	printOdd := func() {
+		for i := 1; i <= upperLimit; i += 2 {
+			m.Lock()
+			for turn != 1 {
+				cond.Wait()
+			}
+
+			fmt.Println(i)
+			turn = 2
+			cond.Signal()
+			m.Unlock()
+		}
+	}
+
+	printEven := func() {
+		for i := 2; i <= upperLimit; i += 2 {
+			m.Lock()
+			for turn != 2 {
+				cond.Wait()
+			}
+
+			fmt.Println(i)
+			turn = 1
+			cond.Signal()
+			m.Unlock()
+		}
+	}
+
+	go printOdd()
+	go printEven()
+
+	time.Sleep(time.Second * 10)
+	// 等待协程完成
+	scanln, err := fmt.Scanln()
+	t.Log(scanln)
+	if err != nil {
+		return
+	}
+}
+
 func TestRandtime(t *testing.T) {
 	// rand.Seed(time.Now().UnixNano())
 	var wg sync.WaitGroup
@@ -1519,6 +1696,7 @@ func TestSortSlice(t *testing.T) {
 		{2, 3},
 		{6, 4},
 	}
+
 	fmt.Printf("%+v\n", s)
 	sort.Sort(arrStruct(s))
 	fmt.Printf("%+v\n", s)
