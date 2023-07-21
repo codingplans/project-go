@@ -1,5 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+codeup.aliyun.com/qimao/leo/gin-timeout v0.0.0-20230713091904-fb1ab2be9081 h1:qFxsxKjMf7Es8nYj0K2n9ApdkYrXRszEpM3C2dtPiTY=
+codeup.aliyun.com/qimao/leo/gin-timeout v0.0.0-20230713091904-fb1ab2be9081/go.mod h1:65QS/BnmFKU/oUCndfx7JQtbrYL1DbTJMYpWLbjVvo4=
 gitea.com/xorm/sqlfiddle v0.0.0-20180821085327-62ce714f951a h1:lSA0F4e9A2NcQSqGqTOXqu2aRi/XEQxDCBwM8yJtE6s=
 gitea.com/xorm/sqlfiddle v0.0.0-20180821085327-62ce714f951a/go.mod h1:EXuID2Zs0pAQhH8yz+DNjUbjppKQzKFAn28TMYPB6IU=
 gitee.com/travelliu/dm v1.8.11192/go.mod h1:DHTzyhCrM843x9VdKVbZ+GKXGRbKM2sJ4LxihRxShkE=

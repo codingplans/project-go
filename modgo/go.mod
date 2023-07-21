@@ -3,8 +3,10 @@ module testgo/modgo
 go 1.18
 
 require (
+	codeup.aliyun.com/qimao/leo/gin-timeout v0.0.0-20230713091904-fb1ab2be9081
 	github.com/Darrenzzy/person-go v1.0.7
 	github.com/PuerkitoBio/goquery v1.6.1
+		go.uber.org/automaxprocs v1.4.0
 	github.com/RoaringBitmap/roaring v1.2.1
 	github.com/Shopify/sarama v1.28.0
 	github.com/getsentry/sentry-go v0.14.0

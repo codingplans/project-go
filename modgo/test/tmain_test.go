@@ -38,6 +38,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"github.com/tidwall/gjson"
+	// _ "go.uber.org/automaxprocs"
 	"go.uber.org/goleak"
 	"golang.org/x/exp/slices"
 	"golang.org/x/sync/errgroup"
@@ -60,6 +61,32 @@ type baz2 struct {
 }
 type arrStruct []baz
 
+func TestErrPrint(t *testing.T) {
+	fn := func(i int) (ii int, err error) {
+		if i == 1 {
+			return 1, errors.New("1")
+		}
+		return 2, nil
+	}
+	w, err := fn(1)
+	t.Log(w, err)
+	w, err = fn(2)
+	t.Log(w, err)
+	w, err = fn(0)
+	t.Log(w, err)
+	w, err = fn(1)
+	t.Log(w, err)
+
+}
+
+// === RUN   TestErrPrint
+//    tmain_test.go:74: 1 1
+//    tmain_test.go:76: 2 <nil>
+//    tmain_test.go:79: 2 <nil>
+//    tmain_test.go:82: 1 1
+// --- PASS: TestErrPrint (0.00s)
+// PASS
+
 func TestYushu(t *testing.T) {
 	fastrand := uint64(717)
 	n := uint64(4)
@@ -67,18 +94,90 @@ func TestYushu(t *testing.T) {
 	t.Log(uint32(fastrand % n))
 }
 
-func TestYieldLocked(t *testing.T) {
-	const N = 10
-	c := make(chan bool)
-	for i := 0; i < N; i++ {
-		go func() {
-			runtime.LockOSThread()
+/*
+对比注释runtime.Gosched() 前后的输出结果，可以看出runtime.Gosched()的作用是让出当前goroutine的执行权限，调度器安排其他等待的任务运行，并在下次某个时候从该位置恢复执行。
+=== RUN   TestGosched
+tmain_test.go:79: after gosched1
+tmain_test.go:91: after gosched2
+tmain_test.go:75: test1
+tmain_test.go:82: test2
+tmain_test.go:87: test3
+tmain_test.go:104: ctx done
+=== RUN   TestGosched
+tmain_test.go:75: test1
+tmain_test.go:79: after gosched1
+tmain_test.go:82: test2
+tmain_test.go:91: after gosched2
+tmain_test.go:87: test3
+tmain_test.go:104: ctx done
+--- PASS: TestGosched (2.00s)
+*/
+func TestGosched(t *testing.T) {
+	ctx, caa := context.WithTimeout(context.Background(), 4*time.Second)
+	runtime.GOMAXPROCS(1)
+	stopGroup, ctx := errgroup.WithContext(ctx)
+	stopGroup.Go(func() error {
+		t.Log(errors.New("test1"))
+		return nil
+	})
+	runtime.Gosched()
+	t.Log("after gosched1")
 
-			runtime.Gosched()
-			time.Sleep(time.Millisecond)
-		}()
+	stopGroup.Go(func() error {
+		t.Log(errors.New("test2"))
+		return nil
+	})
+	stopGroup.Go(func() error {
+		time.Sleep(2 * time.Second)
+		t.Log(errors.New("test3"))
+		return nil
+	})
+	runtime.Gosched()
+	t.Log("after gosched2")
+
+	go func() {
+		err := stopGroup.Wait()
+		if err != nil {
+			caa()
+			t.Log(err)
+			return
+		}
+	}()
+
+	select {
+	case <-ctx.Done():
+		t.Log("ctx done")
+	case <-time.After(3 * time.Second):
+		t.Log("time after")
 	}
-	<-c
+
+}
+
+// 主要测试一下，runtime.Gosched() 在多个协程中的作用，是否会让出时间片。其次就是ctx超时退出机制要在协程中时刻监听才有效
+func TestErrGroup(t *testing.T) {
+	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
+	runtime.GOMAXPROCS(1)
+	stopGroup, ctx := errgroup.WithContext(ctx)
+	fn := func(ctx context.Context, i int) error {
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			default:
+				// time.Sleep(time.Millisecond * 10)
+				log.Println("test", i)
+				runtime.Gosched()
+			}
+		}
+	}
+	stopGroup.Go(func() error {
+		return fn(ctx, 1)
+	})
+	stopGroup.Go(func() error {
+		return fn(ctx, 2)
+	})
+	time.Sleep(5 * time.Second)
+
 }
 
 // 控制多协程作业，超时退出
@@ -414,7 +513,7 @@ func hookSignals() {
 }
 
 // 这个例子说明 即便存在协程错误，都需要等全部协程结束后，才会返回错误，会有阻塞风险问题，建议使用ctx来控制协程超时，这样不影响主流程等待阻塞。
-func TestErrGroup(t *testing.T) {
+func TestErrGroup1(t *testing.T) {
 	c, _ := context.WithTimeout(context.Background(), 1*time.Second)
 	cc, _ := errgroup.WithContext(c)
 	cc.Go(func() error {
@@ -1124,21 +1223,27 @@ func TestSizeOf(t *testing.T) {
 
 	type B struct {
 		// // _ [0]atomic.Int64
-		x   int32
-		v   int32
-		vv  int32
-		vvv int32
+		a int8
+		b int16
+		c int32
 	}
 	type C struct {
 		// _ [0]atomic.Int64
 		x int32
 		// v int64
 	}
-
 	t.Log(unsafe.Sizeof(B{}))
 	i := int32(1)
 	t.Log(unsafe.Sizeof(i))
 	t.Log(unsafe.Sizeof(C{}))
+
+	t.Log(unsafe.Sizeof(int64(1000000)))
+	t.Log(unsafe.Sizeof(int32(100)))
+	t.Log(unsafe.Sizeof(int16(100)))
+	t.Log(unsafe.Sizeof(int8(100)))
+	t.Log(unsafe.Sizeof(100))
+	t.Log(unsafe.Sizeof(string("1")))
+
 }
 
 func TestArranges(t *testing.T) {
@@ -1259,21 +1364,6 @@ func TestHash(t *testing.T) {
 		fmt.Println("******:", i.Int64())
 	}
 
-}
-
-func TestBateInt(t *testing.T) {
-	t.Log(unsafe.Sizeof(int64(1000000)))
-	t.Log(unsafe.Sizeof(int32(100)))
-	t.Log(unsafe.Sizeof(int16(100)))
-	t.Log(unsafe.Sizeof(int8(100)))
-	t.Log(unsafe.Sizeof(100))
-	t.Log(unsafe.Sizeof(string("1")))
-	// 	 tmain_test.go: 8
-	//    tmain_test.go: 4
-	//    tmain_test.go: 2
-	//    tmain_test.go: 1
-	//    tmain_test.go: 8
-	//    tmain_test.go: 16
 }
 
 func TestDeepCopy(t *testing.T) {
@@ -2700,8 +2790,31 @@ func BuildHeapV2(arr []int, n, lens int) {
 
 }
 
-func xRuntime() {
-	runtime.Gosched()                                    // 切换任务
+func TestXruntime(t *testing.T) {
+	fmt.Println(runtime.GOMAXPROCS(2))
+	go func() {
+		for {
+			fmt.Println("NumGoroutine", runtime.NumGoroutine())
+			time.Sleep(time.Second * 1)
+		}
+	}()
+
+	for i := 0; i < 10000; i++ {
+		go timeSleep10(i)
+	}
+	time.Sleep(time.Second * 41)
+}
+
+func timeSleep10(i int) {
+	fmt.Println(i)
+	time.Sleep(time.Second * time.Duration(i+5))
+	fmt.Println("ok", i)
+}
+
+func TestXRuntime(t *testing.T) {
+	// runtime.Gosched()
+	// 切换任务
+	fmt.Println("cpus:", runtime.GOMAXPROCS(0))          // 返回当前系统的CPU核数量
 	fmt.Println("cpus:", runtime.NumCPU())               // 返回当前系统的CPU核数量
 	fmt.Println("goroot:", runtime.GOROOT())             //
 	fmt.Println("NumGoroutine:", runtime.NumGoroutine()) // 返回真该执行和排队的任务总数

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -29,7 +31,48 @@ type QuotedPrice struct {
 // 	"林吉特": "MYR",
 // }
 
+func pings(w http.ResponseWriter, req *http.Request) {
+
+	fmt.Fprintf(w, "pong")
+}
+
+func timeoutMiddleware1(next http.Handler, timeout time.Duration) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), timeout)
+		defer cancel()
+
+		r = r.WithContext(ctx)
+		done := make(chan struct{})
+
+		go func() {
+			defer close(done)
+			next.ServeHTTP(w, r)
+		}()
+
+		select {
+		case <-ctx.Done():
+			w.WriteHeader(http.StatusRequestTimeout)
+			w.Write([]byte("request timeout"))
+		case <-done:
+		}
+	})
+}
 func main() {
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(5 * time.Second)
+		w.Write([]byte("Pong"))
+	})
+
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: timeoutMiddleware1(mux, 2*time.Second),
+	}
+
+	log.Println(server.ListenAndServe())
+
 	g := gin.New()
 	m := sync.Map{}
 	g.GET("/", func(c *gin.Context) {
