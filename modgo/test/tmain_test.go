@@ -61,7 +61,81 @@ type baz2 struct {
 }
 type arrStruct []baz
 
+func TestCopyArr(t *testing.T) {
+	arr := []byte{4, 3, 5, 1, 2, 6, 7}
+
+	ts := new([]byte)
+	a := &arr
+	copy(ts, a)
+	arr[1] = 100
+	fmt.Println(ts)
+	ts = append(ts, []byte{1, 2, 3}...)
+	fmt.Println(ts)
+}
+
+// 求最大子序列
+func TestDpArr(t *testing.T) {
+	arr := []int{199, -500, 2, 10, 30, 50, -13}
+	l := len(arr)
+	dp := make([]int, l)
+	dp[0] = arr[0]
+	index := 0
+	for i := 1; i < l; i++ {
+		maxs := dp[i-1]
+		if maxs > dp[i-1]+arr[i] {
+			if arr[i] < 0 {
+				dp[i] = 0
+				continue
+			}
+			dp[i] = arr[i]
+		} else {
+			dp[i] = maxs + arr[i]
+			index = i
+		}
+	}
+
+	sum := dp[index]
+	left := index
+	for sum != 0 && left >= 0 {
+		sum -= arr[left]
+		left--
+	}
+	fmt.Println(arr[left+1 : index+1])
+
+}
+
+// 这个并发例子说明 提前声明好map所有容量后，可以并发写入，不会报错，因为不会发生扩容。 如果填写m[n%9] 大于原始规格，就可能发生：
+// fatal error: concurrent map read and map write
+// goroutine 5091828 [running]:
+func BenchmarkMapWrite(b *testing.B) {
+	m := make(map[int]*baz2)
+	m[0] = &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+	m[1] = &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+	m[2] = &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+	for n := b.N; n > 0; n-- {
+		n := n
+		go func() {
+			if _, ok := m[n%3]; !ok {
+				// return
+				m[n%3] = &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+			}
+			m[n%3].bar = n
+			m[n%3].foo = n
+		}()
+	}
+
+}
+
 func TestErrPrint(t *testing.T) {
+	ass := []string{"222", "333"}
+	t.Log(len(ass))
+	ass = nil
+	t.Log(len(ass))
+	ass = append(ass, "sss")
+	t.Log(len(ass))
+
+	t.Log((1554796247 - 2161732510) * 100 / 2161732510)
+
 	fn := func(i int) (ii int, err error) {
 		if i == 1 {
 			return 1, errors.New("1")
