@@ -6,6 +6,7 @@ import (
 	"context"
 	"crypto/md5"
 	crand "crypto/rand"
+	"database/sql"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
@@ -34,6 +35,7 @@ import (
 
 	"github.com/Darrenzzy/person-go/structures"
 	jsoniter "github.com/json-iterator/go"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
@@ -61,16 +63,154 @@ type baz2 struct {
 }
 type arrStruct []baz
 
-func TestCopyArr(t *testing.T) {
-	arr := []byte{4, 3, 5, 1, 2, 6, 7}
+func TestForTime(t *testing.T) {
 
-	ts := new([]byte)
-	a := &arr
-	copy(ts, a)
-	arr[1] = 100
-	fmt.Println(ts)
-	ts = append(ts, []byte{1, 2, 3}...)
-	fmt.Println(ts)
+	ts := time.Now()
+	i := -3
+
+	ss, ww := json.Marshal(i)
+	t.Log(ss, ww)
+
+	www := []byte{44, 45, 97, 99}
+	t.Log(string(www))
+	for ts.Sub(ts.AddDate(0, 0, i)).Hours() >= 24 {
+		log.Println(ts.AddDate(0, 0, i).Unix())
+		// log.Println(ts.AddDate(0, 0, -1).Unix())
+		i++
+	}
+}
+
+func TestPointSet2(t *testing.T) {
+	os.Remove("./foo.db")
+	db, err := sql.Open("sqlite3", "./foo.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	sqlStmt := `
+	create table foo (id integer not null primary key, name text);
+	delete from foo;
+	`
+	_, err = db.Exec(sqlStmt)
+	if err != nil {
+		log.Printf("%q: %s\n", err, sqlStmt)
+		return
+	}
+
+	tx, err := db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+	stmt, err := tx.Prepare("insert into foo(id, name) values(?, ?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	for i := 0; i < 100; i++ {
+		_, err = stmt.Exec(i, fmt.Sprintf("こんにちは世界%03d", i))
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	rows, err := db.Query("select id, name from foo")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int
+		var name string
+		err = rows.Scan(&id, &name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(id, name)
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	stmt, err = db.Prepare("select name from foo where id = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	var name string
+	err = stmt.QueryRow("3").Scan(&name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(name)
+
+	_, err = db.Exec("delete from foo")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("insert into foo(id, name) values(1, 'foo'), (2, 'bar'), (3, 'baz')")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	rows, err = db.Query("select id, name from foo")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int
+		var name string
+		err = rows.Scan(&id, &name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(id, name)
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// 指针赋值
+func TestPointSet(t *testing.T) {
+	t.Logf("%.f", 21212.13213)
+
+	type Person struct {
+		Name string
+		Age  int
+	}
+	// 创建一个 Person 实例
+	person := Person{Name: "Alice", Age: 30}
+	var p = &person
+	height := unsafe.Pointer(uintptr(unsafe.Pointer(p)) + unsafe.Offsetof(p.Age))
+	*((*int)(height)) = 100 // 将height的值改为100
+	fmt.Println(p.Age)
+
+	height2 := unsafe.Pointer(uintptr(unsafe.Pointer(p)) + unsafe.Offsetof(p.Name))
+	*((*string)(height2)) = "darren" // 将height的值改为100
+	fmt.Println(p.Name)
+	fmt.Println(person)
+
+}
+
+//go:linkname FastRand runtime.fastrand
+func FastRand() uint32
+
+//go:linkname FastRandN runtime.fastrandn
+func FastRandN(n uint32) uint32
+func TestFastRand(t *testing.T) {
+	for i := 0; i < 1000; i++ {
+		t.Log(FastRand())
+		t.Log(FastRandN(3))
+	}
 }
 
 // 求最大子序列
@@ -615,23 +755,28 @@ func TestErrGroup1(t *testing.T) {
 }
 
 func TestGoCtx(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	ctx = context.WithValue(ctx, "key", "value")
+	// ctx1, cancel1 := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx1 := context.Background()
+	// defer cancel1()
+	ctx := context.WithValue(ctx1, "key", "value")
+	ctx, cancel := context.WithCancelCause(ctx)
 
-	// go func() {
-	//	time.Sleep(4 * time.Second)
-	//	GetA(ctx, "1")
-	// }()
-	// go func() {
-	//	time.Sleep(2 * time.Second)
-	//	//ctxx, _ := context.WithTimeout(context.Background(), 4*time.Second)
-	//	ctxx, _ := context.WithTimeout(ctx, 14*time.Second)
-	//	//defer cancel()
-	//	GetA(ctxx, "2")
-	// }()
-	t.Log(betch())
-	hookSignals()
+	go func() {
+		time.Sleep(4 * time.Second)
+		cancel(errors.New("不会再打印了"))
+	}()
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		cancel(errors.New("test"))
+	}()
+	for {
+		t.Log(ctx.Err())
+		t.Log(context.Cause(ctx))
+		t.Log(context.Cause(ctx1))
+
+		time.Sleep(500 * time.Millisecond)
+	}
 }
 
 func betch() []int {
@@ -1342,6 +1487,7 @@ func TestArrslice(t *testing.T) {
 	t.Logf("%p", &mm)
 	t.Log(reflect.TypeOf(mm))
 	t.Log(len(mm))
+
 	for i := 0; i < 1000; i++ {
 		mm[i] = i
 	}
@@ -2370,7 +2516,10 @@ func TestSliceSplit(t *testing.T) {
 
 	aa := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 
-	// ss := aa[2:3000]
+	t.Log(len(aa), cap(aa)) // ss := aa[2:3000]
+	// 表明了只亲空长度，但是原有容量保存
+	aa = aa[:0]
+	t.Log(len(aa), cap(aa)) // ss := aa[2:3000]
 	ss := aa[2:2]
 
 	var name string
@@ -2378,6 +2527,7 @@ func TestSliceSplit(t *testing.T) {
 	aaaa := strings.Count(name, "")
 
 	t.Log(strings.ToUpper(name))
+	t.Log(strings.ToUpper(" 免费-iOS-底部-1 "))
 	t.Log(aaaa)
 	t.Log(ss, 2222)
 }
@@ -3544,48 +3694,29 @@ func TestArrEq(t *testing.T) {
 }
 
 func TestSliceRange(t *testing.T) {
-	t.Helper()
 	aa := []*PayWay{}
-
-	aa = append(aa, &PayWay{
-		Id:  123,
-		Ids: 123,
-	})
-	aa = append(aa, &PayWay{
-		Id:  222,
-		Ids: 222,
-	})
-	aa = append(aa, &PayWay{
-		Id:  333,
-		Ids: 333,
-	})
+	n := int64(123)
+	for i := 0; i < 10; i++ {
+		aa = append(aa, &PayWay{
+			Id:  n * int64(i+1),
+			Ids: n * int64(i+1),
+		})
+	}
 
 	for k, v := range aa {
-		fmt.Println(v, k)
+		// v := v
+		go func() {
+			t.Log(k, v.Ids)
+		}()
 	}
+	time.Sleep(time.Second * 3)
 
 }
 
 func TestPanicdefer(t *testing.T) {
 	t.Log(DeferTest())
 }
-
-func DeferTest() int {
-	a := 1
-	b := 2
-	defer calc(a, b, "1")
-	// defer calc(a, calc(a, b, "0"), "1")
-	// a = 0
-	// defer calc(a, calc(a, b, "3"), "2")
-	return a + 1
-}
-
-func calc(x, y int, s string) int {
-	fmt.Println(s)
-	fmt.Println(x, y, x+y)
-	return x + y
-}
-
+ 
 func TestZhengzebiaoda(t *testing.T) {
 	text := "fff${LastDateOfMonth(3)}ffff aa2021年02月30日aaa${LastDateOfMonth(123)}aaa     "
 	mach := "\\$\\{LastDateOfMonth.([0-9]+.)\\}"

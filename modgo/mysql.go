@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/mattn/go-sqlite3"
 	"xorm.io/xorm"
 
 	_ "github.com/lib/pq"
@@ -221,9 +221,10 @@ func WriteThreeCsv() {
 func init() {
 	var err error
 
-	dsn := os.Getenv("MYSQL_TEST_HOST")
+	os.Remove("./foo.db")
 	// 用户表
-	engine, err = xorm.NewEngine("mysql", dsn)
+	engine, err = xorm.NewEngine("sqlite3", "./foo.db")
+
 	if err != nil {
 		fmt.Println(err.Error())
 		return
