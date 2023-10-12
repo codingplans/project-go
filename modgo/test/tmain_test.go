@@ -34,6 +34,7 @@ import (
 
 	"github.com/Darrenzzy/person-go/structures"
 	jsoniter "github.com/json-iterator/go"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
@@ -72,21 +73,6 @@ func (c *ConfigOne) Strings() string {
 func TestErrPrint(t *testing.T) {
 	s := &ConfigOne{}
 	s.Strings()
-	fn := func(i int) (ii int, err error) {
-		if i == 1 {
-			return 1, errors.New("1")
-		}
-		return 2, nil
-	}
-	w, err := fn(1)
-	t.Log(w, err)
-	w, err = fn(2)
-	t.Log(w, err)
-	w, err = fn(0)
-	t.Log(w, err)
-	w, err = fn(1)
-	t.Log(w, err)
-
 }
 
 // === RUN   TestErrPrint
@@ -96,6 +82,110 @@ func TestErrPrint(t *testing.T) {
 //    tmain_test.go:82: 1 1
 // --- PASS: TestErrPrint (0.00s)
 // PASS
+
+func TestForTime(t *testing.T) {
+
+	ts := time.Now()
+	i := -3
+
+	ss, ww := json.Marshal(i)
+	t.Log(ss, ww)
+
+	www := []byte{44, 45, 97, 99}
+	t.Log(string(www))
+	for ts.Sub(ts.AddDate(0, 0, i)).Hours() >= 24 {
+		log.Println(ts.AddDate(0, 0, i).Unix())
+		// log.Println(ts.AddDate(0, 0, -1).Unix())
+		i++
+	}
+}
+
+// 指针赋值
+func TestPointSet(t *testing.T) {
+	t.Logf("%.f", 21212.13213)
+
+	type Person struct {
+		Name string
+		Age  int
+	}
+	// 创建一个 Person 实例
+	person := Person{Name: "Alice", Age: 30}
+	var p = &person
+	height := unsafe.Pointer(uintptr(unsafe.Pointer(p)) + unsafe.Offsetof(p.Age))
+	*((*int)(height)) = 100 // 将height的值改为100
+	fmt.Println(p.Age)
+
+	height2 := unsafe.Pointer(uintptr(unsafe.Pointer(p)) + unsafe.Offsetof(p.Name))
+	*((*string)(height2)) = "darren" // 将height的值改为100
+	fmt.Println(p.Name)
+	fmt.Println(person)
+
+}
+
+//go:linkname FastRand runtime.fastrand
+func FastRand() uint32
+
+//go:linkname FastRandN runtime.fastrandn
+func FastRandN(n uint32) uint32
+func TestFastRand(t *testing.T) {
+	for i := 0; i < 1000; i++ {
+		t.Log(FastRand())
+		t.Log(FastRandN(3))
+	}
+}
+
+// 求最大子序列
+func TestDpArr(t *testing.T) {
+	arr := []int{199, -500, 2, 10, 30, 50, -13}
+	l := len(arr)
+	dp := make([]int, l)
+	dp[0] = arr[0]
+	index := 0
+	for i := 1; i < l; i++ {
+		maxs := dp[i-1]
+		if maxs > dp[i-1]+arr[i] {
+			if arr[i] < 0 {
+				dp[i] = 0
+				continue
+			}
+			dp[i] = arr[i]
+		} else {
+			dp[i] = maxs + arr[i]
+			index = i
+		}
+	}
+
+	sum := dp[index]
+	left := index
+	for sum != 0 && left >= 0 {
+		sum -= arr[left]
+		left--
+	}
+	fmt.Println(arr[left+1 : index+1])
+
+}
+
+// 这个并发例子说明 提前声明好map所有容量后，可以并发写入，不会报错，因为不会发生扩容。 如果填写m[n%9] 大于原始规格，就可能发生：
+// fatal error: concurrent map read and map write
+// goroutine 5091828 [running]:
+func BenchmarkMapWrite(b *testing.B) {
+	m := make(map[int]*baz2)
+	m[0] = &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+	m[1] = &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+	m[2] = &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+	for n := b.N; n > 0; n-- {
+		n := n
+		go func() {
+			if _, ok := m[n%3]; !ok {
+				// return
+				m[n%3] = &baz2{bar: 1, foo: 1, fzz: []int{1, 2, 3}}
+			}
+			m[n%3].bar = n
+			m[n%3].foo = n
+		}()
+	}
+
+}
 
 func TestYushu(t *testing.T) {
 	fastrand := uint64(717)
@@ -551,23 +641,28 @@ func TestErrGroup1(t *testing.T) {
 }
 
 func TestGoCtx(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	ctx = context.WithValue(ctx, "key", "value")
+	// ctx1, cancel1 := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx1 := context.Background()
+	// defer cancel1()
+	ctx := context.WithValue(ctx1, "key", "value")
+	ctx, cancel := context.WithCancelCause(ctx)
 
-	// go func() {
-	//	time.Sleep(4 * time.Second)
-	//	GetA(ctx, "1")
-	// }()
-	// go func() {
-	//	time.Sleep(2 * time.Second)
-	//	//ctxx, _ := context.WithTimeout(context.Background(), 4*time.Second)
-	//	ctxx, _ := context.WithTimeout(ctx, 14*time.Second)
-	//	//defer cancel()
-	//	GetA(ctxx, "2")
-	// }()
-	t.Log(betch())
-	hookSignals()
+	go func() {
+		time.Sleep(4 * time.Second)
+		cancel(errors.New("不会再打印了"))
+	}()
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		cancel(errors.New("test"))
+	}()
+	for {
+		t.Log(ctx.Err())
+		t.Log(context.Cause(ctx))
+		t.Log(context.Cause(ctx1))
+
+		time.Sleep(500 * time.Millisecond)
+	}
 }
 
 func betch() []int {
@@ -1278,6 +1373,7 @@ func TestArrslice(t *testing.T) {
 	t.Logf("%p", &mm)
 	t.Log(reflect.TypeOf(mm))
 	t.Log(len(mm))
+
 	for i := 0; i < 1000; i++ {
 		mm[i] = i
 	}
@@ -2306,7 +2402,10 @@ func TestSliceSplit(t *testing.T) {
 
 	aa := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 
-	// ss := aa[2:3000]
+	t.Log(len(aa), cap(aa)) // ss := aa[2:3000]
+	// 表明了只亲空长度，但是原有容量保存
+	aa = aa[:0]
+	t.Log(len(aa), cap(aa)) // ss := aa[2:3000]
 	ss := aa[2:2]
 
 	var name string
@@ -2314,6 +2413,7 @@ func TestSliceSplit(t *testing.T) {
 	aaaa := strings.Count(name, "")
 
 	t.Log(strings.ToUpper(name))
+	t.Log(strings.ToUpper(" 免费-iOS-底部-1 "))
 	t.Log(aaaa)
 	t.Log(ss, 2222)
 }
@@ -3480,46 +3580,23 @@ func TestArrEq(t *testing.T) {
 }
 
 func TestSliceRange(t *testing.T) {
-	t.Helper()
 	aa := []*PayWay{}
-
-	aa = append(aa, &PayWay{
-		Id:  123,
-		Ids: 123,
-	})
-	aa = append(aa, &PayWay{
-		Id:  222,
-		Ids: 222,
-	})
-	aa = append(aa, &PayWay{
-		Id:  333,
-		Ids: 333,
-	})
-
-	for k, v := range aa {
-		fmt.Println(v, k)
+	n := int64(123)
+	for i := 0; i < 10; i++ {
+		aa = append(aa, &PayWay{
+			Id:  n * int64(i+1),
+			Ids: n * int64(i+1),
+		})
 	}
 
-}
+	for k, v := range aa {
+		// v := v
+		go func() {
+			t.Log(k, v.Ids)
+		}()
+	}
+	time.Sleep(time.Second * 3)
 
-func TestPanicdefer(t *testing.T) {
-	t.Log(DeferTest())
-}
-
-func DeferTest() int {
-	a := 1
-	b := 2
-	defer calc(a, b, "1")
-	// defer calc(a, calc(a, b, "0"), "1")
-	// a = 0
-	// defer calc(a, calc(a, b, "3"), "2")
-	return a + 1
-}
-
-func calc(x, y int, s string) int {
-	fmt.Println(s)
-	fmt.Println(x, y, x+y)
-	return x + y
 }
 
 func TestZhengzebiaoda(t *testing.T) {

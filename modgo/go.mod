@@ -5,12 +5,11 @@ go 1.18
 require (
 	github.com/Darrenzzy/person-go v1.0.7
 	github.com/PuerkitoBio/goquery v1.6.1
-	github.com/RoaringBitmap/roaring v1.2.1
+	github.com/RoaringBitmap/roaring v1.3.0
 	github.com/Shopify/sarama v1.28.0
 	github.com/getsentry/sentry-go v0.14.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-kratos/kratos v1.0.0
-	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/json-iterator/go v1.1.12
 	github.com/lib/pq v1.10.2
@@ -46,7 +45,7 @@ require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/bits-and-blooms/bitset v1.2.0 // indirect
+	github.com/bits-and-blooms/bitset v1.8.0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
