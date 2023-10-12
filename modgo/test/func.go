@@ -109,24 +109,6 @@ func BuildHeap(arr []int, lens int) {
 }
 
 func Heapify(arr []int, n, lens int) {
-	// k := n
-	// i := k*2 + 1
-	// j := k*2 + 2
-	//
-	// if i >= lens {
-	// 	return
-	// }
-	// if i < lens && arrStruct[i] > arrStruct[k] {
-	// 	k = i
-	// }
-	// if j < lens && arrStruct[j] > arrStruct[k] {
-	// 	k = j
-	// }
-	// if n != k {
-	// 	arrStruct[n], arrStruct[k] = arrStruct[k], arrStruct[n]
-	// 	Heapify(arrStruct, k, lens)
-	// }
-
 	for {
 		i := 2 * n
 		if i > lens { // 保证该节点是非叶子节点

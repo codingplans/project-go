@@ -61,7 +61,17 @@ type baz2 struct {
 }
 type arrStruct []baz
 
+type ConfigOne struct {
+	Daemon string
+}
+
+func (c *ConfigOne) Strings() string {
+	return fmt.Sprintf("print: %v", c)
+}
+
 func TestErrPrint(t *testing.T) {
+	s := &ConfigOne{}
+	s.Strings()
 	fn := func(i int) (ii int, err error) {
 		if i == 1 {
 			return 1, errors.New("1")
