@@ -33,12 +33,14 @@ import (
 	"unsafe"
 
 	"github.com/Darrenzzy/person-go/structures"
+	"github.com/bytedance/sonic"
 	jsoniter "github.com/json-iterator/go"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"github.com/tidwall/gjson"
+
 	// _ "go.uber.org/automaxprocs"
 	"go.uber.org/goleak"
 	"golang.org/x/exp/slices"
@@ -451,6 +453,14 @@ func TestSlicestrings(t *testing.T) {
 	arr := []int64{}
 	srr := `[22, 111]`
 	err := json.Unmarshal([]byte(srr), &arr)
+
+	var srrr string
+	t.Log(srrr)
+	err = sonic.UnmarshalString(srrr, &arr)
+	if err != nil {
+		t.Log(err)
+		return
+	}
 	t.Log(arr, err)
 }
 
@@ -3512,11 +3522,6 @@ func DfsTree(tree *structures.TreeNode) {
 	}
 }
 
-// 深度遍历 压栈处理
-func DfsTreeV2(tree *structures.TreeNode) {
-
-}
-
 // 广度遍历 队列实现
 func BfsTree(tree *structures.TreeNode) {
 	if tree == nil {
@@ -3538,9 +3543,7 @@ func BfsTree(tree *structures.TreeNode) {
 		if r != nil {
 			node = append(node, r)
 		}
-
 	}
-
 }
 
 func TestWeiyi(t *testing.T) {

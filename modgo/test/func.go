@@ -95,6 +95,7 @@ func CreateTree(node *structures.TreeNode, v int) *structures.TreeNode {
 	return node
 }
 
+// 堆排序
 func BuildHeap(arr []int, lens int) {
 	for i := (lens - 1) / 2; i >= 0; i-- {
 		Heapify(arr, i, lens)
