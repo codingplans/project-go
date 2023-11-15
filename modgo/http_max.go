@@ -40,7 +40,9 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		Ads:              []BidResponse_Ad_MaterialMeta{},
 	}
 	bs, _ := json.Marshal(bidResponse)
-	w.Write(bs)
+	write, err := w.Write(bs)
+	fmt.Println(err)
+	fmt.Println(write)
 
 }
 

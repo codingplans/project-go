@@ -2,78 +2,9 @@ package main
 
 import "fmt"
 
-func rob(nums []int) (int, []int) {
-	n := len(nums)
-	if n == 0 {
-		return 0, []int{}
-	}
+// 打家劫舍
 
-	if n == 1 {
-		return nums[0], []int{0}
-	}
-
-	dp := make([]int, n)
-	dp[0] = nums[0]
-	dp[1] = max(nums[0], nums[1])
-	// selectedHouses := make([]int, n)
-
-	// if nums[0] > nums[1] {
-	// 	selectedHouses[0] = 1
-	// } else {
-	// 	selectedHouses[1] = 1
-	// }
-
-	for i := 2; i < n; i++ {
-		dp[i] = max(dp[i-1], dp[i-2]+nums[i])
-		// if dp[i-1] > dp[i-2]+nums[i] {
-		// 	selectedHouses[i] = selectedHouses[i-1]
-		// } else {
-		// 	selectedHouses[i] = selectedHouses[i-2] + 1
-		// }
-	}
-
-	// Traceback to find the houses to rob
-	robbedHouses := make([]int, 0)
-	i := n - 1
-	for i >= 0 {
-		if i == 0 {
-			robbedHouses = append(robbedHouses, i+1)
-			break
-		} else if i == 1 {
-			if dp[i] > dp[i-1] {
-				robbedHouses = append(robbedHouses, i+1)
-			}
-			break
-		} else if dp[i] > dp[i-1] {
-			robbedHouses = append(robbedHouses, i+1)
-			i -= 2
-		} else {
-			i--
-		}
-	}
-
-	return dp[n-1], robbedHouses
-	// maxWealth := dp[n-1]
-	// maxWealthHouses := []int{}
-	// i := n - 1
-	//
-	// for i >= 0 {
-	// 	if selectedHouses[i] == 1 {
-	// 		maxWealthHouses = append(maxWealthHouses, i)
-	// 		break
-	// 	}
-	// 	if selectedHouses[i] == 2 {
-	// 		maxWealthHouses = append(maxWealthHouses, i, i-1)
-	// 		break
-	// 	}
-	// 	maxWealthHouses = append(maxWealthHouses, i)
-	// 	i -= 2
-	// }
-	//
-	// return maxWealth, reverse(maxWealthHouses)
-}
-
-func max(a, b int) int {
+func maxx(a, b int) int {
 	if a > b {
 		return a
 	}
@@ -98,10 +29,10 @@ func rob2(nums []int) int {
 		return 0
 	}
 	if l == 2 {
-		return max(nums[1], nums[0])
+		return maxx(nums[1], nums[0])
 	}
 	fmt.Println(rob1(nums[1:]), rob1(nums[:l-1]), nums[1:], nums[:l-1])
-	return max(rob1(nums[1:]), rob1(nums[:l-1]))
+	return maxx(rob1(nums[1:]), rob1(nums[:l-1]))
 
 }
 
@@ -109,21 +40,43 @@ func rob1(nums []int) int {
 	l := len(nums)
 	dp := make([]int, l)
 	dp[0] = nums[0]
-	dp[1] = max(nums[0], nums[1])
+	dp[1] = maxx(nums[0], nums[1])
 	for i := 2; i < l; i++ {
-		dp[i] = max(dp[i-2]+nums[i], dp[i-1])
+		dp[i] = maxx(dp[i-2]+nums[i], dp[i-1])
 	}
+	// 返回数组最后一个值
 	return dp[l-1]
 }
 
-//
-// func max(a,b int)int{
-// 	if a>b{
-// 		return a
-// 	}
-//
-// 	return b
-// }
+// 解法二 DP 优化辅助空间，把迭代的值保存在 2 个变量中
+func rob198_1(nums []int) int {
+	n := len(nums)
+	if n == 0 {
+		return 0
+	}
+	curMax, preMax := 0, 0
+	for i := 0; i < n; i++ {
+		tmp := curMax
+		curMax = maxx(curMax, nums[i]+preMax)
+		preMax = tmp
+	}
+	return curMax
+}
+
+// 解法三 模拟
+func rob11(nums []int) int {
+	// a 对于偶数位上的最大值的记录
+	// b 对于奇数位上的最大值的记录
+	a, b := 0, 0
+	for i := 0; i < len(nums); i++ {
+		if i%2 == 0 {
+			a = maxx(a+nums[i], b)
+		} else {
+			b = maxx(a, b+nums[i])
+		}
+	}
+	return maxx(a, b)
+}
 
 func main() {
 	// Example usage:

@@ -15,6 +15,8 @@ import (
 	"math"
 	"math/big"
 	"math/rand"
+	"net/http"
+	"net/http/httptest"
 	urls "net/url"
 	"os"
 	"os/signal"
@@ -68,11 +70,137 @@ type ConfigOne struct {
 	Daemon string
 }
 
+// 校验切片是否被安全释放
+func TestSliceCut(t *testing.T) {
+	sk := make([]string, 20)
+	for i := 1; i < 800; i++ {
+		if i%10 == 0 {
+			runtime.GC()
+		}
+		if i%50 == 0 {
+			println(len(sk), cap(sk))
+		}
+		if i < 20 {
+			sk = append(sk, "test")
+		}
+		if i < 80 && i >= 20 {
+			if len(sk) >= 2 {
+				sk = sk[2:]
+			}
+		}
+		if i > 80 && i < 200 {
+			sk = append(sk, "test")
+		}
+		if i < 300 && i >= 200 {
+			if len(sk) >= 2 {
+				sk = sk[2:]
+			}
+		}
+		if i < 800 && i >= 300 {
+			sk = append(sk, "test")
+		}
+
+	}
+	println("len(sk), cap(sk)")
+	println(len(sk), cap(sk))
+	time.Sleep(time.Second)
+	runtime.GC()
+	println(len(sk), cap(sk))
+
+}
+
+func TestHttpMax(t *testing.T) {
+	targetHost := "http://172.16.54.182:8081/debug"
+	concurrency := 2000
+	maxIdleConnsPerHost := 3
+
+	transport := &http.Transport{
+		MaxIdleConnsPerHost: maxIdleConnsPerHost,
+	}
+
+	client := &http.Client{Transport: transport}
+
+	var wg sync.WaitGroup
+	incr := atomic.Int64{}
+	for i := 0; i < concurrency; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+
+			req, err := http.NewRequest("POST", targetHost, nil)
+			if err != nil {
+				fmt.Printf("Error creating request: %v\n", err)
+				return
+			}
+
+			// // 禁用连接复用
+			// req.Close = true
+			resp, err := client.Do(req)
+			if err != nil {
+				fmt.Printf("Error sending request: %v\n", err)
+				return
+			}
+			defer resp.Body.Close()
+			incr.Add(1)
+			fmt.Printf("Request %d completed\n", i)
+		}(i)
+	}
+
+	wg.Wait()
+	fmt.Println("All requests completed.", incr.Load())
+}
+
+func Test41600(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Add("Content-Length", "0")
+	}))
+	defer ts.Close()
+
+	client := ts.Client()
+	transport := client.Transport.(*http.Transport)
+	transport.MaxIdleConns = 1
+	transport.MaxConnsPerHost = 1
+
+	var wg sync.WaitGroup
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for ctx.Err() == nil {
+				reqctx, reqcancel := context.WithCancel(context.Background())
+				go reqcancel()
+				req, _ := http.NewRequestWithContext(reqctx, http.MethodGet, ts.URL, nil)
+				rsp, err := client.Do(req)
+				if err == nil {
+					defer rsp.Body.Close()
+				}
+			}
+		}()
+	}
+
+	for {
+		req, _ := http.NewRequest(http.MethodGet, ts.URL, nil)
+		if rsp, err := client.Do(req); err != nil {
+			t.Errorf("unexpected: %p %v", req, err)
+			break
+		} else {
+			rsp.Body.Close()
+		}
+	}
+
+	cancel()
+	wg.Wait()
+}
+
 func (c *ConfigOne) Strings() string {
 	return fmt.Sprintf("print: %v", c)
 }
 
 func TestErrPrint(t *testing.T) {
+
 	s := &ConfigOne{}
 	s.Strings()
 }
@@ -3503,7 +3631,7 @@ func TestBfs(t *testing.T) {
 	// 初始化树
 	tree := structures.Ints2TreeNode([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
 	// BfsTree(tree)
-	DfsTreeV2(tree)
+	// DfsTreeV2(tree)
 	// DfsTree(tree)
 	BfsTree(tree)
 }
