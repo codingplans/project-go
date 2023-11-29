@@ -70,6 +70,76 @@ type ConfigOne struct {
 	Daemon string
 }
 
+func maxSum(a []int, q [][]int) int {
+	// n := len(a)
+	m := len(q)
+	sums := make([]int, m)
+
+	for i := 0; i < m; i++ {
+		queries := q[i]
+		start, end := queries[0], queries[1]
+
+		// 枚举所有可能的排序
+		for _, permutation := range permutations(a) {
+			// 计算当前排序下的部分和
+			currentSum := 0
+			for j := start; j < end; j++ {
+				currentSum += permutation[j]
+			}
+
+			// 更新最大部分和
+			if currentSum > sums[i] {
+				sums[i] = currentSum
+			}
+		}
+	}
+
+	// 计算所有查询的总和
+	totalSum := 0
+	for _, s := range sums {
+		totalSum += s
+	}
+
+	return totalSum
+}
+
+// 生成数组的所有可能排列
+func permutations(a []int) [][]int {
+	var result [][]int
+	var backtrack func(start int)
+	backtrack = func(start int) {
+		if start == len(a)-1 {
+			tmp := make([]int, len(a))
+			copy(tmp, a)
+			result = append(result, tmp)
+			return
+		}
+		for i := start; i < len(a); i++ {
+			a[start], a[i] = a[i], a[start]
+			backtrack(start + 1)
+			a[start], a[i] = a[i], a[start]
+		}
+	}
+	backtrack(0)
+	return result
+}
+func TestMaxSum(t *testing.T) {
+	a := []int{1, 2, 3, 4, 5, 6}
+	intervals := [][]int{{2, 4}, {1, 3}, {5, 6}}
+	// 2, 3, 4
+	// 1, 2, 3
+	// 5, 6
+	result := maxSum(a, intervals)
+	fmt.Println("Maximum sum:", result)
+}
+
+func TestFilename(t *testing.T) {
+	// confName := "/Users/darren/go/src/person-go/modgo/test/func.go"
+	confName := "./func.go"
+	data, err := os.ReadFile(confName)
+	t.Log(string(data), err)
+}
+
 // 校验切片是否被安全释放
 func TestSliceCut(t *testing.T) {
 	sk := make([]string, 20)
@@ -661,6 +731,7 @@ func findSubstring(s string, words []string) []int {
 func TestReverssss(t *testing.T) {
 	aa := findSubstring("barfoofoobarthefoobarman", []string{"bar", "foo", "the"})
 	t.Logf("%v", aa)
+	t.Log(99 % 9)
 }
 
 func TestGroutineDFS(t *testing.T) {
@@ -687,18 +758,6 @@ func GOCTX(ctx context.Context) {
 	c, _ := context.WithCancel(o)
 	fmt.Println(c.Err())
 	contexts = append(contexts, c)
-}
-
-// bug： 使用切片指针，导致取到最后一个值的指针
-func TestGoV(t *testing.T) {
-	arr := []int64{1, 2, 3, 4, 5, 6}
-	for _, i := range arr {
-		// i := i
-		t.Run(fmt.Sprintf("test-%d", i), func(t *testing.T) {
-			t.Parallel()
-			t.Log(i)
-		})
-	}
 }
 
 func ff() {
@@ -732,11 +791,16 @@ func TestFors(t *testing.T) {
 	}
 }
 
+func TestSignal(t *testing.T) {
+	hookSignals()
+}
+
 // 用于阻塞主进程，等待信号
 func hookSignals() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(
 		sigChan,
+		os.Interrupt,
 		syscall.SIGHUP,
 		syscall.SIGINT,
 		syscall.SIGTERM,
@@ -747,6 +811,8 @@ func hookSignals() {
 		log.Printf("Server Stop")
 	case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM:
 		log.Println("Server GracefulStop")
+	default:
+		log.Println("Server Unknown")
 	}
 }
 
@@ -1450,6 +1516,7 @@ func printInt(index int, a, b *w2) *w2 {
 	return a
 }
 
+// 查看结构体对象大小
 func TestSizeOf(t *testing.T) {
 	type T struct {
 		// _ [0]atomic.Int64
@@ -1466,13 +1533,13 @@ func TestSizeOf(t *testing.T) {
 
 	type B struct {
 		// // _ [0]atomic.Int64
-		a int8
-		b int16
-		c int32
+		a int8  // 4
+		b int16 // 4
+		c int32 // 4
 	}
 	type C struct {
 		// _ [0]atomic.Int64
-		x int32
+		x int32 // 4
 		// v int64
 	}
 	t.Log(unsafe.Sizeof(B{}))
@@ -2521,9 +2588,31 @@ func TestStructNil(t *testing.T) {
 
 }
 
+func trimZeroDecimal(s string) string {
+	var foundZero bool
+	flag := 0
+	for i := len(s); i > 0; i-- {
+		switch s[i-1] {
+		case '.':
+			if foundZero {
+				return s[:i-1]
+			}
+		case '0':
+			foundZero = true
+		default:
+
+			flag = i
+		}
+	}
+	return s[:flag]
+}
+
 func TestFloat32To64(t *testing.T) {
 
 	f := float64(44.532424234234)
+	// sss := "44.532424234234"
+
+	// t.Log(fmt.Sprintf("%.f", sss))
 	t.Log(float32(f))
 
 	f = float64(445324242342.34)

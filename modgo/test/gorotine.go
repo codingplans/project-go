@@ -5,7 +5,7 @@ import (
 	"runtime"
 )
 
-func main() {
+func mains() {
 	// 设置 CPU 的数量为 1
 	runtime.GOMAXPROCS(1)
 
