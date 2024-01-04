@@ -8,10 +8,7 @@ type Clients struct {
 	name string
 }
 
-func NewClient() (*Clients, *Clients2) {
-	return &Clients{}, &Clients2{}
-}
-func NewClient2() *Clients {
+func NewClient() *Clients {
 	return &Clients{}
 }
 

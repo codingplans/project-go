@@ -15,10 +15,6 @@ func NewMysql2() *Client2 {
 	return &Client2{}
 }
 
-type cityRepos struct {
-	mysqlclient Client
-}
-
 func (p *cityRepos) Add() {
 	// TODO implement me
 	panic("implement me")
@@ -33,4 +29,7 @@ func (p *cityRepos) Del() {
 // NewCityRepo .
 func NewCityRepo() pkg.PkgInterface {
 	return &cityRepos{}
+}
+
+type cityRepos struct {
 }
