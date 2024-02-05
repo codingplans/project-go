@@ -70,6 +70,53 @@ type ConfigOne struct {
 	Daemon string
 }
 
+const (
+	initialWindowSize  = 1
+	slowStartThreshold = 16
+)
+
+// tcp拥塞控制实现
+func TestTcp(t *testing.T) {
+	congestionWindow := initialWindowSize
+	slowStart := true
+
+	for round := 1; round <= 20; round++ {
+		// Simulate data transmission and reception
+		fmt.Printf("Round %d - Congestion Window: %d\n", round, congestionWindow)
+
+		// Simulate successful data transmission and reception
+		ackReceived := simulateTransmission()
+
+		// Adjust congestion window based on acknowledgment
+		if ackReceived {
+			if slowStart {
+				// 当处于慢启动阶段，就指数级扩大窗口，直到达到慢启动阈值
+				congestionWindow *= 2
+				if congestionWindow >= slowStartThreshold {
+					slowStart = false
+					fmt.Println("Entering Congestion Avoidance phase")
+				}
+			} else {
+				// 当处于大于启动阈值后，窗口大小依次递增
+				congestionWindow += 1
+			}
+		} else {
+			// 当发生传输失败情况，就把窗口大小减半，重新进入慢启动阶段
+			fmt.Println("Timeout or packet loss detected. Reducing Congestion Window.")
+			congestionWindow /= 2
+			slowStart = true
+		}
+
+		// Introduce a delay to simulate network conditions
+		time.Sleep(time.Millisecond * 100)
+	}
+}
+
+func simulateTransmission() bool {
+	// Simulate successful transmission with a 90% probability
+	randNum := rand.Float64()
+	return randNum < 0.9
+}
 func maxSum(a []int, q [][]int) int {
 	// n := len(a)
 	m := len(q)

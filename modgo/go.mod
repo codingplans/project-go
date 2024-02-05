@@ -24,6 +24,7 @@ require (
 	github.com/samber/lo v1.35.0
 	github.com/shopspring/decimal v1.2.0
 	github.com/sirupsen/logrus v1.9.0
+	github.com/spf13/cast v1.3.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.3
 	github.com/tidwall/gjson v1.14.4
@@ -31,8 +32,10 @@ require (
 	go.uber.org/goleak v1.2.0
 	go.uber.org/zap v1.17.0
 	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0
+	golang.org/x/mod v0.14.0
 	golang.org/x/sync v0.1.0
 	golang.org/x/text v0.9.0
+	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
 	google.golang.org/protobuf v1.30.0
 	testgo/modgo/crypto v0.0.0-20211102110000-000000000000
 	xorm.io/xorm v1.3.2
@@ -99,7 +102,6 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	google.golang.org/grpc v1.46.2 // indirect

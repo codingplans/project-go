@@ -59,12 +59,8 @@ func ttt(field interface{}) (pkg string, name string) {
 
 	case *ast.StarExpr:
 		return ttt(fieldType.X)
-		// if ident, ok := fieldType.X.(*ast.Ident); ok {
-		// 	fmt.Println("Found return type:", ident.Name)
-		// }
 	case *ast.Field:
 		return ttt(fieldType.Type)
-		// return "", fieldType.Type.(*ast.Ident).Name
 	case *ast.ReturnStmt:
 		if len(fieldType.Results) != 0 {
 			return ttt(fieldType.Results[0])
@@ -104,9 +100,6 @@ func findFiles(functionName, clientFunction string) error {
 	// 目标函数的返回结构体名称
 	identName := ""
 	identPkgName := funcArr[0]
-
-	// ss, vv, dds := findStructResp(goFiles, funcArr[1], funcArr[0])
-	// fmt.Println(ss, vv, dds)
 	// 将当前mod下所有文件搜集到，一一检查
 	over := 0
 	i := 0
@@ -272,48 +265,6 @@ func findFiles(functionName, clientFunction string) error {
 	}
 	return err
 }
-func findStructResp(goFiles []string, name, pkg string) (structPkg, structName, structPath string) {
-	fset := token.NewFileSet()
-
-	for _, goFile := range goFiles {
-		file, err := parser.ParseFile(fset, goFile, nil, parser.ParseComments)
-		if err != nil {
-			fmt.Printf("Error parsing file %s: %v\n", goFile, err)
-			continue
-		}
-		if file.Name.Name == pkg {
-			for _, decl := range file.Decls {
-				// 找到目标函数func
-				if f, ok := decl.(*ast.FuncDecl); ok && f.Name.Name == name {
-
-					// fileTar = file
-					if fieldType, ok := f.Type.Results.List[0].Type.(*ast.StarExpr); ok {
-						// ident, ok := fieldType.X.(*ast.Ident)
-						// fmt.Println(ident, ok)
-
-						if ident, ok := fieldType.X.(*ast.Ident); ok {
-							// 给这个返回结构体 赋值 变量，添加整体结构
-							// identName = ident.Name
-							// targetPath = goFile
-							return "", ident.Name, goFile
-						} else if ident1, ok1 := fieldType.X.(*ast.SelectorExpr); ok1 {
-							// fmt.Println(ident1, ok1)
-							return ident1.X.(*ast.Ident).Name, ident1.Sel.Name, goFile
-							// 给这个返回结构体 赋值 变量，添加整体结构
-							// identName = ident1.X.(*ast.Ident).Name + "." + ident1.Sel.Name
-							// targetFuncRespPath = ""
-						}
-					}
-
-				}
-
-			}
-
-		}
-	}
-	return
-
-}
 
 // hasImport 检查是否已导入指定的包
 func hasImport(file *ast.File, packageName string) bool {
@@ -389,38 +340,4 @@ func findGoMod(dir string) (string, error) {
 
 		dir = filepath.Dir(dir)
 	}
-}
-
-// 找到目标结构体用于添加对应形参
-func findStruct(goFiles []string, name, pkg string) (*ast.GenDecl, int) {
-	fset := token.NewFileSet()
-	for _, goFile := range goFiles {
-		// Parse the source code of the current file
-		file, err := parser.ParseFile(fset, goFile, nil, parser.ParseComments)
-		if err != nil {
-			fmt.Printf("Error parsing file %s: %v\n", goFile, err)
-			continue
-		}
-		// 找到目标函数func 的返回结构体，可能当前包，也可能在其他包内
-
-		// 重复第二遍目的是为了找到这个文件中结构体结构
-		if file.Name.Name == pkg && len(name) != 0 {
-			for _, decl := range file.Decls {
-				if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.TYPE {
-					for i, spec := range genDecl.Specs {
-						if typeSpec, ok := spec.(*ast.TypeSpec); ok && typeSpec.Name.Name == name {
-							// Check if the type is a struct
-							if _, ok := typeSpec.Type.(*ast.StructType); ok {
-								// 怼到这一层 目的是校验确实有这个struct
-								// targetStruct = genDecl
-								// targetStructNum = i
-								return genDecl, i
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return nil, 0
 }
