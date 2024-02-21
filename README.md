@@ -1,12 +1,12 @@
 # ProjectGo
 
-##### 主要做 go 的测试 case，
+##### 主要做 go 的实例 case，
 
 ##### docker 启动 go 微服务环境（redis，mysql，nginx）
 
-##### test 用例基础依赖结构体
+##### 功能用例基础依赖结构体
 
-##### 用go完成 leet code 每日一题
+##### 用go完成 实际挑战功能
 
 
 
