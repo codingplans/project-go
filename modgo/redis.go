@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/go-kratos/kratos/pkg/cache/redis"
 	"github.com/go-kratos/kratos/pkg/conf/paladin"
 	"github.com/go-kratos/kratos/pkg/container/pool"
 	xtime "github.com/go-kratos/kratos/pkg/time"
-	"github.com/prometheus/common/log"
 )
 
 func main() {

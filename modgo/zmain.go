@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/prometheus/common/log"
+	log "github.com/sirupsen/logrus"
+
 	"golang.org/x/text/feature/plural"
 )
 
