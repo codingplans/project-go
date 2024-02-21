@@ -32,7 +32,8 @@ import (
 	"syscall"
 	"testing"
 	"time"
-	"unsafe"
+	"unicode/utf8"
+"unsafe"
 
 	"github.com/Darrenzzy/person-go/structures"
 	"github.com/bytedance/sonic"
@@ -1002,6 +1003,8 @@ func (*foo) Infof(s string, any ...interface{}) {
 
 func TestSliceContains(t *testing.T) {
 	sql := "11,3222,33,2233"
+	sql2 := "’11‘“看到痰"
+	t.Log(utf8.RuneCountInString(sql2),len(sql2))
 	sqls := strings.Split(sql, ",")
 	t.Log(slices.Contains(sqls, "22"))
 }
