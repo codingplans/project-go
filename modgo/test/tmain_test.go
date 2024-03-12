@@ -33,7 +33,7 @@ import (
 	"testing"
 	"time"
 	"unicode/utf8"
-"unsafe"
+	"unsafe"
 
 	"github.com/Darrenzzy/person-go/structures"
 	"github.com/bytedance/sonic"
@@ -75,6 +75,18 @@ const (
 	initialWindowSize  = 1
 	slowStartThreshold = 16
 )
+
+func TestMoveBit(t *testing.T) {
+	sec := uint64(1234567890)
+	shifted := uint64(sec) >> 33  // 0
+	fmt.Println(uint64(sec) >> 1) // 308641972.5
+	fmt.Println(uint64(sec) >> 2) // 617283945
+	fmt.Println(shifted)          // 0
+	aa := "03"
+	fmt.Println(strconv.Atoi(aa))
+	ww := "33"
+	fmt.Println(strconv.Atoi(ww))
+}
 
 // tcp拥塞控制实现
 func TestTcp(t *testing.T) {
@@ -1004,7 +1016,7 @@ func (*foo) Infof(s string, any ...interface{}) {
 func TestSliceContains(t *testing.T) {
 	sql := "11,3222,33,2233"
 	sql2 := "’11‘“看到痰"
-	t.Log(utf8.RuneCountInString(sql2),len(sql2))
+	t.Log(utf8.RuneCountInString(sql2), len(sql2))
 	sqls := strings.Split(sql, ",")
 	t.Log(slices.Contains(sqls, "22"))
 }
