@@ -23,6 +23,7 @@ require (
 	github.com/samber/lo v1.35.0
 	github.com/shopspring/decimal v1.2.0
 	github.com/sirupsen/logrus v1.9.0
+	github.com/spf13/cast v1.3.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.3
 	github.com/tidwall/gjson v1.14.4

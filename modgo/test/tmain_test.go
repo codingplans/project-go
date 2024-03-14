@@ -42,6 +42,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
+	"github.com/spf13/cast"
 	"github.com/tidwall/gjson"
 
 	// _ "go.uber.org/automaxprocs"
@@ -75,6 +76,13 @@ const (
 	initialWindowSize  = 1
 	slowStartThreshold = 16
 )
+
+// 整形 转换特殊case
+func TestStringToInt(t *testing.T) {
+	t.Log(cast.ToInt64("09"))
+	t.Log(cast.ToInt64("079"))
+	t.Log(strconv.Atoi("079"))
+}
 
 func TestMoveBit(t *testing.T) {
 	sec := uint64(1234567890)
