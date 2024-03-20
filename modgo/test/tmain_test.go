@@ -35,6 +35,8 @@ import (
 	"unicode/utf8"
 	"unsafe"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/Darrenzzy/person-go/structures"
 	"github.com/bytedance/sonic"
 	jsoniter "github.com/json-iterator/go"
@@ -77,11 +79,75 @@ const (
 	slowStartThreshold = 16
 )
 
+func TestDefers(t *testing.T) {
+	for counter, n := 0, 2; n >= 0; n-- {
+		defer func() {
+			print(counter)
+			counter++
+		}()
+	}
+}
+
+// 根据日期计算所在季度的起始日期和结束日期
+func TestQuarterDates(t *testing.T) {
+	// 获取当前日期
+	now := time.Now()
+
+	// 获取当前季度
+	quarter := (now.Month()-1)/3 + 1
+
+	// 获取当前季度开始日期
+	quarterStart := time.Date(now.Year(), time.Month(quarter*3-2), 1, 0, 0, 0, 0, now.Location())
+
+	// 计算当前季度已过去的天数
+	daysPassed := int(now.Sub(quarterStart).Hours() / 24)
+
+	// 计算当前季度总天数
+	daysTotal := int(time.Date(now.Year(), time.Month(quarter*3+1), 0, 0, 0, 0, 0, now.Location()).Sub(quarterStart).Hours() / 24)
+
+	// 计算当前季度进度
+	progress := float64(daysPassed) / float64(daysTotal)
+
+	// 输出进度
+	fmt.Println("当前季度进度：", progress)
+}
+
 // 整形 转换特殊case
 func TestStringToInt(t *testing.T) {
 	t.Log(cast.ToInt64("09"))
+	t.Log(cast.ToInt64("02"))
+	t.Log(cast.ToInt64("03"))
+	t.Log(cast.ToInt64("029"))
 	t.Log(cast.ToInt64("079"))
 	t.Log(strconv.Atoi("079"))
+	t.Log(strconv.Atoi("079"))
+	t.Log(strconv.Atoi("029"))
+	s := "1048576"
+	i, err := strconv.Atoi(s)
+	t.Log(i, err)
+	ii, err := strconv.ParseInt(s, 10, 128)
+	t.Log(ii, err)
+	ii, err = strconv.ParseInt(s, 5, 64)
+	t.Log(ii, err)
+	assert.Error(t, err)
+	assert.Equal(t, i, 1048576)
+
+}
+
+func TestCheckInterfaceNil(t *testing.T) {
+	aa := getintface()
+	t.Log(aa == nil)
+	nn := GetNil()
+	t.Log(nn == nil)
+	t.Log(reflect.ValueOf(nn).IsNil())
+
+}
+
+func GetNil() *baz {
+	return nil
+}
+func getintface() any {
+	return GetNil()
 }
 
 func TestMoveBit(t *testing.T) {
@@ -94,6 +160,9 @@ func TestMoveBit(t *testing.T) {
 	fmt.Println(strconv.Atoi(aa))
 	ww := "33"
 	fmt.Println(strconv.Atoi(ww))
+	w := 3
+	fmt.Printf("%02d", w)
+
 }
 
 // tcp拥塞控制实现
@@ -1769,17 +1838,6 @@ func TestDeepCopy(t *testing.T) {
 	deepCopy(a, &m)
 	fmt.Printf("## %p \n", m)
 	t.Log(m)
-
-}
-
-func TestParseInt(t *testing.T) {
-	s := "1048576"
-	i, err := strconv.Atoi(s)
-	t.Log(i, err)
-	ii, err := strconv.ParseInt(s, 10, 128)
-	t.Log(ii, err)
-	ii, err = strconv.ParseInt(s, 5, 64)
-	t.Log(ii, err)
 
 }
 
