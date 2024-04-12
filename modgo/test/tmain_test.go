@@ -79,13 +79,127 @@ const (
 	slowStartThreshold = 16
 )
 
+// getDaysInMonth 返回给定时间所在月份的天数
+func getDaysInMonth(date time.Time) int {
+	// 当月第一天
+	firstDayOfMonth := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, date.Location())
+
+	// 下个月第一天
+	firstDayOfNextMonth := firstDayOfMonth.AddDate(0, 1, 0)
+
+	// 计算两个日期之间的差值
+	daysInMonth := firstDayOfNextMonth.Sub(firstDayOfMonth).Hours() / 24
+	return int(daysInMonth)
+}
+
+func getdateProgress() {
+	// 获取当前时间
+	now := time.Now()
+
+	// 获取当前年份
+	year := now.Year()
+
+	// 计算年初和年末的时间
+	startOfYear := time.Date(year, time.January, 1, 0, 0, 0, 0, now.Location())
+	endOfYear := time.Date(year, time.December, 31, 23, 59, 59, 999999999, now.Location())
+
+	// 计算当前时间是一年中的第几天
+	dayOfYear := now.YearDay()
+
+	// 计算全年总天数
+	totalDays := endOfYear.Sub(startOfYear).Hours()/24 + 1
+
+	// 计算进度百分比
+	progress := float64(dayOfYear) / totalDays * 100
+
+	fmt.Printf("当前日期：%s\n", now.Format("2006-01-02"))
+	fmt.Printf("今年是：%d\n", year)
+	fmt.Printf("今天是一年中的第%d天\n", dayOfYear)
+	fmt.Printf("全年共有%.0f天\n", totalDays)
+	fmt.Printf("今年的时间进度为：%.2f%%\n", progress)
+}
+
+func getDateQuarterProgress() {
+	// 获取当前时间
+	now := time.Now()
+
+	// 获取当前年份和月份
+	year, month, _ := now.Date()
+
+	// 计算当前季度的开始月份
+	startMonth := month - time.Month((int(month)-1)%3)
+
+	// 计算当前季度的开始和结束时间
+	startOfQuarter := time.Date(year, startMonth, 1, 0, 0, 0, 0, now.Location())
+	endOfQuarter := startOfQuarter.AddDate(0, 3, 0).Add(-time.Nanosecond)
+
+	// 计算当前日期是该季度的第几天
+	dayOfQuarter := now.Sub(startOfQuarter).Hours()/24 + 1
+
+	// 计算整个季度的天数
+	totalDaysInQuarter := endOfQuarter.Sub(startOfQuarter).Hours()/24 + 1
+
+	// 计算进度百分比
+	progressInQuarter := (dayOfQuarter / totalDaysInQuarter) * 100
+
+	fmt.Printf("当前日期：%s\n", now.Format("2006-01-02"))
+	fmt.Printf("当前季度开始于：%s\n", startOfQuarter.Format("2006-01-02"))
+	fmt.Printf("当前季度结束于：%s\n", endOfQuarter.Format("2006-01-02"))
+	fmt.Printf("今天是这个季度的第%.0f天\n", dayOfQuarter)
+	fmt.Printf("这个季度共有%.0f天\n", totalDaysInQuarter)
+	fmt.Printf("当前日期在本季度的进度为：%.2f%%\n", progressInQuarter)
+}
+
 func TestDefers(t *testing.T) {
+	start := "20240103"
+	getdateProgress()
+
+	t.Log(fmt.Sprintf("%s-%s-%s", start[:4], start[4:6], start[6:]))
+	ss := time.Now().Add(-time.Hour * 24 * 30)
+	t.Log(getDaysInMonth(ss))
 	for counter, n := 0, 2; n >= 0; n-- {
 		defer func() {
 			print(counter)
 			counter++
 		}()
 	}
+}
+
+func TestWeeks(t *testing.T) {
+	xAxis := []string{
+		"01",
+		"02",
+		"03",
+		"04",
+		"05",
+		"06",
+		"07",
+		"08",
+		"09",
+		"10",
+		"11",
+		"12"}
+	for _, axi := range xAxis {
+		week, err := strconv.Atoi(axi)
+		if err != nil {
+			// log.Error(err.Error())
+		}
+		// t.Log(strconv.Atoi(axi))
+		ts := time.Now()
+
+		// 获取年份的第一天
+		firstDayOfYear := time.Date(ts.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+		// 计算年份的第一天是星期几
+		firstDayOfWeek := int(firstDayOfYear.Weekday())
+
+		// 计算偏移量以确定第一个周的起始日期
+		offset := (8 - firstDayOfWeek) % 7
+
+		// 计算指定周的起始日期
+		startDate := firstDayOfYear.AddDate(0, 0, offset+(week-1)*7)
+		log.Println(startDate.Format("01-02"))
+	}
+
 }
 
 // 根据日期计算所在季度的起始日期和结束日期
@@ -1096,6 +1210,8 @@ func TestSliceContains(t *testing.T) {
 	t.Log(utf8.RuneCountInString(sql2), len(sql2))
 	sqls := strings.Split(sql, ",")
 	t.Log(slices.Contains(sqls, "22"))
+	Start := "2029-09-11"
+	t.Log(strings.Replace(Start, "-", "", -1))
 }
 
 // 并发写入ctx， 需要加锁
