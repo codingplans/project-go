@@ -14,3 +14,4 @@ member/*
 docker/etcd/default.etcd/*
 testgo
 mysqldata
+docker/*
