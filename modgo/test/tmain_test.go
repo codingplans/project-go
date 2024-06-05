@@ -321,6 +321,30 @@ func simulateTransmission() bool {
 	randNum := rand.Float64()
 	return randNum < 0.9
 }
+
+func TestAAA(t *testing.T) {
+	t.Log(parseTimestamp(93428320))
+	t.Log(parseTimestamp(91500260))
+}
+
+// parseTimestamp 将HHMMSSsss格式的时间戳转换为自午夜以来的总毫秒数
+func parseTimestamp(ts uint32) int {
+	hours := ts / 10000000
+	minutes := (ts % 10000000) / 100000
+	seconds := (ts % 100000) / 1000
+	milliseconds := ts % 1000
+	return int(hours)*3600000 + int(minutes)*60000 + int(seconds)*1000 + int(milliseconds)
+}
+
+// formatTimestamp 将自午夜以来的总毫秒数转换回HHMMSSsss格式的时间戳
+func formatTimestamp(ms int) uint32 {
+	hours := ms / 3600000
+	minutes := (ms % 3600000) / 60000
+	seconds := (ms % 60000) / 1000
+	milliseconds := ms % 1000
+	return uint32(hours)*10000000 + uint32(minutes)*100000 + uint32(seconds)*1000 + uint32(milliseconds)
+}
+
 func maxSum(a []int, q [][]int) int {
 	// n := len(a)
 	m := len(q)
@@ -1386,7 +1410,8 @@ func TestFloatString(t *testing.T) {
 	t.Log(dd.Div(dd2).Sub(decimal.NewFromInt(1)).Mul(decimal.NewFromInt(100)))
 	t.Log(dd.Mul(decimal.NewFromInt(100)).Div(dd2))
 	t.Log(dd.Mul(decimal.NewFromInt(100)))
-
+	aa := float64(0.00)
+	t.Log(decimal.NewFromFloat(aa).IsZero(), 33333333)
 	if ok1 != nil {
 		return
 	}

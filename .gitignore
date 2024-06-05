@@ -1,3 +1,6 @@
+
+docker
+docker/*
 user
 *.out
 *.json
@@ -14,4 +17,3 @@ member/*
 docker/etcd/default.etcd/*
 testgo
 mysqldata
-docker/*

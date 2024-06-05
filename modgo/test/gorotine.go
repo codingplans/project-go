@@ -6,7 +6,7 @@ import (
 )
 
 func mains() {
-	// 设置 CPU 的数量为 1
+	// 设置 CPU、	 的数量为 1
 	runtime.GOMAXPROCS(1)
 
 	// 创建一个死循环的 Goroutine
