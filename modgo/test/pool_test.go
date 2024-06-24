@@ -72,7 +72,7 @@ func randomBytes(n int) [1024]byte {
 
 func bufs() []byte {
 	a := make(map[string]complexV1, 0)
-	a["foo"] = complexV1{MM: map[string]complexFoo{"bars": {M: map[string]any{"bar": 1}}}}
+	a["Foo"] = complexV1{MM: map[string]complexFoo{"bars": {M: map[string]any{"Bar": 1}}}}
 
 	student := &studentV1{
 		Name:   "randomString(10)",

@@ -17,7 +17,7 @@ func addString(a, b string) string {
 func BenchmarkWithoutGenerics(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = addInt(1, 2)
-		_ = addString("foo", "bar")
+		_ = addString("Foo", "Bar")
 	}
 }
 
@@ -33,6 +33,6 @@ func BenchmarkWithoutGenerics(b *testing.B) {
 func BenchmarkWithGenerics(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		// _ = add(1, 2)
-		// _ = add("foo", "bar")
+		// _ = add("Foo", "Bar")
 	}
 }

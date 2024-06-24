@@ -23,7 +23,7 @@ func main3() {
 	arr = append(arr, &bazzz{bar: 5, foo: "5"})
 
 	// 有没有一种 封装方式 可以做以下for循环中的事情
-	f := &fooStruct{c: "foo"}
+	f := &fooStruct{c: "Foo"}
 	for i := 0; i < 5; i++ {
 		tmp, _ := f.fooFunc(arr[i], i)
 		arr = append(arr, tmp)
@@ -35,7 +35,7 @@ func main3() {
 	// _ = arr
 
 	// 实现：
-	ff := &fooStruct{c: "foo"}
+	ff := &fooStruct{c: "Foo"}
 	arr = lo.FilterMap[*bazzz, *bazzz](arr, ff.fooFunc)
 	_ = arr
 

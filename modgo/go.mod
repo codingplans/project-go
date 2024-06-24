@@ -1,6 +1,6 @@
 module testgo/modgo
 
-go 1.18
+go 1.21
 
 require (
 	github.com/Darrenzzy/person-go v1.0.7
@@ -11,15 +11,18 @@ require (
 	github.com/getsentry/sentry-go v0.14.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-kratos/kratos v1.0.0
+	github.com/jinzhu/copier v0.4.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/json-iterator/go v1.1.12
 	github.com/lib/pq v1.10.2
 	github.com/looplab/fsm v0.2.0
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
+	github.com/mitchellh/go-homedir v1.1.0
 	github.com/panjf2000/ants/v2 v2.7.1
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.18.0
+	github.com/pkg/sftp v1.13.6
+	github.com/prometheus/client_golang v1.17.0
 	github.com/samber/lo v1.35.0
 	github.com/shopspring/decimal v1.2.0
 	github.com/sirupsen/logrus v1.9.0
@@ -30,11 +33,13 @@ require (
 	github.com/valyala/fasthttp v1.40.0
 	go.uber.org/goleak v1.2.0
 	go.uber.org/zap v1.17.0
-	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0
-	golang.org/x/mod v0.14.0
-	golang.org/x/sync v0.3.0
-	golang.org/x/text v0.14.0
-	google.golang.org/protobuf v1.32.0
+	golang.org/x/crypto v0.14.0
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
+	golang.org/x/mod v0.18.0
+	golang.org/x/sync v0.7.0
+	golang.org/x/text v0.13.0
+	google.golang.org/protobuf v1.31.0
+	gopkg.in/yaml.v3 v3.0.1
 	testgo/modgo/crypto v0.0.0-20211102110000-000000000000
 	xorm.io/xorm v1.3.2
 )
@@ -73,6 +78,7 @@ require (
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/klauspost/compress v1.15.11 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
+	github.com/kr/fs v0.1.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
@@ -98,13 +104,11 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.19.0 // indirect
-	golang.org/x/net v0.21.0 // indirect
-	golang.org/x/sys v0.17.0 // indirect
-	google.golang.org/grpc v1.56.3 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	google.golang.org/grpc v1.46.2 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	moul.io/http2curl v1.0.0 // indirect
 	xorm.io/builder v0.3.11-0.20220531020008-1bd24a7dc978 // indirect
 )

@@ -17,3 +17,7 @@ member/*
 docker/etcd/default.etcd/*
 testgo
 mysqldata
+<<<<<<< HEAD
+=======
+docker/psql
+>>>>>>> 027edcd (feat: add some test)
