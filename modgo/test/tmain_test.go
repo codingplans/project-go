@@ -79,6 +79,117 @@ const (
 	slowStartThreshold = 16
 )
 
+func TestGetDaysInMonth(t *testing.T) {
+	value := "08.9...93673.67"
+
+	t.Log(strings.SplitN(value, ".", 2))
+	t.Log(cast.ToString(value))
+	arr := []int{1, 2}
+	t.Log(arr[:0])
+	t.Log(arr[:2])
+}
+func TestPubPrefix(t *testing.T) {
+	pid := os.Getpid()
+	fmt.Printf("Current process PID: %d\n", pid)
+	strsarr := []string{
+		"/xxxxxxxxx/Configxxxxx/",
+		"WCTrader.pid.471765.log",
+	}
+
+	// prefix := commonPrefix(strsarr)
+	// fmt.Println("Common Prefix:", prefix)
+	keyword(strsarr)
+}
+
+func TestMapStore(t *testing.T) {
+	MM := sync.Map{}
+	t.Log(MM.LoadOrStore("key", "value"))
+	t.Log(MM.LoadOrStore("key2", "value2"))
+	t.Log(MM.Load("key2"))
+	t.Log(MM.Load("key"))
+	t.Log(MM.LoadOrStore("key", "value11"))
+	t.Log(MM.LoadOrStore("key2", "value222"))
+
+}
+
+// 保留的SQL关键字列表
+var sqlKeywords = map[string]bool{
+	"SELECT": true, "FROM": true, "WHERE": true, "INSERT": true, "UPDATE": true, "DELETE": true,
+	// 添加其他SQL关键字...
+}
+
+// 判断字符串是否为有效的SQL表名称
+func isValidTableName(name string) bool {
+	// 检查是否为空
+	if len(name) == 0 {
+		return false
+	}
+	// 检查是否为SQL关键字
+	if _, exists := sqlKeywords[strings.ToUpper(name)]; exists {
+		return false
+	}
+	// 使用正则表达式检查格式
+	match, _ := regexp.MatchString(`^[a-zA-Z_][a-zA-Z0-9_]*$`, name)
+	return match
+}
+
+func TestTableName(t *testing.T) {
+	t.Log(isValidTableName("SELECT"))
+	t.Log(isValidTableName("aaa-test"))
+	t.Log(isValidTableName("aaa_asd3"))
+}
+
+// ConvertPattern 将带有*的模式转换为正则表达式
+func ConvertPattern(pattern string) string {
+	pattern = strings.Replace(pattern, ".", "\\.", -1)
+	pattern = strings.Replace(pattern, "*", ".*", -1)
+	return "^" + pattern + "$"
+}
+
+func keyword(stringsList []string) {
+
+	// 定义匹配模式
+	pattern := "WCTrader.pid*.log"
+
+	// 将匹配模式转换为正则表达式
+	regexPattern := ConvertPattern(pattern)
+
+	// 编译正则表达式
+	re := regexp.MustCompile(regexPattern)
+
+	// 迭代字符串数组并打印匹配的字符串
+	for _, str := range stringsList {
+		if re.MatchString(str) {
+			fmt.Println(str)
+		}
+	}
+}
+
+// Function to find the common prefix of a slice of strings
+func commonPrefix(strs []string) string {
+	if len(strs) == 0 {
+		return ""
+	}
+
+	// Split the first string by "/" to get the initial prefix parts
+	prefixParts := strings.Split(strs[0], "/")
+
+	// Iterate over the other strings
+	for _, str := range strs[1:] {
+		parts := strings.Split(str, "/")
+		for i := range prefixParts {
+			// If we reach a part that doesn't match, truncate the prefixParts
+			if i >= len(parts) || prefixParts[i] != parts[i] {
+				prefixParts = prefixParts[:i]
+				break
+			}
+		}
+	}
+
+	// Join the common prefix parts back together
+	return strings.Join(prefixParts, "/")
+}
+
 // getDaysInMonth 返回给定时间所在月份的天数
 func getDaysInMonth(date time.Time) int {
 	// 当月第一天
@@ -153,6 +264,7 @@ func getDateQuarterProgress() {
 func TestDefers(t *testing.T) {
 	start := "20240103"
 	getdateProgress()
+	getDateQuarterProgress()
 
 	t.Log(fmt.Sprintf("%s-%s-%s", start[:4], start[4:6], start[6:]))
 	ss := time.Now().Add(-time.Hour * 24 * 30)
@@ -257,7 +369,7 @@ func TestCheckInterfaceNil(t *testing.T) {
 
 }
 
-func GetNil() *baz {
+func GetNil() *Baz {
 	return nil
 }
 func getintface() any {
@@ -4581,8 +4693,32 @@ func TestRandtime(t *testing.T) {
 
 }
 
+func removeQuotes(s string) string {
+	// Remove both single and double quotes
+	return strings.Trim(s, `"'`)
+}
 func TestSlicestrings(t *testing.T) {
-	// arr := []interface{}{}
+
+	str1 := `"20240926"`
+	str3 := `"20240926`
+	str2 := "'20240926'"
+
+	fmt.Println("Original str1:", str1)
+	fmt.Println("Processed str1:", removeQuotes(str1))
+
+	fmt.Println("Original str2:", str2)
+	fmt.Println("Processed str2:", removeQuotes(str2))
+	fmt.Println("Original str2:", str3)
+	fmt.Println("Processed str2:", removeQuotes(str3))
+
+	mapData := make(map[string]any)
+	l := `{"DepthMarketTime": 93139000, "PreClose": 280900, "Last": 278200, "AskPrice1": 278200, "AskVol1": 11100, "BidPrice1": 278000, "BidVol1": 5700, "Volume": 12200, "Turnover": 339369.0, "UpperLimit": 309000, "LowerLimit": 252800, "HostTime": 93139097, "Instrument": "002466", "TradingDay": "20240926"}`
+
+	err2 := sonic.UnmarshalString(l, &mapData)
+	if err2 != nil {
+		return
+	}
+
 	arr := []int64{}
 	srr := `[22, 111]`
 	err := json.Unmarshal([]byte(srr), &arr)
@@ -4960,8 +5096,12 @@ func watch(ctx context.Context, name string) {
 	}
 }
 func TestRandTimeMin(t *testing.T) {
-	// sleepHour := 1
 	ts := time.Now()
+
+	ttt, _ := time.ParseInLocation("2006-01-02 15:04:05", "2024-09-23 10:00:00", time.Local)
+	t.Log(ts.Unix())
+	t.Log(ttt.Unix())
+	t.Log(ts.Sub(ttt).Seconds())
 	sleepHour := 28 - ts.Hour()
 	a := rand.NewSource(1)
 	a.Seed(time.Now().Unix())
@@ -5985,6 +6125,15 @@ func TestGoPanic(t *testing.T) {
 }
 
 func TestTimeDaysAdd(t *testing.T) {
+	st, _ := time.Parse("2006-01-02 15:04:05", "2024-06-19 14:30:52")
+	et, _ := time.Parse("2006-01-02 15:04:05", "2024-06-19 14:34:52")
+	ct, _ := time.Parse("2006-01-02 15:04:05", "2024-06-19 14:33:52")
+
+	var zt time.Time
+	t.Log(zt.IsZero())
+
+	t.Log(ct.Before(et))
+	t.Log(ct.After(st))
 	t.Log(time.Now().String())
 	t.Log(time.Now().Year())
 	t.Log(time.Now().GoString())
@@ -6019,6 +6168,10 @@ func TestContains(t *testing.T) {
 	// t.Log(strings.Contains(strings.ToLower("shenZhou"), "shenzhou"))
 	// t.Log(strings.Contains("darren91231231i1892", "darren"))
 	t.Log(getLatestIpAddr("127.0.0.1, 115.171.170.95, 10.5.12.212"))
+	str := "\n     \nHello, World!\n  \n"
+	trimmedStr := strings.TrimSpace(str)
+	fmt.Println("原字符串:", str)
+	fmt.Println("原字符串:", trimmedStr)
 }
 
 func getLatestIpAddr(clientIP string) string {
@@ -6891,7 +7044,66 @@ func regexMatch(regex string, operation string) bool {
 	return r.FindString(operation) == operation
 }
 
+// log := `[20241008-14:43:53]#[EVENT  ]#[normal_opera]#tid[978102]#log_id[002300100036]# { "sz_market_producer":{"sz_session1":[ {"producer":"hot_0", "tick_msg_count":324875618, "tick_msg_discard":0,"tick_msg_disorder":0 }, {"producer":"hot_1", "tick_msg_count":324875619,"tick_msg_discard":0,"tick_msg_disorder":0 }]}}`
+//
+//	re := regexp.MustCompile(`$begin:math:display$(\\d{8}-\\d{2}:\\d{2}:\\d{2})$end:math:display$.*?#(.*)$`)
+//
+//	matches := re.FindStringSubmatch(log)
+//	if len(matches) > 2 {
+//		fmt.Println("Date:", matches[1])
+//		fmt.Println("JSON:", matches[2])
+//	} else {
+//		fmt.Println("No match found")
+//	}
+
 func TestRegex(t *testing.T) {
+	// println(regexMatch(`$begin:math:display$(\\d{8}-\\d{2}:\\d{2}:\\d{2})$end:math:display$.*?#(.*)$`, "login"))
+
+	// println(regexMatch(`^(\[\d{8}-\d{2}:\d{2}:\d{2}\])#.*?#(.*)$`, "login"))
+	// log := `[20241008-14:43:53]#[EVENT  ]#[normal_opera]#tid[978102]#log_id[002300100036]# { "sz_market_producer":{"sz_session1":[ {"producer":"hot_0", "tick_msg_count":324875618, "tick_msg_discard":0,"tick_msg_disorder":0 }, {"producer":"hot_1", "tick_msg_count":324875619,"tick_msg_discard":0,"tick_msg_disorder":0 }]}}`
+	//
+	// re := regexp.MustCompile(`$begin:math:display$(\\d{8}-\\d{2}:\\d{2}:\\d{2})$end:math:display$.*?#(.*)$`)
+	//
+	// matches := re.FindStringSubmatch(log)
+	// if len(matches) > 2 {
+	// 	fmt.Println("Date:", matches[1])
+	// 	fmt.Println("JSON:", matches[2])
+	// } else {
+	// 	fmt.Println("No match found")
+	// }
+
+	logLines := []string{
+		`[20241008-14:30:20]#[EVENT  ]#[normal_opera]#tid[978102]#log_id[002300100034]# { "sz_market":[ {"session":"sz_session1", "session_msg_count":326252314, "session_tick_msg_count":309270624, "session_tick_msg_discard":0,"session_tick_msg_disorder":0, "session_opt_msg_count":0, "msg_queue[0]_remain_len":16777216, "msg_queue[1]_remain_len":16777216 },{"mddp_fix":"sz_session1_mddp_fix_1_0", "ok":4, "timeout":0, "cacheover":0, "q_max":111, "empty_max":0}] }`,
+		`[20241008-14:30:20][20241008-23:30:20]#[EVENT  ]#[normal_opera]#tid[978102]#log_id[002300100036]# { "sz_market_producer":{"sz_session1":[ {"producer":"hot_0", "tick_msg_count":309270624, "tick_msg_discard":0,"tick_msg_disorder":0 }, {"producer":"hot_1", "tick_msg_count":309270624, "tick_msg_discard":0,"tick_msg_disorder":0 }]}}`,
+	}
+
+	// 正则表达式提取日期部分
+	// datePattern := `$begin:math:display$(\\d{8}-\\d{2}:\\d{2}:\\d{2})$end:math:display$`
+	// datePattern := `\[(.*?)\]`
+	datePattern := `\[(.*?)\]`
+	// datePattern := `\[([^\]]+)\].*?\[([^\]]+)\]`
+	// datePattern := `$begin:math:display$(.*?)$end:math:display$`
+	// 正则表达式提取 JSON 内容
+	jsonPattern := `\[(.*?)\].*?#\s*({.*})`
+	// jsonPattern := `#\s*({.*})`
+
+	dateRegex := regexp.MustCompile(datePattern)
+	jsonRegex := regexp.MustCompile(jsonPattern)
+
+	for _, logs := range logLines {
+		dateMatch := dateRegex.FindStringSubmatch(logs)
+		jsonMatch := jsonRegex.FindStringSubmatch(logs)
+
+		if len(dateMatch) > 1 {
+			fmt.Println("Date:", dateMatch[1])
+		}
+		if len(jsonMatch) > 1 {
+			mapdata := make(map[string]any)
+			_ = json.Unmarshal([]byte(jsonMatch[1]), &mapdata)
+			fmt.Println("JSON:", mapdata)
+			// fmt.Println("JSON:", jsonMatch[1])
+		}
+	}
 
 	println(regexMatch(`^.*login.*$`, "asdkalogin/hsj"))
 	println(regexMatch(`^.*login.*$`, "1qweqwi"))
@@ -7800,33 +8012,10 @@ func TestSliceRange(t *testing.T) {
 }
 
 func TestZhengzebiaoda(t *testing.T) {
-	text := "fff${LastDateOfMonth(3)}ffff aa2021年02月30日aaa${LastDateOfMonth(123)}aaa     "
-	mach := "\\$\\{LastDateOfMonth.([0-9]+.)\\}"
+	text := "[08-14 09:02:08.187535][IN1FO 1231       ][rl_mode123l_agent]  123   "
+	mach := `^\[(\d{2}-\d{2}\s*\d{2}:\d{2}:\d{2}\.\d{6})\]`
 	re, _ := regexp.Compile(mach)
-
-	// 取出所有符合规则日期
-	list := re.FindAllString(text, -1)
-	re1, _ := regexp.Compile("[0-9]+")
-	t.Log("替换前：", text, "\n")
-
-	// 遍历替换不同日期
-	for _, v := range list {
-		dayString := re1.Find([]byte(v))
-		days, _ := strconv.Atoi(string(dayString))
-		// 获取目标日期
-		targetDate := LastDateOfMonth(days, time.Now())
-		// 整合当前替换规则
-		curDate := "\\$\\{LastDateOfMonth.(" + string(dayString) + ".)\\}"
-		// 生成当前替换规则
-		re1, _ := regexp.Compile(curDate)
-		// 执行替换
-		text = re1.ReplaceAllString(text, targetDate)
-	}
-	t.Log("替换后：", text, "\n")
-	ts := time.Now()
-	tm1 := time.Date(ts.Year(), ts.Month(), ts.Day()+1, 0, 0, 0, 0, ts.Location())
-	tm2 := tm1.AddDate(0, 0, 1)
-	t.Log(tm1, tm2)
+	t.Log(re.MatchString(text))
 
 }
 
