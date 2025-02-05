@@ -8,6 +8,7 @@ require (
 	github.com/RoaringBitmap/roaring v1.3.0
 	github.com/Shopify/sarama v1.28.0
 	github.com/bytedance/sonic v1.12.4
+	github.com/fsnotify/fsnotify v1.5.4
 	github.com/getsentry/sentry-go v0.14.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-kratos/kratos v1.0.0
@@ -63,7 +64,6 @@ require (
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/elazarl/goproxy v0.0.0-20231117061959-7cc037d33fb5 // indirect
 	github.com/frankban/quicktest v1.14.4 // indirect
-	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect

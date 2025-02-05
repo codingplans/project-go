@@ -35,8 +35,6 @@ import (
 	"unicode/utf8"
 	"unsafe"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/Darrenzzy/person-go/structures"
 	"github.com/bytedance/sonic"
 	"github.com/jinzhu/copier"
@@ -46,6 +44,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"github.com/spf13/cast"
+	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 	// _ "go.uber.org/automaxprocs"
 	"go.uber.org/goleak"
@@ -78,6 +77,31 @@ const (
 	initialWindowSize  = 1
 	slowStartThreshold = 16
 )
+
+// 方案1: 在插入数据库前清理无效的UTF-8字符
+func cleanInvalidUTF8(input string) string {
+	// 1. 移除常见的十六进制表示
+	hexPattern := regexp.MustCompile(`<[0-9A-F]{2}>`)
+	cleaned := hexPattern.ReplaceAllString(input, "")
+
+	// 2. 确保是有效的 UTF-8
+	cleaned = strings.ToValidUTF8(cleaned, "")
+
+	// // 3. 移除可能的末尾特殊字符
+	// cleaned = strings.TrimRight(cleaned, "}")
+	// cleaned = cleaned + "}" // 重新添加结束括号
+
+	return cleaned
+}
+
+func TestUtf8Case(t *testing.T) {
+	// 使用示例
+	aas := "[01-02 14:31:05.185455] [error   ] [AdpBrokerSpi] [OnOrderEvent    ] [Rejected    ] [-] {msg:平仓仓位或配股可用权证不足,可用:0<EF><BC>}"
+	msg2 := cleanInvalidUTF8(aas)
+	t.Log(aas)
+	t.Log(msg2)
+
+}
 
 func TestGetDaysInMonth(t *testing.T) {
 	value := "08.9...93673.67"
@@ -4834,14 +4858,24 @@ func GOCTX(ctx context.Context) {
 func ff() {
 	fmt.Println("ff")
 }
-func TestForSlice(t *testing.T) {
-	list := []func(){func() {
-		fmt.Println("oo")
-	}}
-	var f2 func() = ff
-	for _, f2 = range list {
-		f2()
+func TestForChan(t *testing.T) {
+	ch := make(chan func(), 1)
+	var f3 func() = ff
+	go func() {
+		for {
+			ch <- f3
+			time.Sleep(1 * time.Second)
+		}
+	}()
+	for {
+		select {
+		case f := <-ch:
+			f()
+
+		}
 	}
+	println("ok  ")
+
 }
 
 func TestBigSlice(t *testing.T) {
