@@ -36,7 +36,6 @@ import (
 	"unsafe"
 
 	"github.com/Darrenzzy/person-go/structures"
-	"github.com/bytedance/sonic"
 	"github.com/jinzhu/copier"
 	jsoniter "github.com/json-iterator/go"
 	_ "github.com/mattn/go-sqlite3"
@@ -92,6 +91,28 @@ func cleanInvalidUTF8(input string) string {
 	// cleaned = cleaned + "}" // 重新添加结束括号
 
 	return cleaned
+}
+
+func TestGetConfig(t *testing.T) {
+	// 定义日志行
+	// line := "[04-14 16:49:04.974089][WARNING ][indicator_adapter][prepare_data        :  245][20073][-] {monitor_indicator_result_alert use config in params , error:no indicator_alert_prepare_data}"
+	line := `[11-27 09:05:01.770200] [info    ] [main        ] [main            ] [Version     ] [-] {WCTraderVersion:-,GIT_COMMIT_MSG:\"\",WCCommonVersion:1.7.2,WCCommonUpdate:Add config.h which originally is in Repo of WCTrader)}`
+	// line := "[04-14 16:49:05.872243][INFO    ][base_group_log][package_alarm       :  104][20073][-] { rows: {'params': {'config': {'name': 'monitor_indicator_result_alert', 'alias': '指标计算回测对比结果', 'module_path': 'filter_dispatcher/dispatcher/alert/monitor_indicator_result_alert/monitor_indicator_result_alert.py', 'alert_time_range': {'date': '0-4', 'time': [['04:00:00', '04:04:00']]}, 'alert_calculation_period': 300, 'uniq_index': ['alert_name', 'indicator_msg'], 'alarm_group': 'Dev', 'alarm_manager': 'zhangzhenyu', 'alarm_uniq_period': 300, 'alarm_notice_type': ['msg']}}, 'data': {}}}"
+
+	// 定义正则表达式
+	re := regexp.MustCompile(`^\[(\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{6})\]\s*\[([^\]]+)\]\s*\[([^\]]+)\]\s*\[([^\]]+)\]\s*\[([^\]]+)\]\s*\[([^\]]+)\]\s*(.*)$`)
+
+	// 执行正则匹配
+	matches := re.FindStringSubmatch(line)
+
+	// 打印匹配结果
+	if len(matches) > 0 {
+		for i, match := range matches {
+			fmt.Printf("Match %d: %s\n", i, match)
+		}
+	} else {
+		fmt.Println("No matches found.")
+	}
 }
 
 func TestUtf8Case(t *testing.T) {
@@ -463,6 +484,7 @@ func RemoveANSIEscapeCodes(s string) string {
 	// ANSI 转义序列的正则表达式
 	re := regexp.MustCompile(`\x1B\[[0-?]*[ -/]*[@-~]`)
 	// 使用正则表达式替换掉所有匹配的 ANSI 转义序列
+
 	return re.ReplaceAllString(s, "")
 }
 
@@ -471,6 +493,7 @@ func ContainsANSIEscapeCodes(s string) bool {
 	// ANSI 转义序列的正则表达式
 	re := regexp.MustCompile(`\x1B\[[0-?]*[ -/]*[@-~]`)
 	// 检查字符串是否匹配正则表达式
+
 	return re.MatchString(s)
 }
 
@@ -4721,42 +4744,6 @@ func removeQuotes(s string) string {
 	// Remove both single and double quotes
 	return strings.Trim(s, `"'`)
 }
-func TestSlicestrings(t *testing.T) {
-
-	str1 := `"20240926"`
-	str3 := `"20240926`
-	str2 := "'20240926'"
-
-	fmt.Println("Original str1:", str1)
-	fmt.Println("Processed str1:", removeQuotes(str1))
-
-	fmt.Println("Original str2:", str2)
-	fmt.Println("Processed str2:", removeQuotes(str2))
-	fmt.Println("Original str2:", str3)
-	fmt.Println("Processed str2:", removeQuotes(str3))
-
-	mapData := make(map[string]any)
-	l := `{"DepthMarketTime": 93139000, "PreClose": 280900, "Last": 278200, "AskPrice1": 278200, "AskVol1": 11100, "BidPrice1": 278000, "BidVol1": 5700, "Volume": 12200, "Turnover": 339369.0, "UpperLimit": 309000, "LowerLimit": 252800, "HostTime": 93139097, "Instrument": "002466", "TradingDay": "20240926"}`
-
-	err2 := sonic.UnmarshalString(l, &mapData)
-	if err2 != nil {
-		return
-	}
-
-	arr := []int64{}
-	srr := `[22, 111]`
-	err := json.Unmarshal([]byte(srr), &arr)
-
-	var srrr string
-	t.Log(srrr)
-	err = sonic.UnmarshalString(srrr, &arr)
-	if err != nil {
-		t.Log(err)
-		return
-	}
-	t.Log(arr, err)
-}
-
 func TestIoAll(t *testing.T) {
 	sc := `{"a":1,"b":2}`
 	reader := strings.NewReader(sc)
@@ -4885,13 +4872,13 @@ func TestBigSlice(t *testing.T) {
 
 var x int
 
-func f() bool {
+func fff() bool {
 	x++
 	return x < 5
 }
 
 func TestFors(t *testing.T) {
-	for f(); f(); f() {
+	for fff(); fff(); fff() {
 		println("ok", x)
 	}
 }
@@ -6430,12 +6417,6 @@ func TestClassDef(t *testing.T) {
 	DefClass(fn)
 }
 
-func Example_Print() {
-	score := []int{1, 2, 3}
-	fmt.Println(score)
-	// Output: [1 2 3]
-}
-
 func Test_structChan(t *testing.T) {
 
 	var v BigBar
@@ -7075,12 +7056,14 @@ func regexMatch(regex string, operation string) bool {
 	if err != nil {
 		return false
 	}
+
 	return r.FindString(operation) == operation
 }
 
 // log := `[20241008-14:43:53]#[EVENT  ]#[normal_opera]#tid[978102]#log_id[002300100036]# { "sz_market_producer":{"sz_session1":[ {"producer":"hot_0", "tick_msg_count":324875618, "tick_msg_discard":0,"tick_msg_disorder":0 }, {"producer":"hot_1", "tick_msg_count":324875619,"tick_msg_discard":0,"tick_msg_disorder":0 }]}}`
 //
 //	re := regexp.MustCompile(`$begin:math:display$(\\d{8}-\\d{2}:\\d{2}:\\d{2})$end:math:display$.*?#(.*)$`)
+
 //
 //	matches := re.FindStringSubmatch(log)
 //	if len(matches) > 2 {
@@ -8046,11 +8029,16 @@ func TestSliceRange(t *testing.T) {
 }
 
 func TestZhengzebiaoda(t *testing.T) {
-	text := "[08-14 09:02:08.187535][IN1FO 1231       ][rl_mode123l_agent]  123   "
-	mach := `^\[(\d{2}-\d{2}\s*\d{2}:\d{2}:\d{2}\.\d{6})\]`
+	// text := "[08-14 09:02:08.187535][IN1FO 1231       ][rl_mode123l_agent]  123   "
+	// mach := `^\[(\d{2}-\d{2}\s*\d{2}:\d{2}:\d{2}\.\d{6})\]`
+	// re, _ := regexp.Compile(mach)
+	// t.Log(re.MatchString(text))
+	text := "2025/03/20 14:36:16 [2839218] .d..t...... Data/Model/20250320/asdasd2025/03/20 11:36:16 [2839218] .d..t...... Data/Mod2025/03/20 14:36:16 [2839218] el/20250320/"
+	mach := `(\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}) `
 	re, _ := regexp.Compile(mach)
+	aas := re.FindAllStringIndex(text, -1)
+	t.Log(aas)
 	t.Log(re.MatchString(text))
-
 }
 
 // param: days 为多少天以后

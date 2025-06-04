@@ -56,6 +56,6 @@ func getNetworkInfo() error {
 	return nil
 }
 
-func main2() {
+func main22() {
 	getNetworkInfo()
 }

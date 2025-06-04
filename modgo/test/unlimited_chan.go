@@ -34,12 +34,11 @@ func UnlimitChan() {
 
 	println(len(obj.in), len(obj.out), len(obj.buffer))
 	println("永动结束 完毕")
-
 }
 
 // 不停的涌动生产数据
 func (u *unlimited) In() {
-	defer println("return !!!in！！")
+	defer println("return !!!生产in！！")
 
 	i := 0
 	for {
