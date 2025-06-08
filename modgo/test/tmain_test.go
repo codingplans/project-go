@@ -7296,46 +7296,6 @@ func singleNumber(nums []int) int {
 	return a
 }
 
-func HeapSoft(arr []int) {
-	l := len(arr)
-	fmt.Println(arr)
-
-	for i := l / 2; i >= 0; i-- {
-		BuildHeapV2(arr, i, l)
-	}
-
-	l--
-	for i := l; i >= 0; i-- {
-		arr[0], arr[i] = arr[i], arr[0]
-		BuildHeapV2(arr, 0, l)
-		l--
-	}
-	fmt.Println(arr)
-}
-
-func BuildHeapV2(arr []int, n, lens int) {
-	k := n
-	for n < lens {
-		i := n*2 + 1
-		j := i + 1
-		if i < lens && arr[k] < arr[i] {
-			k = i
-		}
-		if j < lens && arr[k] < arr[j] {
-			k = j
-		}
-		if k != n {
-			arr[k], arr[n] = arr[n], arr[k]
-			n = k
-		} else {
-			// n = n * 2
-			break
-		}
-		// println(n, j, i)
-	}
-
-}
-
 func TestXruntime(t *testing.T) {
 	fmt.Println(runtime.GOMAXPROCS(2))
 	go func() {
@@ -7566,6 +7526,13 @@ func twoSum(numbers []int, target int) []int {
 	// write code here
 }
 
+func TestMergeArr2(t *testing.T) {
+	arr1 := []int{1, 3, 3, 3, 4, 4, 5, 7, 9}
+	arr2 := []int{2, 4}
+	arr3 := append(arr1, make([]int, len(arr2))...) // 扩展 arr1 的长度
+	merge(arr3, len(arr1), arr2, len(arr2))
+}
+
 // 归并排序 不用额外空间，改变原来数组
 func merge(A []int, m int, B []int, n int) {
 	var a = m - 1
@@ -7675,41 +7642,6 @@ func getLongestPalindrome(A string, n int) int {
 		}
 	}
 	return max(k, 0)
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-// 小练归并排序
-func TestMergeArr(t *testing.T) {
-	arr1 := []int{1, 3, 5, 7, 9}
-	arr2 := []int{2, 4, 6, 8, 10}
-	i, j := 0, 0
-	for j < len(arr2) && i < len(arr1) {
-		if arr1[i] <= arr2[j] {
-			i++
-		} else {
-			arr1 = append(arr1[:i], append([]int{arr2[j]}, arr1[i:]...)...)
-			i++
-			j++
-		}
-	}
-	if j < len(arr2) {
-		arr1 = append(arr1, arr2[j])
-		j++
-	}
-
-	fmt.Println(arr1)
 }
 
 func TestChanV2(t *testing.T) {
@@ -7829,11 +7761,47 @@ func TestQuickSoft(t *testing.T) {
 func TestHeapSort(t *testing.T) {
 	// arrStruct := []int{4, 3, 5, 1, 2, 6, 7}
 	arr := []int{1, 4, 3, 2, 6, 5, 8, 7, 9, 0}
+	// arr := []int{1, 2}
+	// arr := []int{5, 4}
+	// fmt.Println(arr)
 
+	heapSort(arr)
+	// BuildHeap(arr, len(arr))
 	fmt.Println(arr)
+}
 
-	BuildHeap(arr, len(arr))
+func heapSort(arr []int) {
+	n := len(arr)
+
+	// 构建大顶堆
+	for i := n/2 - 1; i >= 0; i-- {
+		heapify22(arr, n, i)
+	}
+
+	// 一个个将堆顶元素交换到末尾，再重新构建堆
+	for i := n - 1; i > 0; i-- {
+		arr[0], arr[i] = arr[i], arr[0] // 交换最大值到末尾
+		heapify22(arr, i, 0)            // 重新构建堆
+	}
+}
+
+// 维护堆结构
+func heapify22(arr []int, n, i int) {
 	fmt.Println(arr)
+	largest := i
+	left := 2*i + 1
+	right := 2*i + 2
+
+	if left < n && arr[left] > arr[largest] {
+		largest = left
+	}
+	if right < n && arr[right] > arr[largest] {
+		largest = right
+	}
+	if largest != i {
+		arr[i], arr[largest] = arr[largest], arr[i]
+		heapify22(arr, n, largest)
+	}
 }
 
 // 随便练一下 二叉树排序 =》堆排序
