@@ -17,6 +17,10 @@ def pickleShow():
     print(df)
     print(df_from_db)
 
+
+# print(f"{ord('A')}")
+# print(f"{ord('B')}")
+
 pickleShow()
 
 
