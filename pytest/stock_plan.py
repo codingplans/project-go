@@ -79,18 +79,21 @@ class Solution:
         self.plan = N
         for stock, suspension in enumerate(Suspension):
             self.suspension[stock] = suspension
-
-        for day in range(1, int(self.plan / self.stockConfig[1]['day_volume']) + 3):
+        day = 1
+        # 按照已完成总量来决定是否继续安排交易计划
+        while sum([num for sublist in self.has_traded.values() for num in sublist]) < self.plan * len(self.stockConfig):
             current_day = {}
+            current_day_new = {}
             current_supp_day = {}
-
-            for stock in [1, 2, 3]:
+            sum(self.has_traded[1])
+            sum([num for sublist in self.has_traded.values() for num in sublist])
+            for stock in self.stockConfig.keys():
                 # 计划买入量
-                volume = self.calculate_stock(stock, day, Suspension[stock - 1])
+                volume = self.calculate_stock(stock, day)
                 # 累计计划买入总量
-                plan_volume = self.plan_volume(stock, day, Suspension[stock - 1]) + volume
+                plan_volume = self.plan_volume(stock, day) + volume
                 # 当日需要补量
-                supp_volume = self.supplement_volume(stock, day, Suspension[stock - 1])
+                supp_volume = self.supplement_volume(stock, day)
                 # 存储补量到字典中
                 current_supp_day[stock] = supp_volume
                 # 验算当天是否超额，重新梳理，按照顺序
@@ -114,7 +117,7 @@ class Solution:
                 # 重新验算是否有超额情况，按照股票顺序和欠款顺序 验算
                 current_day_new = self.full_day_order_by_stock(current_day.copy(), current_supp_day_new)
                 # 如果当日停牌，进行标注
-                if self.is_stop(day, Suspension[stock - 1]):
+                if self.is_stop(day, self.suspension[stock - 1]):
                     self.need_supp_days[stock][day] = True
             # 梳理当天所有票是否有补充逻辑，有的话进行标注，用于后续计算补充量
             for stock, volume in current_day_new.items():
@@ -124,7 +127,9 @@ class Solution:
             for stock, traded in current_day_new.items():
                 self.has_traded[stock].append(current_day_new[stock])
             print(f"当前{day}计划买入{current_day_new}")
+            day += 1
         self.print_output()
+
         return list(self.has_traded.values())
 
     def print_output(self):
@@ -132,10 +137,10 @@ class Solution:
             traded_str = "[" + ",".join(f"{x:>3}" for x in traded) + "]"
             print(f"总计{sum(traded)}股{stock}买入列表{traded_str:<50}")
 
-    def plan_volume(self, stock, day, sup) -> int:
+    def plan_volume(self, stock, day) -> int:
         plan_volume = 0
         for day_item in range(1, day):
-            plan_volume += self.calculate_stock_v2(stock, day_item, sup)
+            plan_volume += self.calculate_stock_v2(stock, day_item)
         return plan_volume
 
     def pre_total_volume(self, stock: int) -> int:
@@ -182,9 +187,9 @@ class Solution:
         return day in suspension
 
     # 指定日期计划买入的数量
-    def calculate_stock(self, stock, day: int, suspension: list) -> int:
+    def calculate_stock(self, stock, day: int) -> int:
         v = self.stockConfig[stock]['day_volume']
-        if self.is_stop(day, suspension):
+        if self.is_stop(day, self.suspension[stock - 1]):
             v = 0
         # print(f"第{day}天，股票{stock},计划买入{v}")
         # 计算是否需要隔天处理
@@ -198,7 +203,7 @@ class Solution:
 
         # 指定日期计划买入的数量
 
-    def calculate_stock_v2(self, stock, day: int, suspension: list) -> int:
+    def calculate_stock_v2(self, stock, day: int) -> int:
         v = self.stockConfig[stock]['day_volume']
         # print(f"第{day}天，股票{stock},计划买入{v}")
         # 计算是否需要隔天处理
@@ -211,9 +216,9 @@ class Solution:
         return 0
 
     # 补充买入
-    def supplement_volume(self, stock: int, day: int, suspension: list, ) -> int:
+    def supplement_volume(self, stock: int, day: int) -> int:
         # 如果当天没有买入，则补充买入
-        if self.is_stop(day, suspension):
+        if self.is_stop(day, self.suspension[stock - 1]):
             return 0
 
         # 如果是隔天买入，计算应该买入数量
@@ -224,10 +229,6 @@ class Solution:
             return int(total)
         return 0
 
-    # 对比该日计划买入总配置，有超出则削减
-    def compare_volume(self, list: []) -> list:
-        return []
-
     # 校验当前票是否已不能在交易
     def is_max_volume(self, stock: int) -> int:
         if sum(self.has_traded[stock]) >= self.plan:
@@ -236,18 +237,16 @@ class Solution:
 
 
 K = Solution()
-# aa = K.filter_full_day({1: 160,
-#                     2: 0,
-#                     3: 390})
-# aa = K.filter_full_day({1: 60,
-#                     2: 60,
-#                     3: 490})
-# K.trading_plan(1000, [[1, 2], [3], [1]])
+K.trading_plan(1000, [[1, 2], [3], [1]])
 # 总计1计划买入列表[  0,  0,160,110,190,140,  0,130,130,130, 10]
 # 总计2计划买入列表[200,  0,  0,  0,260,  0,110,  0,320,  0,110]
 # 总计3计划买入列表[  0,  0,  0,390,  0,  0,390,  0,  0,220,  0]
 # K.trading_plan(10000, [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 2], [], []])
-K.trading_plan(1, [])
+# K.trading_plan(1, [])
+# K.trading_plan(1000, [[2, 3, 4, 5, 6, 7, 8, 9], [2, 3, 4, 5, 6, 7, 8, 9], [2, 3, 4, 5, 6, 7, 8, 9]])
+# 总计1000股1买入列表[100,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,400,200,300,  0]
+# 总计1000股2买入列表[200,  0,  0,  0,  0,  0,  0,  0,  0,  0,500,  0,  0,  0,300]
+# 总计1000股3买入列表[200,  0,  0,  0,  0,  0,  0,  0,  0,500,  0,  0,300,  0,  0]
 # K.trading_plan(1000, [[], [], []])
 # 总计1计划买入列表[100,100,100,100,100,100,100,100,100,100,  0]
 # 总计2计划买入列表[200,  0,200,  0,200,  0, 90,  0,260,  0, 50]
