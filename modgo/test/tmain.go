@@ -32,6 +32,31 @@ func (Toilet) Builds() {
 	println("Toilet")
 }
 
+type w2 struct {
+	q int
+}
+
+type Baz struct {
+	Bar int
+	Foo int
+}
+
+type baz2 struct {
+	Bar int
+	Foo int
+	fzz []int
+}
+type arrStruct []Baz
+
+type ConfigOne struct {
+	Daemon string
+}
+
+const (
+	initialWindowSize  = 1
+	slowStartThreshold = 16
+)
+
 // 大于2m 结构体
 type BigBar struct {
 	foo runtime.MemStats

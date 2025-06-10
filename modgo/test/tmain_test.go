@@ -52,30 +52,23 @@ import (
 	"testgo/modgo/crypto"
 )
 
-type w2 struct {
-	q int
+func TestSumdiff(t *testing.T) {
+	res := sumDiff(13112)
+	print(res)
 }
 
-type Baz struct {
-	Bar int
-	Foo int
+// 给你一个整数 n，请你帮忙计算并返回该整数「各位数字之积」与「各位数字之和」的差。
+func sumDiff(n int) int {
+	sum := 0
+	product := 1
+	for n != 0 {
+		xxx := n % 10
+		n = n / 10
+		sum += xxx
+		product *= xxx
+	}
+	return product - sum
 }
-
-type baz2 struct {
-	Bar int
-	Foo int
-	fzz []int
-}
-type arrStruct []Baz
-
-type ConfigOne struct {
-	Daemon string
-}
-
-const (
-	initialWindowSize  = 1
-	slowStartThreshold = 16
-)
 
 // 方案1: 在插入数据库前清理无效的UTF-8字符
 func cleanInvalidUTF8(input string) string {

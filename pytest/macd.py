@@ -70,7 +70,7 @@ def calculate_rsi(prices, period=14):
     delta = prices.diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
     loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-
+    # RS = 平均涨幅 / 平均跌幅
     rs = gain / loss
     rsi = 100 - (100 / (1 + rs))
 
