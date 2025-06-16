@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-//  多消费多生产 场景 下通过 wg 控制生产者关闭 和消费
+// 多消费多生产 场景 下通过 wg 控制生产者关闭 和消费
 func TestGoroutine(t *testing.T) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	// runtime.GOMAXPROCS(1)
