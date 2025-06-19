@@ -87,6 +87,26 @@ func dfs3(arr []int, target int, start int, path []int, result *[][]int) {
 	}
 }
 
+func TestForRangex(t *testing.T) {
+	arr := make([]*int, 0, 10)
+	// arr := make([]*Baz, 0, 10)
+	for i := 0; i < 10; i++ {
+		arr = append(arr, &i)
+		// arr = append(arr, &Baz{
+		// 	Bar: &i,
+		// })
+	}
+	// for i := 0; i < 10; i++ {
+	// 	print(&i)
+	// }
+	fmt.Println(*arr[0], *arr[3])
+
+	// for m, n := range arr {
+	// 	fmt.Println(m, n)
+	// }
+
+}
+
 func TestSumDiff(t *testing.T) {
 	res := sumDiff(13112)
 	print(res)
@@ -637,8 +657,8 @@ func maxSum(a []int, q [][]int) int {
 // 生成数组的所有可能排列
 func permutationsMax(a []int) [][]int {
 	var result [][]int
-	var backtrack func(start int)
-	backtrack = func(start int) {
+	var backtrackitem func(start int)
+	backtrackitem = func(start int) {
 		if start == len(a)-1 {
 			tmp := make([]int, len(a))
 			copy(tmp, a)
@@ -647,11 +667,11 @@ func permutationsMax(a []int) [][]int {
 		}
 		for i := start; i < len(a); i++ {
 			a[start], a[i] = a[i], a[start]
-			backtrack(start + 1)
+			backtrackitem(start + 1)
 			a[start], a[i] = a[i], a[start]
 		}
 	}
-	backtrack(0)
+	backtrackitem(0)
 	return result
 }
 func TestMaxSum(t *testing.T) {
@@ -2937,7 +2957,7 @@ func TestAppends(t *testing.T) {
 
 	arr := []int{}
 	ch := make(chan struct{}, 0)
-	isClose = false
+	isClose := false
 	i := int32(0)
 	maxCount := int32(5000)
 	println(runtime.NumCPU())
@@ -4148,16 +4168,6 @@ func TestChanV2(t *testing.T) {
 
 }
 
-func TestQuickSoft(t *testing.T) {
-	// arr := []int{4, 3, 5, 1, 2, 6, 33, 12, 1, 55, 3, 2, 111, 57, 7, 5}
-	// arr := []int{2, 9, 3, 333, 8, 11, 4, 7, 6, 5, 22, 115, 3}
-	arr := []int{3, 5, 1, 9, 8, 344, 1, 5555, 44, 2}
-
-	fmt.Println(arr)
-	QuickSoft(arr, 0, len(arr)-1)
-	fmt.Println(arr)
-}
-
 // 堆排序小练
 func TestHeapSort(t *testing.T) {
 	// arrStruct := []int{4, 3, 5, 1, 2, 6, 7}
@@ -4203,24 +4213,6 @@ func heapify22(arr []int, n, i int) {
 		arr[i], arr[largest] = arr[largest], arr[i]
 		heapify22(arr, n, largest)
 	}
-}
-
-// 随便练一下 二叉树排序 =》堆排序
-func Test2TreeSoft(t *testing.T) {
-	// arrStruct := []int{1, 2, 3, 4, 5, 6, 7, 8}
-	arr := []int{4, 3, 5, 1, 2, 6, 7}
-
-	ts := []int{0, 0, 0, 1}
-	ss := copy(ts, arr)
-	fmt.Println(len(ts), cap(ts), arr, ts, ss)
-	fmt.Printf("%v,%p,%p,", ss, ts, arr)
-
-	node := &structures.TreeNode{Val: 4}
-	for v := range arr[:6] {
-		node = CreateTree(node, arr[v+1])
-	}
-	fmt.Println("begin")
-	Travel(node)
 }
 
 func TestBlocking(t *testing.T) {

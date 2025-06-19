@@ -2,7 +2,7 @@ module testgo/modgo
 
 go 1.23.0
 
-toolchain go1.24.1
+toolchain go1.24.4
 
 require (
 	github.com/Darrenzzy/person-go v1.0.7
