@@ -685,7 +685,6 @@ func TestMaxSum(t *testing.T) {
 }
 
 func TestFilename(t *testing.T) {
-	// confName := "/Users/darren/go/src/person-go/modgo/test/func.go"
 	confName := "./func.go"
 	data, err := os.ReadFile(confName)
 	t.Log(string(data), err)
@@ -1120,7 +1119,7 @@ func TestBufferToByte(t *testing.T) {
 func TestPrintNum(t *testing.T) {
 	even := make(chan bool)
 	odd := make(chan bool)
-
+	var wg sync.WaitGroup
 	fn := func(self, other chan bool, start int) {
 		for i := start; i <= 100; i += 2 {
 			<-self // 等待自己的轮次
@@ -2700,7 +2699,7 @@ func TestWriteSlice(t *testing.T) {
 	app := make([]int64, 0, 1000)
 	var lock sync.RWMutex
 	var lock2 sync.RWMutex
-
+	var wg sync.WaitGroup
 	a := 2
 	wg.Add(1)
 

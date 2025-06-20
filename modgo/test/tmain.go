@@ -4,10 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/pkg/errors"
-	"sync"
 )
-
-var wg sync.WaitGroup
 
 type Buiding interface {
 	Builds()
