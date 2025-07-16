@@ -1,7 +1,7 @@
 package main
 
 // 最简单的一个C程序
-// go run c_main.go
+// CGO_ENABLED=1 go run c_main.go
 
 /*
 #include <stdio.h>
